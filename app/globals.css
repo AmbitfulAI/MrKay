@@ -1,26 +1,507 @@
 @import "tailwindcss";
 
+/* ── Light mode (default) ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7f4ef;
+  --surface: #edeae3;
+  --surface-2: #e3dfd7;
+  --text: #1c1916;
+  --muted: #6b6560;
+  --dim: #a09a92;
+  --border: #d8d3ca;
+  --gold: #c4974a;
+  --gold-glow: rgba(196, 151, 74, 0.08);
 }
 
+/* ── Dark mode ── */
+.dark {
+  --bg: #0c0c0a;
+  --surface: #131311;
+  --surface-2: #1a1a17;
+  --text: #ede8df;
+  --muted: #7a7468;
+  --dim: #524f49;
+  --border: #222220;
+  --gold: #c4974a;
+  --gold-glow: rgba(196, 151, 74, 0.04);
+}
+
+/* ── Tailwind design tokens ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-dim: var(--dim);
+  --color-border: var(--border);
+  --color-gold: var(--gold);
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-jost), "Jost", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Base reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.65;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Layout ── */
+.container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+/* ── Typography utilities ── */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.gold-rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.gold-rule-full {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 25%,
+    var(--gold) 75%,
+    transparent
+  );
+}
+
+/* ── Buttons ── */
+.btn-outline {
+  display: inline-block;
+  padding: 13px 38px;
+  border: 1px solid var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 0.28s ease,
+    color 0.28s ease;
+}
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+.btn-solid {
+  display: inline-block;
+  padding: 13px 38px;
+  background: var(--gold);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--bg);
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  transition:
+    background 0.28s ease,
+    color 0.28s ease;
+}
+.btn-solid:hover {
+  background: transparent;
+  color: var(--gold);
+}
+
+/* ── Forms ── */
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0 12px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.28s ease;
+}
+.form-input::placeholder {
+  color: var(--dim);
+}
+.form-input:focus {
+  border-color: var(--gold);
+}
+textarea.form-input {
+  resize: none;
+  min-height: 120px;
+}
+
+/* ── Hover utilities ── */
+.hover-gold {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.hover-gold:hover {
+  color: var(--gold);
+}
+.hover-text {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.hover-text:hover {
+  color: var(--text);
+}
+.gold-link {
+  color: var(--gold);
+  transition: opacity 0.2s;
+}
+.gold-link:hover {
+  opacity: 0.65;
+}
+
+/* ── Service rows ── */
+.service-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 40px;
+  padding: 36px 0;
+  border-bottom: 1px solid var(--surface-2);
+  text-decoration: none;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.service-row:hover {
+  background: var(--gold-glow);
+}
+.service-row .service-num {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  color: var(--surface-2);
+  transition: color 0.3s;
+  line-height: 1;
+}
+.service-row:hover .service-num {
+  color: var(--gold);
+}
+.service-row .service-arrow {
+  font-size: 1.4rem;
+  color: var(--dim);
+  transition:
+    color 0.3s,
+    transform 0.3s;
+}
+.service-row:hover .service-arrow {
+  color: var(--gold);
+  transform: translateX(6px);
+}
+
+/* ── Pillar cards ── */
+.pillar-card {
+  background: var(--surface);
+  padding: 52px 48px;
+  border-top: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+.pillar-card:hover {
+  border-top-color: var(--gold);
+}
+
+/* ── Case articles ── */
+.case-article {
+  background: var(--bg);
+  padding: 72px 64px;
+  border-left: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+.case-article:hover {
+  border-left-color: var(--gold);
+}
+
+/* ── Footer ── */
+.footer-link {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.footer-link:hover {
+  color: var(--text);
+}
+.footer-social {
+  color: var(--dim);
+  transition: color 0.25s;
+  display: flex;
+  align-items: center;
+}
+.footer-social:hover {
+  color: var(--gold);
+}
+
+/* ── Section padding (exact original values) ── */
+.s-pad {
+  padding: 140px 0;
+} /* primary content sections */
+.s-pad-md {
+  padding: 100px 0;
+} /* pullquotes, CTAs, related */
+.s-pad-sm {
+  padding: 80px 0;
+} /* compact strips */
+.s-pad-hero {
+  padding: 140px 0 100px;
+} /* page hero (asymmetric) */
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-fade-up {
+  animation: fadeUp 1s ease both;
+}
+.anim-delay-1 {
+  animation-delay: 0.2s;
+}
+.anim-delay-2 {
+  animation-delay: 0.4s;
+}
+.anim-delay-3 {
+  animation-delay: 0.6s;
+}
+.anim-delay-4 {
+  animation-delay: 0.8s;
+}
+
+/* ── Navigation ── */
+.nav-root {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  list-style: none;
+}
+.nav-link {
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: color 0.25s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.nav-link:hover,
+.nav-link.active {
+  color: var(--gold);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 1px solid var(--gold);
+  padding: 8px 0;
+  min-width: 230px;
+  z-index: 100;
+}
+.nav-dropdown-item {
+  display: block;
+  padding: 11px 24px;
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.nav-dropdown-item:hover {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  .nav-links {
+    display: none;
+  }
+  .mobile-toggle {
+    display: flex !important;
+  }
+
+  .mobile-menu {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    padding: 16px 20px 28px;
+  }
+  .mobile-menu-item {
+    display: block;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--surface-2);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+  .mobile-menu-item:hover {
+    color: var(--gold);
+  }
+  .mobile-menu-sub {
+    padding-left: 16px;
+    font-size: 0.62rem;
+    color: var(--muted);
+  }
+
+  /* Custom class overrides for mobile */
+  .s-pad {
+    padding: 80px 0;
+  }
+  .s-pad-md {
+    padding: 64px 0;
+  }
+  .s-pad-sm {
+    padding: 56px 0;
+  }
+  .s-pad-hero {
+    padding: 100px 0 80px;
+  }
+
+  .service-row {
+    grid-template-columns: 48px 1fr auto;
+    gap: 16px;
+    padding: 24px 0;
+  }
+  .service-row .service-num {
+    font-size: 2rem;
+  }
+  .pillar-card {
+    padding: 32px 24px;
+  }
+  .case-article {
+    padding: 36px 20px;
+  }
 }

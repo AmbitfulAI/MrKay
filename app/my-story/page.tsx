@@ -1,5 +1,7 @@
 import PageHero from "@/components/PageHero";
 import Link from "next/link";
+import Image from "next/image";
+import headshot from "@/assets/KK Headshot_BW.jpg";
 
 const milestones = [
   { period: "Early Career",     title: "The Foundation",      body: "Began in corporate strategy within financial services — first in London, then across Asia-Pacific. Spent a decade in roles that demanded the ability to read organisations rapidly, identify where real decisions were made, and advise under conditions of genuine uncertainty." },
@@ -16,13 +18,18 @@ export default function MyStory() {
       <section className="bg-bg s-pad">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
-            <div className="bg-surface border border-border relative overflow-hidden hidden md:block" style={{aspectRatio:"3/4"}}>
-              <div className="absolute inset-8 border border-surface-2" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className="display" style={{fontSize:"6rem",fontWeight:300,color:"var(--border)",display:"block",lineHeight:1}}>MK</span>
-              </div>
-              <div className="absolute top-0 left-0 w-[50px] h-[50px]" style={{borderTop:"1px solid var(--gold)",borderLeft:"1px solid var(--gold)"}} />
-              <div className="absolute bottom-0 right-0 w-[50px] h-[50px]" style={{borderBottom:"1px solid var(--gold)",borderRight:"1px solid var(--gold)"}} />
+            <div className="relative overflow-hidden hidden md:block" style={{aspectRatio:"3/4"}}>
+              <Image
+                src={headshot}
+                alt="MrKay — Executive Advisor"
+                fill
+                style={{ objectFit: "cover", objectPosition: "top center" }}
+                sizes="(max-width: 1160px) 50vw, 580px"
+                priority
+              />
+              {/* Corner accents */}
+              <div className="absolute top-0 left-0 w-[50px] h-[50px] pointer-events-none" style={{borderTop:"1px solid var(--gold)",borderLeft:"1px solid var(--gold)"}} />
+              <div className="absolute bottom-0 right-0 w-[50px] h-[50px] pointer-events-none" style={{borderBottom:"1px solid var(--gold)",borderRight:"1px solid var(--gold)"}} />
             </div>
             <div>
               <span className="eyebrow block mb-6">In Brief</span>

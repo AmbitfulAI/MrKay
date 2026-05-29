@@ -12,6 +12,11 @@ const services = [
   { label: "Media & Speaking",       href: "/media-speaking" },
 ];
 
+const resources = [
+  { label: "Blog",    href: "/blog" },
+  { label: "Gallery", href: "/gallery" },
+];
+
 const primaryLinks = [
   { label: "My Story",     href: "/my-story" },
   { label: "Case Studies", href: "/case-studies" },
@@ -45,12 +50,15 @@ function MoonIcon() {
 export default function Navigation() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const [servicesOpen,       setServicesOpen]       = useState(false);
-  const [mobileOpen,         setMobileOpen]         = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [servicesOpen,        setServicesOpen]        = useState(false);
+  const [resourcesOpen,       setResourcesOpen]       = useState(false);
+  const [mobileOpen,          setMobileOpen]          = useState(false);
+  const [mobileServicesOpen,  setMobileServicesOpen]  = useState(false);
+  const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
 
-  const isActive         = (href: string) => pathname === href;
-  const isServicesActive = services.some((s) => pathname === s.href);
+  const isActive          = (href: string) => pathname === href;
+  const isServicesActive  = services.some((s) => pathname === s.href);
+  const isResourcesActive = resources.some((r) => pathname === r.href);
   const toggleTheme      = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
@@ -90,6 +98,37 @@ export default function Navigation() {
                   style={{ color: isActive(s.href) ? "var(--gold)" : undefined }}
                   onClick={() => setServicesOpen(false)}>
                   {s.label}
+                </Link>
+              ))}
+            </div>
+          </li>
+
+          {/* Resources dropdown */}
+          <li
+            style={{ position: "relative" }}
+            onMouseEnter={() => setResourcesOpen(true)}
+            onMouseLeave={() => setResourcesOpen(false)}
+          >
+            <button className={`nav-link ${isResourcesActive ? "active" : ""}`}>
+              Resources
+              <svg width="8" height="5" viewBox="0 0 8 5" fill="none"
+                style={{ opacity: 0.6, transition: "transform 0.2s", transform: resourcesOpen ? "rotate(180deg)" : "none" }}>
+                <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <div aria-hidden style={{ position: "absolute", top: "100%", left: "-20px", right: "-20px", height: "16px" }} />
+
+            <div className="nav-dropdown" style={{
+              visibility: resourcesOpen ? "visible" : "hidden",
+              opacity: resourcesOpen ? 1 : 0,
+              transition: "opacity 0.18s ease, visibility 0.18s ease",
+            }}>
+              {resources.map((r) => (
+                <Link key={r.href} href={r.href} className="nav-dropdown-item"
+                  style={{ color: isActive(r.href) ? "var(--gold)" : undefined }}
+                  onClick={() => setResourcesOpen(false)}>
+                  {r.label}
                 </Link>
               ))}
             </div>
@@ -148,6 +187,22 @@ export default function Navigation() {
               onClick={() => setMobileOpen(false)}
               style={{ color: isActive(s.href) ? "var(--gold)" : undefined }}>
               {s.label}
+            </Link>
+          ))}
+
+          {/* Resources accordion */}
+          <button className="mobile-menu-item"
+            onClick={() => setMobileResourcesOpen(!mobileResourcesOpen)}
+            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: isResourcesActive ? "var(--gold)" : "var(--text)" }}>
+            Resources
+            <span style={{ fontSize: "0.55rem", opacity: 0.6 }}>{mobileResourcesOpen ? "▲" : "▼"}</span>
+          </button>
+
+          {mobileResourcesOpen && resources.map((r) => (
+            <Link key={r.href} href={r.href} className="mobile-menu-item mobile-menu-sub"
+              onClick={() => setMobileOpen(false)}
+              style={{ color: isActive(r.href) ? "var(--gold)" : undefined }}>
+              {r.label}
             </Link>
           ))}
 

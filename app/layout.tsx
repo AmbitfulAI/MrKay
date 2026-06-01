@@ -26,9 +26,18 @@ export const metadata: Metadata = {
     "Strategic counsel for executives who lead at the highest level. Board advisory, leadership development, and executive strategy.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${jost.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${jost.variable}`}
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
       <body>
         <Providers>
           <Navigation />

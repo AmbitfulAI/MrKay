@@ -7,20 +7,20 @@ import execBg from "@/assets/KK_Exec_bg.jpg";
 const services = [
   {
     num: "01",
-    title: "Executive Strategy",
-    href: "/executive-strategy",
+    title: "Strategy",
+    href: "/strategy",
     desc: "Clarity in complexity. Strategic counsel for the decisions that define careers and companies.",
   },
   {
     num: "02",
-    title: "Leadership Development",
-    href: "/leadership-development",
+    title: "Leadership",
+    href: "/leadership",
     desc: "Developing the behaviours, mindsets, and presence of leaders at every level of your organisation.",
   },
   {
     num: "03",
-    title: "Board Advisory",
-    href: "/board-advisory",
+    title: "Board Work",
+    href: "/board-work",
     desc: "Independent counsel for boards navigating governance, succession, and strategic transformation.",
   },
   {
@@ -60,7 +60,7 @@ export default function Home() {
 
         <div className="container relative">
           <span className="eyebrow anim-fade-up block mb-8 md:mb-10">
-            Executive Consulting
+            Advisor · Coach · Confidant
           </span>
           <h1
             className="display text-text anim-fade-up anim-delay-1 max-w-[900px] mb-8 md:mb-10"
@@ -85,9 +85,9 @@ export default function Home() {
           </p>
           <div className="anim-fade-up anim-delay-4 flex flex-wrap gap-4">
             <CalendlyButton className="btn-solid">
-              Book a Consultation
+              Let's Talk
             </CalendlyButton>
-            <Link href="/executive-strategy" className="btn-outline">
+            <Link href="/strategy" className="btn-outline">
               Our Services
             </Link>
           </div>
@@ -114,6 +114,25 @@ export default function Home() {
               background: "linear-gradient(180deg, var(--gold), transparent)",
             }}
           />
+        </div>
+      </section>
+
+      {/* ── Stats ── */}
+      <section className="bg-surface border-b border-surface-2" style={{ padding: "0" }}>
+        <div className="container">
+          <div className="grid grid-cols-2 lg:grid-cols-4" style={{ borderRight: "1px solid var(--surface-2)" }}>
+            {[
+              { num: "30+", label: "Years of Practice" },
+              { num: "4",   label: "Continents" },
+              { num: "C-Suite", label: "& Board Level Clients" },
+              { num: "One",  label: "Advisor. Every Engagement." },
+            ].map((s) => (
+              <div key={s.label} className="stats-cell">
+                <span className="display text-text" style={{ fontSize: "clamp(1.8rem, 3.5vw, 3rem)", color: "var(--gold)", lineHeight: 1 }}>{s.num}</span>
+                <span className="eyebrow" style={{ marginTop: "10px", display: "block", color: "var(--dim)" }}>{s.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -150,16 +169,16 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-surface-2 pb-8 mb-0 gap-4">
             <div>
-              <span className="eyebrow block mb-4">Our Practice</span>
+              <span className="eyebrow block mb-4">My Work</span>
               <h2
                 className="display text-text"
                 style={{ fontSize: "clamp(1.8rem, 4vw, 3.2rem)" }}
               >
-                How We Work
+                How I Help
               </h2>
             </div>
             <Link
-              href="/executive-strategy"
+              href="/strategy"
               className="hover-gold flex items-center gap-2"
               style={{
                 fontSize: "0.65rem",
@@ -170,25 +189,17 @@ export default function Home() {
               View All <span>→</span>
             </Link>
           </div>
-          <div className="flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[2px] bg-surface-2 mt-0">
             {services.map((s) => (
-              <Link key={s.href} href={s.href} className="service-row">
-                <span className="service-num display">{s.num}</span>
-                <div>
-                  <h3
-                    className="display text-text mb-2"
-                    style={{ fontSize: "clamp(1.2rem, 2.5vw, 2rem)" }}
-                  >
-                    {s.title}
-                  </h3>
-                  <p
-                    className="text-dim font-light"
-                    style={{ fontSize: "0.85rem", lineHeight: 1.7 }}
-                  >
-                    {s.desc}
-                  </p>
-                </div>
-                <span className="service-arrow">→</span>
+              <Link key={s.href} href={s.href} className="service-card">
+                <span className="service-card-num display">{s.num}</span>
+                <h3 className="display text-text mb-3" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.5rem)" }}>
+                  {s.title}
+                </h3>
+                <p className="text-dim font-light" style={{ fontSize: "0.82rem", lineHeight: 1.8 }}>
+                  {s.desc}
+                </p>
+                <span className="service-card-arrow">→</span>
               </Link>
             ))}
           </div>
@@ -279,7 +290,7 @@ export default function Home() {
             with complete discretion.
           </p>
           <CalendlyButton className="btn-solid">
-            Book a Consultation
+            Let's Talk
           </CalendlyButton>
         </div>
       </section>

@@ -1,25 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
 const services = [
-  { label: "Executive Strategy",     href: "/executive-strategy" },
-  { label: "Leadership Development", href: "/leadership-development" },
-  { label: "Board Advisory",         href: "/board-advisory" },
-  { label: "Media & Speaking",       href: "/media-speaking" },
+  { label: "Strategy",         href: "/strategy" },
+  { label: "Leadership",       href: "/leadership" },
+  { label: "Board Work",       href: "/board-work" },
+  { label: "Media & Speaking", href: "/media-speaking" },
 ];
 
 const resources = [
-  { label: "Blog",    href: "/blog" },
-  { label: "Gallery", href: "/gallery" },
+  { label: "My Notes", href: "/my-notes" },
+  { label: "Gallery",   href: "/gallery" },
 ];
 
 const primaryLinks = [
   { label: "My Story",     href: "/my-story" },
-  { label: "Case Studies", href: "/case-studies" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "Contact",      href: "/contact" },
 ];
 
@@ -56,10 +56,14 @@ export default function Navigation() {
   const [mobileServicesOpen,  setMobileServicesOpen]  = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   const isActive          = (href: string) => pathname === href;
   const isServicesActive  = services.some((s) => pathname === s.href);
   const isResourcesActive = resources.some((r) => pathname === r.href);
-  const toggleTheme      = () => setTheme(theme === "dark" ? "light" : "dark");
+  const toggleTheme       = () => setTheme(theme === "dark" ? "light" : "dark");
+  const ThemeIcon         = mounted && theme === "dark" ? SunIcon : MoonIcon;
 
   return (
     <nav className="nav-root">
@@ -78,7 +82,7 @@ export default function Navigation() {
             onMouseLeave={() => setServicesOpen(false)}
           >
             <button className={`nav-link ${isServicesActive ? "active" : ""}`}>
-              Services
+              My Work
               <svg width="8" height="5" viewBox="0 0 8 5" fill="none"
                 style={{ opacity: 0.6, transition: "transform 0.2s", transform: servicesOpen ? "rotate(180deg)" : "none" }}>
                 <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
@@ -110,7 +114,7 @@ export default function Navigation() {
             onMouseLeave={() => setResourcesOpen(false)}
           >
             <button className={`nav-link ${isResourcesActive ? "active" : ""}`}>
-              Resources
+              Explore
               <svg width="8" height="5" viewBox="0 0 8 5" fill="none"
                 style={{ opacity: 0.6, transition: "transform 0.2s", transform: resourcesOpen ? "rotate(180deg)" : "none" }}>
                 <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
@@ -145,7 +149,7 @@ export default function Navigation() {
           {/* Theme toggle — desktop only */}
           <li>
             <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-              {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+              <ThemeIcon />
             </button>
           </li>
         </ul>
@@ -178,7 +182,7 @@ export default function Navigation() {
           <button className="mobile-menu-item"
             onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
             style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: isServicesActive ? "var(--gold)" : "var(--text)" }}>
-            Services
+            My Work
             <span style={{ fontSize: "0.55rem", opacity: 0.6 }}>{mobileServicesOpen ? "▲" : "▼"}</span>
           </button>
 
@@ -194,7 +198,7 @@ export default function Navigation() {
           <button className="mobile-menu-item"
             onClick={() => setMobileResourcesOpen(!mobileResourcesOpen)}
             style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: isResourcesActive ? "var(--gold)" : "var(--text)" }}>
-            Resources
+            Explore
             <span style={{ fontSize: "0.55rem", opacity: 0.6 }}>{mobileResourcesOpen ? "▲" : "▼"}</span>
           </button>
 
@@ -233,8 +237,8 @@ export default function Navigation() {
               textTransform: "uppercase",
             }}
           >
-            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            <ThemeIcon />
+            {mounted && theme === "dark" ? "Light Mode" : "Dark Mode"}
           </button>
         </div>
       )}

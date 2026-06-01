@@ -6,12 +6,12 @@ const phases = [
   {
     num: "01",
     title: "Discovery",
-    desc: "We begin with a deep assessment of your current strategic position — examining your competitive context, organisational dynamics, decision-making frameworks, and the external forces shaping your sector. This phase is not a surface audit; it is a rigorous interrogation of where you are and why.",
+    desc: "I begin with a deep assessment of your current strategic position — examining your competitive context, organisational dynamics, decision-making frameworks, and the external forces shaping your sector. This phase is not a surface audit; it is a rigorous interrogation of where you are and why.",
   },
   {
     num: "02",
     title: "Clarification",
-    desc: "Complexity is the enemy of decisive leadership. Working with you directly, we distil the noise into a clear strategic narrative — defining priorities, resolving competing imperatives, and constructing the framework through which your most consequential decisions will be made.",
+    desc: "Complexity is the enemy of decisive leadership. Working with you directly, I distil the noise into a clear strategic narrative — defining priorities, resolving competing imperatives, and constructing the framework through which your most consequential decisions will be made.",
   },
   {
     num: "03",
@@ -24,7 +24,7 @@ export default function ExecutiveStrategy() {
   return (
     <>
       <PageHero
-        eyebrow="Services — Executive Strategy"
+        eyebrow="Services — Strategy"
         title="Clarity in Complexity."
         subtitle="Strategic counsel for leaders navigating the decisions that define careers and companies. Not advice to be accepted — counsel to be interrogated."
       />
@@ -72,7 +72,7 @@ export default function ExecutiveStrategy() {
 
       <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">
-          <span className="eyebrow block mb-4">Our Approach</span>
+          <span className="eyebrow block mb-4">My Approach</span>
           <h2
             className="display text-text mb-12 md:mb-16"
             style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)" }}
@@ -157,11 +157,8 @@ export default function ExecutiveStrategy() {
           <span className="eyebrow block mb-8">Related Services</span>
           <div className="flex flex-wrap gap-4">
             {[
-              {
-                label: "Leadership Development",
-                href: "/leadership-development",
-              },
-              { label: "Board Advisory", href: "/board-advisory" },
+              { label: "Leadership", href: "/leadership" },
+              { label: "Board Work", href: "/board-work" },
             ].map((s) => (
               <Link key={s.href} href={s.href} className="btn-outline">
                 {s.label}
@@ -178,10 +175,10 @@ export default function ExecutiveStrategy() {
             className="display text-text mb-8"
             style={{ fontSize: "clamp(1.6rem,3vw,2.8rem)" }}
           >
-            Book a complimentary consultation.
+            Let's have a conversation.
           </h2>
           <CalendlyButton className="btn-solid">
-            Book a Consultation
+            Let's Talk
           </CalendlyButton>
         </div>
       </section>

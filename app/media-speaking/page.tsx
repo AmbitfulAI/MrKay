@@ -4,9 +4,9 @@ import Link from "next/link";
 
 const items = [
   { title: "Media Training",          desc: "Executives are not born media ready. We prepare leaders for print, broadcast, and digital media — with realistic interview simulations, message architecture, and the capacity to stay on-message under pressure without appearing to do so." },
-  { title: "Keynote Development",     desc: "A great keynote is not a slide deck with a confident presenter. It is a precisely structured argument, delivered with authority and personal conviction. We work on substance, structure, and delivery — not presentation skills in the generic sense." },
-  { title: "Public Profile Strategy", desc: "For executives building a public profile, the question is not whether to be visible — it is where, on what terms, and to what purpose. We develop coherent public positioning strategies aligned with the executive's broader career and organisational objectives." },
-  { title: "Crisis Communications",   desc: "When an organisation faces a public crisis, the first 48 hours are frequently decisive. We advise senior executives and communications teams on messaging, sequencing, and spokesperson positioning under real-time pressure." },
+  { title: "Keynote Development",     desc: "A great keynote is not a slide deck with a confident presenter. It is a precisely structured argument, delivered with authority and personal conviction. I work on substance, structure, and delivery — not presentation skills in the generic sense." },
+  { title: "Public Profile Strategy", desc: "For executives building a public profile, the question is not whether to be visible — it is where, on what terms, and to what purpose. I develop coherent public positioning strategies aligned with your broader career and organisational objectives." },
+  { title: "Crisis Communications",   desc: "When an organisation faces a public crisis, the first 48 hours are frequently decisive. I advise senior executives and communications teams on messaging, sequencing, and spokesperson positioning under real-time pressure." },
 ];
 
 export default function MediaSpeaking() {
@@ -24,7 +24,7 @@ export default function MediaSpeaking() {
             </div>
             <div>
               <p className="text-muted font-light mb-5" style={{fontSize:"0.95rem",lineHeight:1.9}}>The gap between what an executive knows and what they can communicate publicly is often significant — and rarely acknowledged. The boardroom brilliance that created an executive&apos;s career does not automatically translate into effective public performance.</p>
-              <p className="text-muted font-light" style={{fontSize:"0.95rem",lineHeight:1.9}}>We close that gap — through preparation, positioning, and practice — so that when the moment arrives, the executive is ready.</p>
+              <p className="text-muted font-light" style={{fontSize:"0.95rem",lineHeight:1.9}}>I close that gap — through preparation, positioning, and practice — so that when the moment arrives, you are ready.</p>
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function MediaSpeaking() {
         <div className="container">
           <span className="eyebrow block mb-8">Related Services</span>
           <div className="flex flex-wrap gap-4">
-            {[{label:"Executive Strategy",href:"/executive-strategy"},{label:"Leadership Development",href:"/leadership-development"}].map((s)=>(
+            {[{label:"Strategy",href:"/strategy"},{label:"Leadership",href:"/leadership"}].map((s)=>(
               <Link key={s.href} href={s.href} className="btn-outline">{s.label}</Link>
             ))}
           </div>
@@ -66,8 +66,8 @@ export default function MediaSpeaking() {
       <section className="bg-bg border-t border-surface-2 text-center s-pad-md">
         <div className="container max-w-[600px] mx-auto">
           <span className="eyebrow block mb-5">Ready to Begin?</span>
-          <h2 className="display text-text mb-8" style={{fontSize:"clamp(1.6rem,3vw,2.8rem)"}}>Book a complimentary consultation.</h2>
-          <CalendlyButton className="btn-solid">Book a Consultation</CalendlyButton>
+          <h2 className="display text-text mb-8" style={{fontSize:"clamp(1.6rem,3vw,2.8rem)"}}>Let's have a conversation.</h2>
+          <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
         </div>
       </section>
     </>

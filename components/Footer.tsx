@@ -3,14 +3,15 @@
 import Link from "next/link";
 
 const services = [
-  { label: "Executive Strategy",     href: "/executive-strategy" },
-  { label: "Leadership Development", href: "/leadership-development" },
-  { label: "Board Advisory",         href: "/board-advisory" },
-  { label: "Media & Speaking",       href: "/media-speaking" },
+  { label: "Strategy",         href: "/strategy" },
+  { label: "Leadership",       href: "/leadership" },
+  { label: "Board Work",       href: "/board-work" },
+  { label: "Media & Speaking", href: "/media-speaking" },
 ];
 const company = [
   { label: "My Story",     href: "/my-story" },
-  { label: "Case Studies", href: "/case-studies" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "My Notes",     href: "/my-notes" },
   { label: "Contact",      href: "/contact" },
 ];
 
@@ -79,7 +80,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-dim font-light"
           style={{ fontSize: "0.62rem", letterSpacing: "0.12em", paddingTop: "32px" }}>
           <span>© {new Date().getFullYear()} MrKay. All rights reserved.</span>
-          <span>Executive Consulting</span>
+          <span>Advisor · Coach · Confidant</span>
         </div>
       </div>
     </footer>

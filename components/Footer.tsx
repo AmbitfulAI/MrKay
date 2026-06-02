@@ -12,6 +12,7 @@ const company = [
   { label: "My Story",     href: "/my-story" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "My Notes",     href: "/my-notes" },
+  { label: "Marketplace",  href: "/marketplace" },
   { label: "Contact",      href: "/contact" },
 ];
 

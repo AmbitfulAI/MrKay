@@ -13,8 +13,9 @@ const services = [
 ];
 
 const resources = [
-  { label: "My Notes", href: "/my-notes" },
-  { label: "Gallery",   href: "/gallery" },
+  { label: "My Notes",    href: "/my-notes" },
+  { label: "Gallery",     href: "/gallery" },
+  { label: "Marketplace", href: "/marketplace" },
 ];
 
 const primaryLinks = [

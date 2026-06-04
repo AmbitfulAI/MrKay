@@ -35,7 +35,7 @@ export default function ContactSection({
             <p className="text-muted font-light max-w-none md:max-w-[360px] mb-10" style={{ fontSize: "0.9rem", lineHeight: 1.85 }}>
               {subheading}
             </p>
-            <a href="mailto:hello@mrkay.com" className="btn-outline">hello@mrkay.com</a>
+            <a href="mailto:hello@thekayodekolade.com" className="btn-outline">hello@thekayodekolade.com</a>
           </div>
 
           {/* Right: form */}

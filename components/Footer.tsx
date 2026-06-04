@@ -26,7 +26,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="block mb-5">
               <span className="display text-text" style={{ fontSize: "2rem" }}>
-                Mr<span style={{ color: "var(--gold)" }}>Kay</span>
+                The<span style={{ color: "var(--gold)" }}>KayodeKolade</span>
               </span>
             </Link>
             <p className="text-dim font-light leading-[1.8] max-w-[260px]" style={{ fontSize: "0.8rem" }}>
@@ -71,7 +71,7 @@ export default function Footer() {
           <div>
             <p className="eyebrow mb-6">Contact</p>
             <div className="flex flex-col gap-3 font-light leading-[1.7] text-muted" style={{ fontSize: "0.78rem" }}>
-              <a href="mailto:hello@mrkay.com" className="hover-gold">hello@mrkay.com</a>
+              <a href="mailto:hello@thekayodekolade.com" className="hover-gold">hello@thekayodekolade.com</a>
               <span>All enquiries are treated with the utmost discretion.</span>
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-dim font-light"
           style={{ fontSize: "0.62rem", letterSpacing: "0.12em", paddingTop: "32px" }}>
-          <span>© {new Date().getFullYear()} MrKay. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} TheKayodeKolade. All rights reserved.</span>
           <span>Advisor · Coach · Confidant</span>
         </div>
       </div>

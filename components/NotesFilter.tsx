@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-
 import type { Note } from "@/lib/notes";
 
 interface Props {
@@ -10,10 +10,25 @@ interface Props {
   categories: string[];
 }
 
-export default function NotesFilter({ posts, categories }: Props) {
-  const [active, setActive] = useState("All");
+function NotesFilterInner({ posts, categories }: Props) {
+  const searchParams = useSearchParams();
+  const router       = useRouter();
+  const pathname     = usePathname();
 
-  const filtered = active === "All" ? posts : posts.filter((p: Note) => p.category === active);
+  const active = searchParams.get("category") ?? "All";
+
+  const setFilter = (cat: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat === "All") {
+      params.delete("category");
+    } else {
+      params.set("category", cat);
+    }
+    const qs = params.toString();
+    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  };
+
+  const filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
 
   return (
     <>
@@ -26,7 +41,7 @@ export default function NotesFilter({ posts, categories }: Props) {
                 key={cat}
                 className="blog-cat-tab"
                 data-active={active === cat ? "true" : undefined}
-                onClick={() => setActive(cat)}
+                onClick={() => setFilter(cat)}
               >
                 {cat}
               </button>
@@ -43,24 +58,15 @@ export default function NotesFilter({ posts, categories }: Props) {
               <Link key={post.slug} href={`/my-notes/${post.slug}`} className="blog-row">
                 <div className="blog-row-meta">
                   <span className="eyebrow">{post.category}</span>
-                  <span
-                    className="text-dim font-light"
-                    style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}
-                  >
+                  <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>
                     {post.date}
                   </span>
                 </div>
                 <div className="blog-row-body">
-                  <h2
-                    className="display text-text mb-3"
-                    style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}
-                  >
+                  <h2 className="display text-text mb-3" style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}>
                     {post.title}
                   </h2>
-                  <p
-                    className="text-muted font-light"
-                    style={{ fontSize: "0.85rem", lineHeight: 1.85 }}
-                  >
+                  <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.85 }}>
                     {post.excerpt}
                   </p>
                 </div>
@@ -76,5 +82,13 @@ export default function NotesFilter({ posts, categories }: Props) {
         </div>
       </section>
     </>
+  );
+}
+
+export default function NotesFilter(props: Props) {
+  return (
+    <Suspense>
+      <NotesFilterInner {...props} />
+    </Suspense>
   );
 }

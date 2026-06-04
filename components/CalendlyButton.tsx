@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { PopupButton } from "react-calendly";
 
-const CALENDLY_URL = "https://calendly.com/mrkay"; // ← replace with your Calendly link
+const CALENDLY_URL = "https://calendly.com/thekayodekolade"; // ← replace with your Calendly link
 
 const subscribe = () => () => {};
 

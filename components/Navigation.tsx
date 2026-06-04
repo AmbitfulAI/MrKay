@@ -71,7 +71,7 @@ export default function Navigation() {
       <div className="container nav-inner">
         {/* Logo */}
         <Link href="/" className="nav-logo">
-          Mr<span style={{ color: "var(--gold)" }}>Kay</span>
+          The<span style={{ color: "var(--gold)" }}>KayodeKolade</span>
         </Link>
 
         {/* Desktop nav */}

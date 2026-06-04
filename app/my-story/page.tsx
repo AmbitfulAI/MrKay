@@ -22,7 +22,7 @@ const milestones = [
     body: "Occupied board positions and senior leadership roles across technology, government advisory, and professional services. The experience of accountability — of being the one responsible, not the one advising — changed what kind of advisor I became.",
   },
   {
-    period: "MrKay Today",
+    period: "TheKayodeKolade Today",
     title: "The Practice",
     body: "Work with a deliberately small number of clients — CEOs, board chairs, and senior leadership teams at inflection points. The constraint is intentional. Every client receives direct, undivided engagement. Not a firm. Not a team. One advisor.",
   },
@@ -52,7 +52,7 @@ export default function MyStory() {
   return (
     <>
       <PageHero
-        eyebrow="About MrKay"
+        eyebrow="About TheKayodeKolade"
         title="The Advisor Behind the Practice."
         subtitle="I didn't plan to become an advisor. I planned to lead. What I discovered — through decades of operating experience across four continents — is that the questions I was most useful for were the ones no one inside the organisation could safely ask."
       />
@@ -64,7 +64,7 @@ export default function MyStory() {
             <div className="relative overflow-hidden hidden md:block" style={{ aspectRatio: "3/4" }}>
               <Image
                 src={headshot}
-                alt="MrKay — Executive Advisor"
+                alt="TheKayodeKolade — Executive Advisor"
                 fill
                 style={{ objectFit: "cover", objectPosition: "top center" }}
                 sizes="(max-width: 1160px) 50vw, 580px"
@@ -80,7 +80,7 @@ export default function MyStory() {
               </h2>
               <span className="gold-rule mb-7" />
               <p className="text-muted font-light mb-5" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                MrKay is the operating name of a seasoned executive advisor whose career spans three decades across financial services, technology, and government. Having occupied senior leadership and board positions across four continents, the work draws on a combination of operating experience and strategic perspective that purely advisory careers rarely produce.
+                TheKayodeKolade is the operating name of a seasoned executive advisor whose career spans three decades across financial services, technology, and government. Having occupied senior leadership and board positions across four continents, the work draws on a combination of operating experience and strategic perspective that purely advisory careers rarely produce.
               </p>
               <p className="text-muted font-light mb-5" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
                 I am a direct communicator and a deep reader of organisations. I notice what is said, what is not said, and what is happening beneath both. That combination — operating experience, strategic clarity, and the capacity to ask the question no one else will — is what clients engage me for.
@@ -191,7 +191,7 @@ export default function MyStory() {
             <div className="relative overflow-hidden hidden md:block" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={upperbody}
-                alt="MrKay"
+                alt="TheKayodeKolade"
                 fill
                 style={{ objectFit: "cover", objectPosition: "center top" }}
                 sizes="(max-width: 1160px) 50vw, 580px"
@@ -228,7 +228,7 @@ export default function MyStory() {
           <blockquote className="display text-text" style={{ fontSize: "clamp(1.3rem,3vw,2.6rem)", fontStyle: "italic", lineHeight: 1.3, marginBottom: "24px" }}>
             "I am not here to make you feel good about where you are. I am here to help you get where you need to be."
           </blockquote>
-          <p className="eyebrow">— MrKay</p>
+          <p className="eyebrow">— TheKayodeKolade</p>
         </div>
       </section>
 

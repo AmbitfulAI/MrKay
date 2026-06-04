@@ -114,7 +114,7 @@ export default function Marketplace() {
             </div>
             <div className="flex flex-wrap gap-4">
               <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
-              <a href="/my-story" className="btn-outline">About MrKay</a>
+              <a href="/my-story" className="btn-outline">About TheKayodeKolade</a>
             </div>
           </div>
         </div>

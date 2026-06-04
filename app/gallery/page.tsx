@@ -11,7 +11,7 @@ import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
 const images: GalleryImage[] = [
   {
     src: facecardImg,
-    alt: "MrKay — Portrait",
+    alt: "TheKayodeKolade — Portrait",
     title: "The Advisor",
     caption: "In conversation — the posture that defines the work.",
     category: "Portrait",
@@ -19,7 +19,7 @@ const images: GalleryImage[] = [
   },
   {
     src: execImg,
-    alt: "MrKay — Executive Setting",
+    alt: "TheKayodeKolade — Executive Setting",
     title: "In the Room",
     caption: "Where the real decisions get made.",
     category: "Professional",
@@ -27,7 +27,7 @@ const images: GalleryImage[] = [
   },
   {
     src: upperbodyImg,
-    alt: "MrKay — Upper Body",
+    alt: "TheKayodeKolade — Upper Body",
     title: "Present",
     caption: "Stillness before the session.",
     category: "Portrait",
@@ -35,8 +35,8 @@ const images: GalleryImage[] = [
   },
   {
     src: headshotImg,
-    alt: "MrKay — Headshot",
-    title: "MrKay",
+    alt: "TheKayodeKolade — Headshot",
+    title: "TheKayodeKolade",
     caption: "Advisor · Coach · Confidant",
     category: "Professional",
     span: "normal",

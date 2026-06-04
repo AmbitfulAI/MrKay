@@ -1,7 +1,7 @@
 import ContactSection from "@/components/ContactSection";
 
 const faqs = [
-  { q:"Who does MrKay work with?", a:"Senior executives, board chairs, and leadership teams at genuine inflection points — typically CEOs, CFOs, MDs, and chairs of listed and private organisations. We do not work with every enquiry that arrives; a brief initial conversation determines whether there is a fit worth pursuing." },
+  { q:"Who does TheKayodeKolade work with?", a:"Senior executives, board chairs, and leadership teams at genuine inflection points — typically CEOs, CFOs, MDs, and chairs of listed and private organisations. We do not work with every enquiry that arrives; a brief initial conversation determines whether there is a fit worth pursuing." },
   { q:"How does an engagement begin?", a:"With a complimentary initial conversation — no agenda, no obligation. The purpose is mutual: to understand whether the situation is one we can add value to, and whether the working relationship makes sense. From there, we design the engagement around the specific need." },
   { q:"Is everything confidential?", a:"Completely. Client relationships are never disclosed. We do not use client names in marketing materials, case studies, or references without explicit permission. Discretion is not an add-on — it is a founding principle of the practice." },
   { q:"Do you work internationally?", a:"Yes. Current and recent clients span Australia, the United Kingdom, Southeast Asia, and the Gulf. Engagements are conducted in person where proximity adds value, and remotely where it does not." },
@@ -20,7 +20,7 @@ export default function Contact() {
         </div>
       </section>
 
-      <ContactSection heading="Send a message." subheading="We will respond within two business days. For urgent matters, please reach us directly at hello@mrkay.com." dark />
+      <ContactSection heading="Send a message." subheading="We will respond within two business days. For urgent matters, please reach us directly at hello@thekayodekolade.com." dark />
 
       <section className="bg-bg border-t border-surface-2 s-pad">
         <div className="container">
@@ -41,7 +41,7 @@ export default function Contact() {
         <div className="container max-w-[560px] mx-auto">
           <span className="eyebrow block mb-5">Direct Contact</span>
           <p className="display text-text mb-6" style={{fontSize:"clamp(1.3rem,2.5vw,2rem)"}}>Prefer to write directly?</p>
-          <a href="mailto:hello@mrkay.com" className="gold-link font-light" style={{fontSize:"1rem"}}>hello@mrkay.com</a>
+          <a href="mailto:hello@thekayodekolade.com" className="gold-link font-light" style={{fontSize:"1rem"}}>hello@thekayodekolade.com</a>
         </div>
       </section>
     </>

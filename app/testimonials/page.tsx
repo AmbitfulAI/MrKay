@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const quotes = [
   {
-    quote: "MrKay gave me the kind of counsel I didn't know I was missing — direct, independent, and completely without agenda. Within three months I had more clarity on our direction than I'd had in three years.",
+    quote: "TheKayodeKolade gave me the kind of counsel I didn't know I was missing — direct, independent, and completely without agenda. Within three months I had more clarity on our direction than I'd had in three years.",
     name: "CEO",
     context: "Financial Services, West Africa",
   },

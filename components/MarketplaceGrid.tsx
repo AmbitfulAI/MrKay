@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 
 export interface Product {
@@ -23,8 +24,23 @@ interface Props {
 
 const types = ["All", "Books", "Courses"];
 
-export default function MarketplaceGrid({ products }: Props) {
-  const [active, setActive] = useState("All");
+function MarketplaceGridInner({ products }: Props) {
+  const searchParams = useSearchParams();
+  const router       = useRouter();
+  const pathname     = usePathname();
+
+  const active = searchParams.get("type") ?? "All";
+
+  const setFilter = (t: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (t === "All") {
+      params.delete("type");
+    } else {
+      params.set("type", t);
+    }
+    const qs = params.toString();
+    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  };
 
   const filtered =
     active === "All"
@@ -42,7 +58,7 @@ export default function MarketplaceGrid({ products }: Props) {
                 key={t}
                 className="blog-cat-tab"
                 data-active={active === t ? "true" : undefined}
-                onClick={() => setActive(t)}
+                onClick={() => setFilter(t)}
               >
                 {t}
               </button>
@@ -57,7 +73,6 @@ export default function MarketplaceGrid({ products }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2px] bg-surface-2">
             {filtered.map((p) => (
               <div key={p.id} className="product-card">
-                {/* Cover */}
                 <div className="product-cover" style={{ background: p.coverAccent }}>
                   <span className="product-cover-type eyebrow">{p.type}</span>
                   <h3 className="display product-cover-title">{p.title}</h3>
@@ -66,10 +81,8 @@ export default function MarketplaceGrid({ products }: Props) {
                   {p.tag && <span className="product-cover-tag">{p.tag}</span>}
                 </div>
 
-                {/* Info */}
                 <div className="product-info">
                   <p className="text-muted font-light product-desc">{p.description}</p>
-
                   <div className="product-footer">
                     <div>
                       <span className="product-price">{p.price}</span>
@@ -94,5 +107,13 @@ export default function MarketplaceGrid({ products }: Props) {
         </div>
       </section>
     </>
+  );
+}
+
+export default function MarketplaceGrid(props: Props) {
+  return (
+    <Suspense>
+      <MarketplaceGridInner {...props} />
+    </Suspense>
   );
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import CalendlyButton from "@/components/CalendlyButton";
+import HeroSlider from "@/components/HeroSlider";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
 import execBg from "@/assets/KK_Exec_bg.jpg";
 
@@ -58,40 +59,7 @@ export default function Home() {
           }}
         />
 
-        <div className="container relative">
-          <span className="eyebrow anim-fade-up block mb-8 md:mb-10">
-            Advisor · Coach · Confidant
-          </span>
-          <h1
-            className="display text-text anim-fade-up anim-delay-1 max-w-[900px] mb-8 md:mb-10"
-            style={{ fontSize: "clamp(3rem, 9vw, 8.5rem)", lineHeight: 0.97 }}
-          >
-            Built for the
-            <br />
-            <em style={{ fontStyle: "italic", color: "var(--gold)" }}>
-              Boardroom.
-            </em>
-          </h1>
-          <span className="gold-rule anim-fade-up anim-delay-2 mb-6 md:mb-8" />
-          <p
-            className="text-muted font-light anim-fade-up anim-delay-3 max-w-[520px] mb-10 md:mb-12"
-            style={{
-              fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)",
-              lineHeight: 1.9,
-            }}
-          >
-            Strategic counsel for executives who lead at the highest level.
-            Confidential. Considered. Consequential.
-          </p>
-          <div className="anim-fade-up anim-delay-4 flex flex-wrap gap-4">
-            <CalendlyButton className="btn-solid">
-              Let's Talk
-            </CalendlyButton>
-            <Link href="/strategy" className="btn-outline">
-              Our Services
-            </Link>
-          </div>
-        </div>
+        <HeroSlider />
 
         <div
           className="absolute hidden md:flex flex-col items-center gap-2 opacity-35"
@@ -158,7 +126,7 @@ export default function Home() {
               className="text-dim uppercase tracking-[0.15em]"
               style={{ fontSize: "0.85rem" }}
             >
-              — MrKay
+              — TheKayodeKolade
             </p>
           </div>
         </div>
@@ -211,7 +179,7 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
             <div>
-              <span className="eyebrow block mb-6">About MrKay</span>
+              <span className="eyebrow block mb-6">About TheKayodeKolade</span>
               <h2
                 className="display text-text mb-6"
                 style={{
@@ -226,7 +194,7 @@ export default function Home() {
                 className="text-muted font-light mb-4"
                 style={{ fontSize: "0.9rem", lineHeight: 1.9 }}
               >
-                MrKay brings decades of boardroom experience to help executives
+                TheKayodeKolade brings decades of boardroom experience to help executives
                 navigate complexity, lead with authority, and build enduring
                 organisations.
               </p>
@@ -248,7 +216,7 @@ export default function Home() {
             >
               <Image
                 src={facecard}
-                alt="MrKay"
+                alt="TheKayodeKolade"
                 fill
                 style={{ objectFit: "cover", objectPosition: "center top" }}
                 sizes="(max-width: 1160px) 50vw, 580px"

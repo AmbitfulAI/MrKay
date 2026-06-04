@@ -59,7 +59,7 @@ export default function ExecutiveStrategy() {
                 className="text-muted font-light"
                 style={{ fontSize: "0.95rem", lineHeight: 1.9 }}
               >
-                MrKay works with a small number of senior executives and
+                TheKayodeKolade works with a small number of senior executives and
                 organisations to provide strategic counsel that is direct,
                 independent, and informed by decades of operating experience.
                 Not frameworks. Not methodologies. Thinking — applied to your
@@ -148,7 +148,7 @@ export default function ExecutiveStrategy() {
             ask themselves — because they are too close to the problem to see it
             clearly.&rdquo;
           </blockquote>
-          <p className="eyebrow">— MrKay</p>
+          <p className="eyebrow">— TheKayodeKolade</p>
         </div>
       </section>
 

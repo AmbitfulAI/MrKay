@@ -51,7 +51,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
             className="text-dim font-light anim-fade-up anim-delay-3"
             style={{ fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase" }}
           >
-            {note.date} &nbsp;·&nbsp; MrKay
+            {note.date} &nbsp;·&nbsp; TheKayodeKolade
           </p>
         </div>
       </section>
@@ -100,7 +100,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
             <p className="text-dim font-light" style={{ fontSize: "0.82rem", lineHeight: 1.8, marginBottom: "8px" }}>
               Written by
             </p>
-            <p className="display text-text" style={{ fontSize: "1.4rem" }}>MrKay</p>
+            <p className="display text-text" style={{ fontSize: "1.4rem" }}>TheKayodeKolade</p>
             <p className="text-dim font-light" style={{ fontSize: "0.78rem", marginTop: "6px", lineHeight: 1.7 }}>
               Advisor · Coach · Confidant
             </p>

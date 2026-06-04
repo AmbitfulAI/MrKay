@@ -21,7 +21,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "MrKay — Executive Consulting",
+  title: "TheKayodeKolade — Advisor · Coach · Confidant",
   description:
     "Strategic counsel for executives who lead at the highest level. Board advisory, leadership development, and executive strategy.",
 };

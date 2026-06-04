@@ -48,7 +48,7 @@ export default function LeadershipDevelopment() {
       <section className="bg-bg border-t border-b border-surface-2 text-center s-pad-md">
         <div className="container max-w-[720px] mx-auto">
           <blockquote className="display text-text" style={{fontSize:"clamp(1.2rem,2.8vw,2.2rem)",fontStyle:"italic",lineHeight:1.35,marginBottom:"24px"}}>"The best leaders I have worked with share one trait: they are genuinely curious about the gap between who they are and who they need to become."</blockquote>
-          <p className="eyebrow">— MrKay</p>
+          <p className="eyebrow">— TheKayodeKolade</p>
         </div>
       </section>
 

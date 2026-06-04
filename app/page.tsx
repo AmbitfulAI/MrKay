@@ -3,7 +3,6 @@ import Image from "next/image";
 import CalendlyButton from "@/components/CalendlyButton";
 import HeroSlider from "@/components/HeroSlider";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
-import execBg from "@/assets/KK_Exec_bg.jpg";
 
 const services = [
   {
@@ -36,29 +35,7 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ── */}
-      <section className="bg-bg relative overflow-hidden flex flex-col justify-center min-h-svh pt-20 pb-16 md:pt-24 md:pb-20">
-        <Image
-          src={execBg}
-          alt=""
-          aria-hidden
-          fill
-          priority
-          style={{
-            objectFit: "cover",
-            objectPosition: "center 20%",
-            opacity: 0.18,
-          }}
-          sizes="100vw"
-        />
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to bottom, color-mix(in srgb, var(--bg) 30%, transparent) 0%, transparent 40%, color-mix(in srgb, var(--bg) 60%, transparent) 100%)",
-          }}
-        />
-
+      <section className="bg-bg relative overflow-hidden flex flex-col justify-center min-h-svh pt-20 pb-16 md:pt-24 md:pb-20" style={{ position: "relative" }}>
         <HeroSlider />
 
         <div

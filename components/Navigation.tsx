@@ -21,6 +21,7 @@ const resources = [
 const primaryLinks = [
   { label: "My Story",     href: "/my-story" },
   { label: "Testimonials", href: "/testimonials" },
+  { label: "Impact",       href: "/impact" },
   { label: "Contact",      href: "/contact" },
 ];
 

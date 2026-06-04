@@ -816,24 +816,73 @@ textarea.form-input {
 }
 
 /* ── Hero slider ── */
+.hero-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+}
 .hero-dots {
   display: flex;
-  gap: 10px;
+  gap: 4px;
   align-items: center;
 }
+.hero-arrow {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+.hero-arrow:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
 .hero-dot {
-  width: 24px;
-  height: 2px;
-  background: var(--dim);
+  /* Large hit area */
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease, width 0.3s ease;
-  padding: 10px 0;
-  background-clip: content-box;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.hero-dot[data-active="true"] {
-  width: 40px;
+.hero-dot:hover,
+.hero-dot:focus {
+  cursor: pointer;
+  outline: none;
+}
+/* Visual circle via pseudo-element */
+.hero-dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--dim);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
+}
+.hero-dot:hover::before {
+  border-color: var(--gold);
+  transform: scale(1.2);
+}
+.hero-dot[data-active="true"]::before {
   background: var(--gold);
+  border-color: var(--gold);
 }
 
 /* ── Marketplace product cards ── */
@@ -1187,6 +1236,101 @@ textarea.form-input {
 .blog-cat-tab[data-active="true"] {
   color: var(--gold);
   border-bottom-color: var(--gold);
+}
+
+/* ── Impact org cards ── */
+.impact-org-card {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 0;
+  min-height: 360px;
+}
+.impact-org-content {
+  padding: 52px 52px 48px;
+}
+.impact-org-image {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+}
+@media (max-width: 1024px) {
+  .impact-org-card { grid-template-columns: 1fr 280px; }
+}
+@media (max-width: 768px) {
+  .impact-org-card { grid-template-columns: 1fr; }
+  .impact-org-content { padding: 36px 20px; }
+  .impact-org-image { height: 260px; }
+}
+
+/* ── Newsletter form ── */
+.newsletter-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.newsletter-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0 10px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.newsletter-input::placeholder { color: var(--dim); }
+.newsletter-input:focus { border-color: var(--gold); }
+.newsletter-btn {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+.newsletter-btn:hover { opacity: 0.7; }
+.newsletter-btn:disabled { opacity: 0.4; cursor: default; }
+.newsletter-full {
+  width: 100%;
+  max-width: 560px;
+}
+.newsletter-full-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+.newsletter-input-full {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 0 12px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+.newsletter-input-full::placeholder { color: var(--dim); }
+.newsletter-input-full:focus { border-color: var(--gold); }
+.newsletter-error {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: #c0392b;
+  margin-top: 8px;
+}
+@media (max-width: 768px) {
+  .newsletter-full-row { flex-direction: column; align-items: stretch; }
 }
 
 /* ── Footer ── */

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NewsletterForm from "@/components/NewsletterForm";
 
 const services = [
   { label: "Strategy",         href: "/strategy" },
@@ -11,6 +12,7 @@ const services = [
 const company = [
   { label: "My Story",     href: "/my-story" },
   { label: "Testimonials", href: "/testimonials" },
+  { label: "Impact",       href: "/impact" },
   { label: "My Notes",     href: "/my-notes" },
   { label: "Marketplace",  href: "/marketplace" },
   { label: "Contact",      href: "/contact" },
@@ -74,6 +76,11 @@ export default function Footer() {
               <a href="mailto:hello@thekayodekolade.com" className="hover-gold">hello@thekayodekolade.com</a>
               <span>All enquiries are treated with the utmost discretion.</span>
             </div>
+            <p className="eyebrow" style={{ marginTop: "32px", marginBottom: "4px" }}>Newsletter</p>
+            <p className="text-dim font-light" style={{ fontSize: "0.72rem", lineHeight: 1.7, marginBottom: "4px" }}>
+              Notes on leadership, strategy & faith.
+            </p>
+            <NewsletterForm variant="compact" />
           </div>
         </div>
 

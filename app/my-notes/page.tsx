@@ -1,9 +1,46 @@
 import PageHero from "@/components/PageHero";
 import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
-import { notes, categories } from "@/lib/notes";
+import { notes as staticNotes, categories as staticCategories, type Note } from "@/lib/notes";
+import { sanityFetch } from "@/lib/sanity-fetch";
+import { notesQuery } from "@/sanity/queries";
 
-export default function MyNotes() {
+export const revalidate = 60;
+
+interface SanityNote {
+  _id: string;
+  slug: string;
+  title: string;
+  category: string;
+  date: string;
+  excerpt: string;
+  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
+}
+
+function mapSanityNote(n: SanityNote): Note {
+  return {
+    slug: n.slug,
+    title: n.title,
+    category: n.category,
+    date: n.date,
+    excerpt: n.excerpt,
+    body: (n.blocks ?? []).map((b) =>
+      (b.children ?? []).map((c) => c.text ?? "").join("")
+    ).filter(Boolean),
+  };
+}
+
+export default async function MyNotes() {
+  const sanityNotes = await sanityFetch<SanityNote>(notesQuery);
+
+  const notes = sanityNotes.length > 0
+    ? sanityNotes.map(mapSanityNote)
+    : staticNotes;
+
+  const uniqueCategories = sanityNotes.length > 0
+    ? ["All", ...Array.from(new Set(sanityNotes.map((n) => n.category)))]
+    : staticCategories;
+
   return (
     <>
       <PageHero
@@ -12,7 +49,7 @@ export default function MyNotes() {
         subtitle="Notes, essays, and perspectives on leadership, strategy, faith, and the discipline of leading well — written as I think, not as I present."
       />
 
-      <NotesFilter posts={notes} categories={categories} />
+      <NotesFilter posts={notes} categories={uniqueCategories} />
 
       <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">

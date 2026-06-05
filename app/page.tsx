@@ -235,7 +235,7 @@ export default function Home() {
             with complete discretion.
           </p>
           <CalendlyButton className="btn-solid">
-            Let's Talk
+            Let&apos;s Talk
           </CalendlyButton>
         </div>
       </section>

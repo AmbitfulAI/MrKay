@@ -1,6 +1,10 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
+import { sanityFetch } from "@/lib/sanity-fetch";
+import { testimonialsQuery, successStoriesQuery } from "@/sanity/queries";
+
+export const revalidate = 60;
 
 const quotes = [
   {
@@ -64,7 +68,37 @@ const stories = [
   },
 ];
 
-export default function Testimonials() {
+interface SanityQuote {
+  _id: string;
+  quote: string;
+  clientName?: string;
+  clientContext?: string;
+}
+
+interface SanityStory {
+  _id: string;
+  code: string;
+  title: string;
+  sector: string;
+  client?: string;
+  result?: string;
+  story: string;
+}
+
+export default async function Testimonials() {
+  const [sanityQuotes, sanityStories] = await Promise.all([
+    sanityFetch<SanityQuote>(testimonialsQuery),
+    sanityFetch<SanityStory>(successStoriesQuery),
+  ]);
+
+  const activeQuotes = sanityQuotes.length > 0
+    ? sanityQuotes.map((q) => ({ quote: q.quote, name: q.clientName ?? "", context: q.clientContext ?? "" }))
+    : quotes;
+
+  const activeStories = sanityStories.length > 0
+    ? sanityStories.map((s) => ({ code: s.code, title: s.title, sector: s.sector, client: s.client ?? "", result: s.result ?? "", story: s.story }))
+    : stories;
+
   return (
     <>
       <PageHero
@@ -78,7 +112,7 @@ export default function Testimonials() {
         <div className="container">
           <span className="eyebrow block mb-12">In Their Words</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
-            {quotes.map((q) => (
+            {activeQuotes.map((q) => (
               <div key={q.name} className="bg-surface" style={{ padding: "48px 44px" }}>
                 <span className="display" style={{ fontSize: "3.5rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "24px", opacity: 0.4 }}>&ldquo;</span>
                 <blockquote
@@ -116,7 +150,7 @@ export default function Testimonials() {
             The work in practice.
           </h2>
           <div className="flex flex-col gap-[2px] bg-surface-2">
-            {stories.map((s) => (
+            {activeStories.map((s) => (
               <article key={s.code} className="bg-bg" style={{ padding: "64px 56px" }}>
                 {/* Header */}
                 <div className="flex justify-between items-start flex-wrap gap-4" style={{ marginBottom: "12px" }}>

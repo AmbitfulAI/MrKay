@@ -1,11 +1,16 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Image from "next/image";
+import { sanityFetch } from "@/lib/sanity-fetch";
+import { impactOrgsQuery } from "@/sanity/queries";
+import { urlFor } from "@/lib/image-url";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
 import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
+
+export const revalidate = 60;
 
 const organisations = [
   {
@@ -65,7 +70,49 @@ const causes = [
   { label: "Education Access",        body: "Supporting access to quality professional education for young people who have the talent but not yet the opportunity." },
 ];
 
-export default function Impact() {
+interface SanityOrg {
+  _id: string;
+  name: string;
+  category: string;
+  role?: string;
+  since?: string;
+  description?: string;
+  url?: string;
+  active?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  image?: any;
+}
+
+type OrgItem = {
+  name: string;
+  category: string;
+  role: string;
+  since: string;
+  description: string;
+  href: string;
+  active: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  image: any;
+  imageAlt: string;
+};
+
+export default async function Impact() {
+  const sanityOrgs = await sanityFetch<SanityOrg>(impactOrgsQuery);
+
+  const activeOrgs: OrgItem[] = sanityOrgs.length > 0
+    ? sanityOrgs.map((org) => ({
+        name: org.name,
+        category: org.category,
+        role: org.role ?? "",
+        since: org.since ?? "",
+        description: org.description ?? "",
+        href: org.url ?? "#",
+        active: org.active ?? true,
+        image: org.image ? urlFor(org.image).width(800).url() : execImg,
+        imageAlt: org.image?.alt ?? `TheKayodeKolade at ${org.name}`,
+      }))
+    : organisations;
+
   return (
     <>
       <PageHero
@@ -95,7 +142,7 @@ export default function Impact() {
           </h2>
 
           <div className="flex flex-col gap-[2px] bg-surface-2">
-            {organisations.map((org) => (
+            {activeOrgs.map((org) => (
               <div key={org.name} className="bg-bg impact-org-card">
                 {/* Content */}
                 <div className="impact-org-content">

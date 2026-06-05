@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image, { StaticImageData } from "next/image";
 
 export interface GalleryImage {
-  src: StaticImageData;
+  src: StaticImageData | string;
   alt: string;
   title: string;
   caption?: string;

@@ -1,12 +1,17 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNoteBySlug, getRelatedNotes, notes } from "@/lib/notes";
+import { getNoteBySlug, getRelatedNotes, notes as staticNotes } from "@/lib/notes";
+import { sanityFetch, sanityFetchOne } from "@/lib/sanity-fetch";
+import { noteBySlugQuery, noteSlugsQuery } from "@/sanity/queries";
+import { urlFor } from "@/lib/image-url";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
 import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
+
+export const revalidate = 60;
 
 const imageMap = {
   headshot:  headshotImg,
@@ -15,18 +20,95 @@ const imageMap = {
   upperbody: upperbodyImg,
 };
 
+interface SanityNote {
+  _id: string;
+  slug: string;
+  title: string;
+  category: string;
+  date: string;
+  excerpt: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  featuredImage?: any;
+  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
+}
+
 export async function generateStaticParams() {
-  return notes.map((n) => ({ slug: n.slug }));
+  const fromSanity = await sanityFetch<{ slug: unknown }>(noteSlugsQuery);
+  const fromStatic = staticNotes.map((n) => ({ slug: n.slug }));
+
+  const sanityParams = fromSanity
+    .map((s) => {
+      const raw = s.slug;
+      const slug = typeof raw === "string" ? raw : (raw as { current?: string })?.current;
+      return slug ? { slug } : null;
+    })
+    .filter((x): x is { slug: string } => x !== null);
+
+  const all = [...fromStatic, ...sanityParams];
+  return [...new Map(all.map((s) => [s.slug, s])).values()];
 }
 
 export default async function NotePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  const sanityNote = await sanityFetchOne<SanityNote>(noteBySlugQuery, { slug });
+
+  if (sanityNote) {
+    const body = (sanityNote.blocks ?? [])
+      .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
+      .filter(Boolean);
+    const heroImageUrl = sanityNote.featuredImage
+      ? urlFor(sanityNote.featuredImage).width(1400).url()
+      : null;
+    const related = getRelatedNotes(slug);
+
+    return (
+      <NoteDetail
+        title={sanityNote.title}
+        category={sanityNote.category}
+        date={sanityNote.date}
+        excerpt={sanityNote.excerpt}
+        body={body}
+        heroSrc={heroImageUrl ?? undefined}
+        heroAlt={sanityNote.title}
+        related={related}
+      />
+    );
+  }
+
   const note = getNoteBySlug(slug);
   if (!note) notFound();
 
   const related = getRelatedNotes(slug);
-  const heroImage = note.image ? imageMap[note.image] : null;
+  const heroStaticImage = note.image ? imageMap[note.image] : undefined;
 
+  return (
+    <NoteDetail
+      title={note.title}
+      category={note.category}
+      date={note.date}
+      excerpt={note.excerpt}
+      body={note.body}
+      heroSrc={heroStaticImage}
+      heroAlt={note.title}
+      related={related}
+    />
+  );
+}
+
+interface NoteDetailProps {
+  title: string;
+  category: string;
+  date: string;
+  excerpt: string;
+  body: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  heroSrc?: any;
+  heroAlt: string;
+  related: ReturnType<typeof getRelatedNotes>;
+}
+
+function NoteDetail({ title, category, date, excerpt, body, heroSrc, heroAlt, related }: NoteDetailProps) {
   return (
     <>
       {/* ── Header ── */}
@@ -39,29 +121,29 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
           >
             ← My Notes
           </Link>
-          <span className="eyebrow anim-fade-up block mb-6">{note.category}</span>
+          <span className="eyebrow anim-fade-up block mb-6">{category}</span>
           <h1
             className="display text-text anim-fade-up anim-delay-1"
             style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)", lineHeight: 1.05, maxWidth: "820px", marginBottom: "28px" }}
           >
-            {note.title}
+            {title}
           </h1>
           <span className="gold-rule anim-fade-up anim-delay-2" style={{ marginBottom: "24px" }} />
           <p
             className="text-dim font-light anim-fade-up anim-delay-3"
             style={{ fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase" }}
           >
-            {note.date} &nbsp;·&nbsp; TheKayodeKolade
+            {date} &nbsp;·&nbsp; TheKayodeKolade
           </p>
         </div>
       </section>
 
       {/* ── Featured image ── */}
-      {heroImage && (
+      {heroSrc && (
         <div style={{ width: "100%", aspectRatio: "21/8", position: "relative", overflow: "hidden", background: "var(--surface)" }}>
           <Image
-            src={heroImage}
-            alt={note.title}
+            src={heroSrc}
+            alt={heroAlt}
             fill
             priority
             style={{ objectFit: "cover", objectPosition: "center 20%", opacity: 0.75 }}
@@ -81,11 +163,9 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
       <section className="bg-bg s-pad">
         <div className="container">
           <div className="note-body">
-            {note.excerpt && (
-              <p className="note-lead">{note.excerpt}</p>
-            )}
+            {excerpt && <p className="note-lead">{excerpt}</p>}
             <span className="gold-rule" style={{ margin: "40px 0" }} />
-            {note.body.map((para, i) => (
+            {body.map((para, i) => (
               <p key={i} className="note-para">{para}</p>
             ))}
           </div>

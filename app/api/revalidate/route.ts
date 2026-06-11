@@ -12,19 +12,20 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const type  = body?._type as string | undefined;
+  const type = body?._type as string | undefined;
 
   // Revalidate only the affected pages based on document type
   const pathMap: Record<string, string[]> = {
-    note:         ["/my-notes", "/my-notes/[slug]"],
-    testimonial:  ["/testimonials"],
+    note: ["/my-notes", "/my-notes/[slug]"],
+    testimonial: ["/testimonials"],
     successStory: ["/testimonials"],
-    product:      ["/marketplace"],
+    product: ["/marketplace"],
     galleryImage: ["/gallery"],
-    impactOrg:    ["/impact"],
+    impactOrg: ["/impact"],
   };
 
-  const paths = type && pathMap[type] ? pathMap[type] : Object.values(pathMap).flat();
+  const paths =
+    type && pathMap[type] ? pathMap[type] : Object.values(pathMap).flat();
 
   paths.forEach((p) => revalidatePath(p));
 

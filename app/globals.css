@@ -1,9 +1,9 @@
 /* ── Light mode (default) ── */
 :root {
-  --bg: #f7f4ef;
-  --surface: #edeae3;
-  --surface-2: #e3dfd7;
-  --text: #1c1916;
+  --bg: #ede8e0;
+  --surface: #e4ddd3;
+  --surface-2: #d9d1c6;
+  --text: #2a2520;
   --muted: #6b6560;
   --dim: #a09a92;
   --border: #d8d3ca;
@@ -1411,11 +1411,22 @@ textarea.form-input {
   height: 72px;
 }
 .nav-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 300;
   letter-spacing: 0.04em;
   color: var(--text);
+}
+.nav-logo-tag {
+  font-family: var(--font-body);
+  font-size: 0.48rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 400;
 }
 .nav-links {
   display: flex;

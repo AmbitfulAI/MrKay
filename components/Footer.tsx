@@ -4,13 +4,13 @@ import Link from "next/link";
 import NewsletterForm from "@/components/NewsletterForm";
 
 const services = [
-  { label: "Strategy",         href: "/strategy" },
-  { label: "Leadership",       href: "/leadership" },
-  { label: "Board Work",       href: "/board-work" },
-  { label: "Media & Speaking", href: "/media-speaking" },
+  { label: "Career & Executive Clarity",      href: "/career-clarity" },
+  { label: "Founder & Business Architecture", href: "/founder-architecture" },
+  { label: "Organisational Systems",          href: "/organisational-systems" },
+  { label: "Workshops & Speaking",            href: "/workshops-speaking" },
 ];
 const company = [
-  { label: "My Story",     href: "/my-story" },
+  { label: "Meet Kayode", href: "/my-story" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Impact",       href: "/impact" },
   { label: "My Notes",     href: "/my-notes" },
@@ -32,8 +32,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-dim font-light leading-[1.8] max-w-[260px]" style={{ fontSize: "0.8rem" }}>
-              Strategic counsel for executives who lead at the highest level.
-              Confidential. Considered. Consequential.
+              Helping professionals, founders, and organisations turn clarity into operating architecture and execution momentum.
             </p>
             <div className="flex gap-5 mt-8">
               {[
@@ -78,7 +77,7 @@ export default function Footer() {
             </div>
             <p className="eyebrow" style={{ marginTop: "32px", marginBottom: "4px" }}>Newsletter</p>
             <p className="text-dim font-light" style={{ fontSize: "0.72rem", lineHeight: 1.7, marginBottom: "4px" }}>
-              Notes on leadership, strategy & faith.
+              Notes on clarity, leadership, and systems — written for people building their next chapter.
             </p>
             <NewsletterForm variant="compact" />
           </div>
@@ -88,7 +87,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-dim font-light"
           style={{ fontSize: "0.62rem", letterSpacing: "0.12em", paddingTop: "32px" }}>
           <span>© {new Date().getFullYear()} TheKayodeKolade. All rights reserved.</span>
-          <span>Advisor · Coach · Confidant</span>
+          <span>Executive Operating System Architect · Fractional COO · Coach</span>
         </div>
       </div>
     </footer>

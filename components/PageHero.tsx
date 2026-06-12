@@ -12,7 +12,7 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
       <div className="container">
         <span className="eyebrow anim-fade-up block mb-6 md:mb-7">{eyebrow}</span>
         <h1 className="display text-text anim-fade-up anim-delay-1 max-w-[800px] mb-6 md:mb-8"
-          style={{ fontSize: "clamp(2.4rem, 6vw, 5.5rem)" }}>
+          style={{ fontSize: "clamp(1.8rem, 3.5vw, 3.6rem)" }}>
           {title}
         </h1>
         <span className="gold-rule anim-fade-up anim-delay-2 mb-6 md:mb-7" />

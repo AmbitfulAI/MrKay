@@ -13,10 +13,10 @@ export default function ContactSection({
   subheading = "All engagements are confidential. Initial consultations are complimentary.",
   dark = false,
 }: ContactSectionProps) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", organisation: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", organisation: "", role: "", situation: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e: FormEvent) => { e.preventDefault(); setSubmitted(true); };
@@ -64,7 +64,7 @@ export default function ContactSection({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                   <div className="form-group">
-                    <label className="form-label" htmlFor="organisation">Organisation</label>
+                    <label className="form-label" htmlFor="organisation">Organisation <span className="text-dim" style={{ fontSize: "0.75em" }}>(optional)</span></label>
                     <input id="organisation" name="organisation" type="text" className="form-input" placeholder="Company name" value={form.organisation} onChange={handleChange} />
                   </div>
                   <div className="form-group">
@@ -73,10 +73,30 @@ export default function ContactSection({
                   </div>
                 </div>
                 <div className="form-group">
+                  <label className="form-label" htmlFor="role">What best describes you?</label>
+                  <select id="role" name="role" className="form-input" value={form.role} onChange={handleChange}>
+                    <option value="">Select your situation</option>
+                    <option value="professional">A professional or executive at a crossroads</option>
+                    <option value="founder">A founder building or restructuring a business</option>
+                    <option value="organisation">A leader of a scaling organisation</option>
+                    <option value="other">Something else</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="situation">Where are you right now?</label>
+                  <select id="situation" name="situation" className="form-input" value={form.situation} onChange={handleChange}>
+                    <option value="">Select...</option>
+                    <option value="crossroads">At a career crossroads</option>
+                    <option value="building">Building a business</option>
+                    <option value="leading">Leading an organisation</option>
+                    <option value="other">Something else</option>
+                  </select>
+                </div>
+                <div className="form-group">
                   <label className="form-label" htmlFor="message">How can we help?</label>
                   <textarea id="message" name="message" className="form-input" placeholder="Briefly describe your situation..." value={form.message} onChange={handleChange} required />
                 </div>
-                <button type="submit" className="btn-solid self-start">Send Message</button>
+                <button type="submit" className="btn-solid self-start">Send It Over</button>
               </form>
             )}
           </div>

@@ -1,6 +1,7 @@
 import PageHero from "@/components/PageHero";
 import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
+import Link from "next/link";
 import { notes as staticNotes, categories as staticCategories, type Note } from "@/lib/notes";
 import { sanityFetch } from "@/lib/sanity-fetch";
 import { notesQuery, noteCategoriesQuery } from "@/sanity/queries";
@@ -80,6 +81,19 @@ export default async function MyNotes() {
               <NewsletterForm variant="full" />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="bg-bg border-t border-surface-2 s-pad-sm">
+        <div className="container flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
+          <div>
+            <span className="eyebrow block mb-4">Explore More</span>
+            <h3 className="display text-text" style={{ fontSize: "clamp(1.3rem,2.5vw,2.2rem)" }}>
+              See the work beyond the writing.
+            </h3>
+          </div>
+          <Link href="/gallery" className="btn-outline shrink-0">Browse the Gallery</Link>
         </div>
       </section>
     </>

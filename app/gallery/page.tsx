@@ -97,7 +97,10 @@ export default async function Gallery() {
               Ready to connect with the person behind the work?
             </h3>
           </div>
-          <CalendlyButton className="btn-solid shrink-0">Let's Talk</CalendlyButton>
+          <div className="flex flex-wrap gap-4">
+            <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
+            <a href="/marketplace" className="btn-outline shrink-0">Visit the Marketplace</a>
+          </div>
         </div>
       </section>
     </>

@@ -149,13 +149,12 @@ export default function Navigation() {
             </li>
           ))}
 
-          {/* Theme toggle — desktop only */}
-          <li>
-            <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-              <ThemeIcon />
-            </button>
-          </li>
         </ul>
+
+        {/* Theme toggle — desktop only, far right */}
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme" style={{ display: "flex" }}>
+          <ThemeIcon />
+        </button>
 
         {/* Mobile: hamburger only */}
         <button

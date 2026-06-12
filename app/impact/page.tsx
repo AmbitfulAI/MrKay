@@ -1,5 +1,6 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
+import Link from "next/link";
 import Image from "next/image";
 import { sanityFetch } from "@/lib/sanity-fetch";
 import { impactOrgsQuery } from "@/sanity/queries";
@@ -260,7 +261,10 @@ export default async function Impact() {
               Working on something worth supporting?
             </h3>
           </div>
-          <CalendlyButton className="btn-solid shrink-0">Let's Talk</CalendlyButton>
+          <div className="flex flex-wrap gap-4">
+            <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
+            <Link href="/contact" className="btn-outline shrink-0">Get in Touch</Link>
+          </div>
         </div>
       </section>
     </>

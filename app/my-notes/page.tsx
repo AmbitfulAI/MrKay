@@ -3,7 +3,7 @@ import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
 import { notes as staticNotes, categories as staticCategories, type Note } from "@/lib/notes";
 import { sanityFetch } from "@/lib/sanity-fetch";
-import { notesQuery } from "@/sanity/queries";
+import { notesQuery, noteCategoriesQuery } from "@/sanity/queries";
 
 export const revalidate = 60;
 
@@ -30,14 +30,26 @@ function mapSanityNote(n: SanityNote): Note {
   };
 }
 
+interface SanityCategory {
+  _id: string;
+  title: string;
+  slug: string;
+  order?: number;
+}
+
 export default async function MyNotes() {
-  const sanityNotes = await sanityFetch<SanityNote>(notesQuery);
+  const [sanityNotes, sanityCategories] = await Promise.all([
+    sanityFetch<SanityNote>(notesQuery),
+    sanityFetch<SanityCategory>(noteCategoriesQuery),
+  ]);
 
   const notes = sanityNotes.length > 0
     ? sanityNotes.map(mapSanityNote)
     : staticNotes;
 
-  const uniqueCategories = sanityNotes.length > 0
+  const uniqueCategories = sanityCategories.length > 0
+    ? ["All", ...sanityCategories.map((c) => c.title)]
+    : sanityNotes.length > 0
     ? ["All", ...Array.from(new Set(sanityNotes.map((n) => n.category)))]
     : staticCategories;
 

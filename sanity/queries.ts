@@ -23,6 +23,13 @@ export const noteBySlugQuery = groq`*[_type == "note" && slug.current == $slug][
   "blocks": body[_type == "block"]{ children[]{ text }, style }
 }`;
 
+export const noteCategoriesQuery = groq`*[_type == "noteCategory"] | order(order asc) {
+  _id,
+  title,
+  "slug": slug.current,
+  order
+}`;
+
 export const noteSlugsQuery = groq`*[_type == "note"]{ "slug": slug.current }`;
 
 // ── Testimonials ───────────────────────────────────────────────────────

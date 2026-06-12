@@ -12,8 +12,8 @@ interface Props {
 
 function NotesFilterInner({ posts, categories }: Props) {
   const searchParams = useSearchParams();
-  const router       = useRouter();
-  const pathname     = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const active = searchParams.get("category") ?? "All";
 
@@ -28,14 +28,21 @@ function NotesFilterInner({ posts, categories }: Props) {
     router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
   };
 
-  const filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
+  const filtered =
+    active === "All" ? posts : posts.filter((p) => p.category === active);
 
   return (
     <>
       {/* Category strip */}
-      <section className="bg-surface border-b border-surface-2" style={{ padding: "0" }}>
+      <section
+        className="bg-surface border-b border-surface-2"
+        style={{ padding: "0" }}
+      >
         <div className="container">
-          <div className="flex gap-0 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <div
+            className="flex gap-0 overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -55,18 +62,36 @@ function NotesFilterInner({ posts, categories }: Props) {
         <div className="container">
           <div className="flex flex-col">
             {filtered.map((post) => (
-              <Link key={post.slug} href={`/my-notes/${post.slug}`} className="blog-row">
+              <Link
+                key={post.slug}
+                href={`/my-notes/${post.slug}`}
+                className="blog-row"
+              >
                 <div className="blog-row-meta">
                   <span className="eyebrow">{post.category}</span>
-                  <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>
+                  <span
+                    className="text-dim font-light"
+                    style={{
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.18em",
+                      marginTop: "6px",
+                      display: "block",
+                    }}
+                  >
                     {post.date}
                   </span>
                 </div>
                 <div className="blog-row-body">
-                  <h2 className="display text-text mb-3" style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}>
+                  <h2
+                    className="display text-text mb-3"
+                    style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}
+                  >
                     {post.title}
                   </h2>
-                  <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.85 }}>
+                  <p
+                    className="text-muted font-light"
+                    style={{ fontSize: "0.85rem", lineHeight: 1.85 }}
+                  >
                     {post.excerpt}
                   </p>
                 </div>
@@ -74,7 +99,10 @@ function NotesFilterInner({ posts, categories }: Props) {
               </Link>
             ))}
             {filtered.length === 0 && (
-              <p className="text-dim font-light" style={{ fontSize: "0.88rem", padding: "48px 0" }}>
+              <p
+                className="text-dim font-light"
+                style={{ fontSize: "0.88rem", padding: "48px 0" }}
+              >
                 No notes in this category yet.
               </p>
             )}

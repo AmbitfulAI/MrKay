@@ -12,6 +12,7 @@ import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
 
 export const revalidate = 60;
+export const dynamicParams = true;
 
 const imageMap = {
   headshot:  headshotImg,

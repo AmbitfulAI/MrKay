@@ -186,7 +186,10 @@ export default async function Testimonials() {
               Recognise something in these stories?
             </h3>
           </div>
-          <CalendlyButton className="btn-solid shrink-0">Let's Talk</CalendlyButton>
+          <div className="flex flex-wrap gap-4">
+            <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
+            <Link href="/impact" className="btn-outline shrink-0">See the Impact</Link>
+          </div>
         </div>
       </section>
     </>

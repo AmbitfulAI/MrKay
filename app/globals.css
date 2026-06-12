@@ -1411,9 +1411,9 @@ textarea.form-input {
   height: 72px;
 }
 .nav-logo {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 300;
@@ -1421,12 +1421,17 @@ textarea.form-input {
   color: var(--text);
 }
 .nav-logo-tag {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: translateY(65%);
   font-family: var(--font-body);
-  font-size: 0.48rem;
-  letter-spacing: 0.22em;
+  font-size: 0.42rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--dim);
   font-weight: 400;
+  white-space: nowrap;
 }
 .nav-links {
   display: flex;
@@ -1509,6 +1514,9 @@ textarea.form-input {
   }
   .mobile-toggle {
     display: flex !important;
+  }
+  .theme-toggle {
+    display: none;
   }
 
   .mobile-menu {

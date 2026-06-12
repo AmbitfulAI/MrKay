@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
 const services = [
-  { label: "Strategy",         href: "/strategy" },
-  { label: "Leadership",       href: "/leadership" },
-  { label: "Board Work",       href: "/board-work" },
-  { label: "Media & Speaking", href: "/media-speaking" },
+  { label: "Career & Executive Clarity",         href: "/career-clarity" },
+  { label: "Founder & Business Architecture",    href: "/founder-architecture" },
+  { label: "Organisational Systems & Execution", href: "/organisational-systems" },
+  { label: "Workshops & Speaking",               href: "/workshops-speaking" },
 ];
 
 const resources = [
@@ -19,7 +19,7 @@ const resources = [
 ];
 
 const primaryLinks = [
-  { label: "My Story",     href: "/my-story" },
+  { label: "Meet Kayode", href: "/my-story" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Impact",       href: "/impact" },
   { label: "Contact",      href: "/contact" },
@@ -149,13 +149,12 @@ export default function Navigation() {
             </li>
           ))}
 
-          {/* Theme toggle — desktop only */}
-          <li>
-            <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-              <ThemeIcon />
-            </button>
-          </li>
         </ul>
+
+        {/* Theme toggle — desktop only, far right */}
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme" style={{ display: "flex" }}>
+          <ThemeIcon />
+        </button>
 
         {/* Mobile: hamburger only */}
         <button

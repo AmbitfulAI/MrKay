@@ -22,34 +22,34 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    eyebrow: "Strategic Advisor",
-    line1: "Built for the",
-    line2: "Boardroom.",
-    subtitle: "Clarity for the decisions that define careers and companies. Confidential. Considered. Consequential.",
+    eyebrow: "Executive Operating System Architect · Fractional COO · Coach",
+    line1: "Clarity → Architecture",
+    line2: "→ Momentum.",
+    subtitle: "You're at the kind of inflection point where the next move matters — in your career, your business, or your organisation. The effort is there. The traction isn't. That gap is rarely an ambition problem. It's an architecture problem.",
     image: execBg,
     imagePos: "center 20%",
-    primary:   { label: "Explore My Work", href: "/strategy",  calendly: false },
-    secondary: { label: "My Story",        href: "/my-story",  calendly: false },
+    primary:   { label: "Find Your Path", href: "/career-clarity", calendly: false },
+    secondary: { label: "Meet Kayode",    href: "/my-story",       calendly: false },
   },
   {
-    eyebrow: "Executive Coach",
-    line1: "Built for the",
-    line2: "Leader.",
-    subtitle: "Building the behaviours, presence, and decision-making discipline that organisations actually need.",
+    eyebrow: "Organisational Systems & Execution",
+    line1: "Growing Faster Than",
+    line2: "Your Systems Can Carry.",
+    subtitle: "Your people are capable. Execution still depends on heroic effort. Operating models, governance, and execution architecture that make performance repeatable — not accidental.",
     image: upperbodyImg,
     imagePos: "center top",
-    primary:   { label: "How I Help",  href: "/leadership", calendly: false },
-    secondary: { label: "Let's Talk",  href: "",            calendly: true  },
+    primary:   { label: "See How We Fix This", href: "/organisational-systems", calendly: false },
+    secondary: { label: "Let's Talk",          href: "",                        calendly: true  },
   },
   {
-    eyebrow: "Trusted Confidant",
-    line1: "Built for the",
-    line2: "Conversation.",
-    subtitle: "The counsel you can't get from inside the organisation. Direct, independent, and without agenda.",
+    eyebrow: "Founder & Business Architecture",
+    line1: "Building Hard. So Why",
+    line2: "Isn't It Compounding?",
+    subtitle: "Vision, drive, and too many ideas — but the offer isn't sharp, the business depends entirely on you, and activity isn't converting into traction. Let's fix the architecture.",
     image: facecardImg,
     imagePos: "center top",
-    primary:   { label: "Read the Work", href: "/testimonials", calendly: false },
-    secondary: { label: "Let's Talk",    href: "",              calendly: true  },
+    primary:   { label: "Pressure-Test Your Model", href: "/founder-architecture", calendly: false },
+    secondary: { label: "Let's Talk",               href: "",                      calendly: true  },
   },
 ];
 
@@ -145,7 +145,7 @@ export default function HeroSlider() {
 
           <h1
             className="display text-text max-w-[900px] mb-8 md:mb-10"
-            style={{ fontSize: "clamp(3rem, 9vw, 8.5rem)", lineHeight: 0.97 }}
+            style={{ fontSize: "clamp(2.2rem, 5vw, 5.5rem)", lineHeight: 1.05 }}
           >
             {s.line1}<br />
             <em style={{ fontStyle: "italic", color: "var(--gold)" }}>{s.line2}</em>

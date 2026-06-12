@@ -4,67 +4,110 @@ import Link from "next/link";
 import Image from "next/image";
 import headshot from "@/assets/KK Headshot_BW.jpg";
 import upperbody from "@/assets/KK_Upperbody_BW.jpg";
+import facecardImg from "@/assets/KK_Facecard_BW.jpg";
 
 const milestones = [
   {
-    period: "Early Career",
-    title: "The Foundation",
-    body: "Began in corporate strategy within financial services — first in London, then across Asia-Pacific. Spent a decade in roles that demanded the ability to read organisations rapidly, identify where real decisions were made, and advise under conditions of genuine uncertainty.",
+    period: "The Foundation",
+    title: "From Drawing Board to Reality",
+    body: "I began in construction — a cost consultant, then a project manager — learning to take something from drawing to reality under hard constraints of time, budget, and risk. That discipline never left me: ideas are cheap; making them hold in the real world is the actual work. I became a certified Project Management Professional, and that early grounding in execution under pressure still shapes how I think.",
   },
   {
-    period: "Mid Career",
-    title: "The Pivot",
-    body: "Moved from doing strategy to advising on it. The transition revealed something that would define the work: most executives have more clarity than they believe — what they lack is a trusted interlocutor who can surface it without an agenda.",
+    period: "The Operating Years",
+    title: "Building Where There Was No Playbook",
+    body: "I was a pioneer team member at one of the first e-commerce marketplaces to launch on the African continent — building a category in a market where the infrastructure for it barely existed yet. From there I helped stand up a multinational business process outsourcing operation — at one point directing a 200-person team to deliver best-in-class customer outcomes against demanding service-level agreements. A conviction about the leadership my continent needs then drew me into education and impact.",
   },
   {
-    period: "Senior Positions",
-    title: "The Operating Years",
-    body: "Occupied board positions and senior leadership roles across technology, government advisory, and professional services. The experience of accountability — of being the one responsible, not the one advising — changed what kind of advisor I became.",
+    period: "Into the Executive Tier",
+    title: "Operating Where the Stakes Were Absolute",
+    body: "As Country Manager, Operations & Strategy, I led a national operation end to end — its people, its performance, its outcomes — in an environment where the work interfaced directly with government immigration authorities, including the UK's UKVI and Australia's Department of Immigration and Border Protection, where the compliance bar is absolute. I performed strongly enough to be leaned on well beyond my own market — supporting other countries and being seconded to help restructure another national operation.",
   },
   {
-    period: "TheKayodeKolade Today",
-    title: "The Practice",
-    body: "Work with a deliberately small number of clients — CEOs, board chairs, and senior leadership teams at inflection points. The constraint is intentional. Every client receives direct, undivided engagement. Not a firm. Not a team. One advisor.",
+    period: "The Executive Seat",
+    title: "Deputy COO, Multi-Country Operation",
+    body: "Deputy COO of a multi-country operation spanning Rwanda, Kenya, Uganda, and Tanzania, with managing directors across those countries reporting to me. I owned strategy and performance outcomes across the region, coached and held to account the senior leaders running each market, and built the operating rhythms, leadership retreats, and excellence standards an organisation needs to scale a high-performance culture. I led the hardest kind of change: closing down an operation in one country and standing up a new one in another. That is where the conviction beneath my whole practice finally proved itself: execution fails when architecture is missing — and most of what looks like a people problem or a strategy problem is an architecture problem in disguise.",
+  },
+  {
+    period: "The Integration",
+    title: "Where Structure Meets the Human",
+    body: "The coaching came first, not last. I was certified in brain-based coaching through the NeuroLeadership Institute before I stepped into the Deputy COO seat — which means when I coached and held managing directors to account, I was working from a trained discipline, not improvising. So the structural and the human were braided from the start. COO-level training through Operations Nation, organisational development training, and active membership of both the Organization Development Network and the International Coaching Federation followed. The Kayode Kolade Consulting is where both disciplines come together: decision-grade clarity for professionals, architecture for founders, and operating systems for organisations.",
   },
 ];
 
 const credentials = [
-  { title: "MBA — Executive Leadership",         body: "International Business School, London. Specialisation in organisational behaviour and strategic decision-making." },
-  { title: "Board Directorship Qualification",   body: "Institute of Directors. Governance, fiduciary responsibility, and board dynamics across listed and private entities." },
-  { title: "Certified Executive Coach",          body: "International Coaching Federation (ICF). Individual and team coaching at senior and board level." },
-  { title: "Non-Executive Director Accreditation", body: "Recognised qualification for independent board advisory roles across corporate, government, and not-for-profit sectors." },
+  {
+    title: "Operating & Leadership",
+    body: "Executive MBA, Rotterdam School of Management, Erasmus University. Certified Project Management Professional (PMP). Fellow of the Institute of Leadership & Management, UK.",
+  },
+  {
+    title: "Coaching",
+    body: "Brain-based coaching certification, NeuroLeadership Institute. Member, International Coaching Federation (ICF).",
+  },
+  {
+    title: "Operations, Systems & OD",
+    body: "COO-level training, Operations Nation — operating model design, strategic finance, performance analytics, and execution governance. Organisational development training; member, Organization Development Network (ODN).",
+  },
+  {
+    title: "Continued Study",
+    body: "Executive education in Digital Transformation Strategy (University of Cambridge, Judge Business School) and Design Thinking (MIT Sloan School of Management).",
+  },
 ];
 
-const recognition = [
-  { year: "2024", title: "Top Executive Advisors — Africa", body: "Recognised among a select group of senior advisors shaping leadership and governance practice across the continent." },
-  { year: "2023", title: "Board Governance Award",          body: "Institute of Directors Africa — acknowledging sustained contribution to board effectiveness and governance excellence." },
-  { year: "2022", title: "Leadership Speaker of the Year",  body: "Pan-African Leadership Forum — recognised for keynote contributions on executive presence, succession, and board dynamics." },
+const principles = [
+  {
+    label: "Clarity Is Kindness",
+    body: "I say what I see. You won't engage me for comfort — you'll engage me for clarity, which is the most useful kind of care I can offer. Vagueness is what's actually unkind: it leaves you to discover the hard truth later, alone, at greater cost.",
+  },
+  {
+    label: "Rigour Because I Care",
+    body: "I go deep, ask the uncomfortable questions, and refuse the easy answer — not because I enjoy complexity, but because shallow work fails you later. The rigour is the care.",
+  },
+  {
+    label: "Architecture Before Scale",
+    body: "I won't help you build faster on a structure that can't hold. Systemisation comes before scaling — always — because durable beats fast every time.",
+  },
+  {
+    label: "A Partnership, Not a Performance",
+    body: "I don't hand down answers from a podium. The best work happens in the room with you — your context, your judgement, your ownership of the outcome.",
+  },
+  {
+    label: "Outcomes Over Sessions",
+    body: "Trusted advisors don't design sessions — they design outcomes. Every engagement is built backwards from the decision, capability, or system it must produce.",
+  },
+  {
+    label: "Confidentiality",
+    body: "What you share in confidence stays there. Client relationships and details are never used publicly without your explicit permission. A first principle, not a policy.",
+  },
 ];
 
-const values = [
-  { label: "Directness",      body: "I say what I see. My clients do not pay me for comfort — they engage me for clarity. I will tell you what I genuinely think, every time." },
-  { label: "Confidentiality", body: "Not as a policy. As a first principle. Nothing that passes between us reaches anyone else. This is non-negotiable and has always been so." },
-  { label: "Independence",    body: "I hold no institutional affiliations that create conflicted counsel. My only loyalty is to the quality of the thinking I bring to your situation." },
-  { label: "Preparation",     body: "I believe decisions made from a place of stillness and preparation outlast decisions made under pressure. I help leaders get to that place." },
+const testimonials = [
+  {
+    quote: "You showed me how to reflect growth and career progression in spite of having the same job title. Within about four months of applying what you shared, I got two job offers — and finally left after several years of applying here and there. Recruiters still reach out to me.",
+    author: "Victoria Ikuemonisan",
+  },
+  {
+    quote: "You helped me contextualise situations, develop a comprehensive pros and cons — and even did it with me. These interactions gave me better perspective and helped me make the best decisions.",
+    author: "Samson Richard",
+  },
 ];
 
 export default function MyStory() {
   return (
     <>
       <PageHero
-        eyebrow="About TheKayodeKolade"
-        title="The Advisor Behind the Practice."
-        subtitle="I didn't plan to become an advisor. I planned to lead. What I discovered — through decades of operating experience across four continents — is that the questions I was most useful for were the ones no one inside the organisation could safely ask."
+        eyebrow="Meet Kayode"
+        title="The Architect Behind the Work."
+        subtitle="Before you trust someone with your next chapter, you should know how they built theirs. Mine wasn't built in a lecture hall. It was built inside growing organisations — in the operating rooms where systems either hold or fail, and where I learned, first-hand, exactly why they do."
       />
 
       {/* ── In Brief ── */}
-      <section className="bg-bg s-pad">
+      <section className="bg-surface s-pad">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
             <div className="relative overflow-hidden hidden md:block" style={{ aspectRatio: "3/4" }}>
               <Image
-                src={headshot}
-                alt="TheKayodeKolade — Executive Advisor"
+                src={facecardImg}
+                alt="Kayode Kolade"
                 fill
                 style={{ objectFit: "cover", objectPosition: "top center" }}
                 sizes="(max-width: 1160px) 50vw, 580px"
@@ -76,29 +119,23 @@ export default function MyStory() {
             <div>
               <span className="eyebrow block mb-6">In Brief</span>
               <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)", lineHeight: 1.15 }}>
-                I work with leaders who are willing to be challenged.
+                I work at the intersection of people, systems, and execution.
               </h2>
               <span className="gold-rule mb-7" />
-              <p className="text-muted font-light mb-5" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                TheKayodeKolade is the operating name of a seasoned executive advisor whose career spans three decades across financial services, technology, and government. Having occupied senior leadership and board positions across four continents, the work draws on a combination of operating experience and strategic perspective that purely advisory careers rarely produce.
-              </p>
-              <p className="text-muted font-light mb-5" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                I am a direct communicator and a deep reader of organisations. I notice what is said, what is not said, and what is happening beneath both. That combination — operating experience, strategic clarity, and the capacity to ask the question no one else will — is what clients engage me for.
-              </p>
               <p className="text-muted font-light mb-10" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                The practice does not accept more clients than it can serve at the standard each engagement demands. Every relationship is exclusive and handled with complete discretion.
+                I'm an operations leader, executive systems thinker, consultant, and coach. Everything I do circles one question: how do people and organisations move from intention to structured, sustained execution? I've sat in the COO's chair across a multi-country operation, led enterprise transformation, designed governance and performance systems that let organisations scale, stood up new operations from nothing, led the kind of change that decides whether an organisation survives its next stage — and coached professionals and founders through their most consequential transitions. I've done this across construction, e-commerce, business process outsourcing, education, and impact, which means I've watched the same execution problem wear very different clothes. What all of it taught me is simple, and slightly unfashionable: most people and organisations don't fail for lack of talent, effort, or ambition. They struggle because of unclear identity, weak architecture, broken rhythms, and misaligned execution. Everything I build — through The Kayode Kolade Consulting and beyond it — exists to fix that.
               </p>
 
               {/* Mini stats */}
               <div className="grid grid-cols-2 gap-[2px] bg-surface-2" style={{ marginBottom: "40px" }}>
                 {[
-                  { num: "30+", label: "Years" },
-                  { num: "4", label: "Continents" },
-                  { num: "CEO", label: "to Board" },
-                  { num: "100%", label: "Confidential" },
+                  { num: "Deputy COO", label: "4-Country Operation" },
+                  { num: "Five Sectors", label: "of Lived Experience" },
+                  { num: "Founder-Led", label: "Practice" },
+                  { num: "Full", label: "Confidentiality" },
                 ].map((s) => (
-                  <div key={s.label} className="bg-surface" style={{ padding: "24px 20px" }}>
-                    <span className="display text-text" style={{ fontSize: "1.9rem", color: "var(--gold)", lineHeight: 1, display: "block" }}>{s.num}</span>
+                  <div key={s.label} className="bg-bg" style={{ padding: "24px 20px" }}>
+                    <span className="display text-text" style={{ fontSize: "1.1rem", color: "var(--gold)", lineHeight: 1.2, display: "block" }}>{s.num}</span>
                     <span className="eyebrow" style={{ marginTop: "6px", display: "block", color: "var(--dim)" }}>{s.label}</span>
                   </div>
                 ))}
@@ -110,12 +147,12 @@ export default function MyStory() {
         </div>
       </section>
 
-      {/* ── Journey ── */}
-      <section className="bg-surface border-t border-surface-2 s-pad">
+      {/* ── The Journey ── */}
+      <section className="bg-bg border-t border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-4">The Journey</span>
           <h2 className="display text-text mb-12 md:mb-16" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)" }}>
-            A Career Built on Accountability
+            I Didn't Start at the Top. I Climbed There.
           </h2>
           <div className="flex flex-col">
             {milestones.map((m, i) => (
@@ -139,17 +176,17 @@ export default function MyStory() {
       </section>
 
       {/* ── Credentials ── */}
-      <section className="bg-bg border-t border-surface-2 s-pad">
+      <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
             <div>
-              <span className="eyebrow block mb-6">Qualifications</span>
+              <span className="eyebrow block mb-6">Credentials</span>
               <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)", lineHeight: 1.15 }}>
-                The formation behind the practice.
+                The Foundations Beneath the Practice.
               </h2>
               <span className="gold-rule mb-7" />
               <p className="text-muted font-light" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-                Three decades of operating experience are underpinned by formal qualifications in leadership, governance, and coaching — developed across institutions in Europe and Africa.
+                Lived operating experience comes first. But it sits on formal foundations built across institutions in Africa and Europe.
               </p>
             </div>
             <div className="flex flex-col" style={{ gap: "1px", background: "var(--surface-2)" }}>
@@ -164,34 +201,14 @@ export default function MyStory() {
         </div>
       </section>
 
-      {/* ── Recognition ── */}
-      <section className="bg-surface border-t border-surface-2 s-pad">
-        <div className="container">
-          <span className="eyebrow block mb-4">Recognition</span>
-          <h2 className="display text-text mb-12 md:mb-16" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)" }}>
-            Acknowledged by the field.
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[2px] bg-surface-2">
-            {recognition.map((r) => (
-              <div key={r.title} className="bg-surface" style={{ padding: "48px 40px" }}>
-                <span className="display" style={{ fontSize: "3rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "20px" }}>{r.year}</span>
-                <span className="gold-rule" style={{ marginBottom: "24px" }} />
-                <h3 className="display text-text mb-4" style={{ fontSize: "clamp(1rem,1.6vw,1.35rem)", lineHeight: 1.2 }}>{r.title}</h3>
-                <p className="text-muted font-light" style={{ fontSize: "0.82rem", lineHeight: 1.85 }}>{r.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── What drives me ── */}
+      {/* ── What You Can Expect ── */}
       <section className="bg-bg border-t border-surface-2 s-pad">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-start">
             <div className="relative overflow-hidden hidden md:block" style={{ aspectRatio: "4/5" }}>
               <Image
                 src={upperbody}
-                alt="TheKayodeKolade"
+                alt="Kayode Kolade"
                 fill
                 style={{ objectFit: "cover", objectPosition: "center top" }}
                 sizes="(max-width: 1160px) 50vw, 580px"
@@ -200,13 +217,13 @@ export default function MyStory() {
               <div className="absolute bottom-0 left-0 w-[60px] h-[60px] pointer-events-none" style={{ borderBottom: "1px solid var(--gold)", borderLeft: "1px solid var(--gold)" }} />
             </div>
             <div>
-              <span className="eyebrow block mb-6">What Drives Me</span>
+              <span className="eyebrow block mb-6">What You Can Expect From Me</span>
               <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)", lineHeight: 1.15 }}>
-                The principles I bring to every engagement.
+                The Principles You Can Hold Me To.
               </h2>
               <span className="gold-rule mb-10" />
               <div className="flex flex-col" style={{ gap: "32px" }}>
-                {values.map((v) => (
+                {principles.map((v) => (
                   <div key={v.label} className="flex gap-5 items-start">
                     <span style={{ display: "block", width: "1px", minHeight: "56px", background: "var(--gold)", flexShrink: 0, marginTop: "4px" }} />
                     <div>
@@ -221,29 +238,46 @@ export default function MyStory() {
         </div>
       </section>
 
-      {/* ── Quote ── */}
-      <section className="bg-surface border-t border-b border-surface-2 text-center s-pad-md">
-        <div className="container max-w-[720px] mx-auto">
-          <span className="eyebrow block mb-6">Guiding Principle</span>
-          <blockquote className="display text-text" style={{ fontSize: "clamp(1.3rem,3vw,2.6rem)", fontStyle: "italic", lineHeight: 1.3, marginBottom: "24px" }}>
-            "I am not here to make you feel good about where you are. I am here to help you get where you need to be."
-          </blockquote>
-          <p className="eyebrow">— TheKayodeKolade</p>
+      {/* ── In Their Words ── */}
+      <section className="bg-surface border-t border-surface-2 s-pad">
+        <div className="container">
+          <span className="eyebrow block mb-10 md:mb-12">In Their Words</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[2px] bg-surface-2">
+            {testimonials.map((t) => (
+              <div key={t.author} className="bg-surface" style={{ padding: "48px 40px" }}>
+                <span className="gold-rule" style={{ marginBottom: "32px" }} />
+                <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9, marginBottom: "28px" }}>
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <span className="eyebrow">{t.author}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Personal Note ── */}
+      <section className="bg-bg border-t border-surface-2 text-center s-pad-md">
+        <div className="container" style={{ maxWidth: "640px", margin: "0 auto" }}>
+          <span className="eyebrow block mb-6">A Personal Note</span>
+          <p className="text-muted font-light" style={{ fontSize: "1rem", lineHeight: 1.9 }}>
+            Beyond the operating rooms and the frameworks, there's a conviction that drives all of it: the belief that genius sits inside every person, team, and organisation, and that my work is to mine it and help it reach its full potential. It's the headwater everything else flows from, including this practice.
+          </p>
         </div>
       </section>
 
       {/* ── CTA ── */}
-      <section className="bg-bg s-pad-sm">
+      <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
           <div>
-            <span className="eyebrow block mb-4">Work Together</span>
+            <span className="eyebrow block mb-4">Now You Know Me</span>
             <h3 className="display text-text" style={{ fontSize: "clamp(1.4rem,2.5vw,2rem)" }}>
-              Ready for a direct conversation?
+              Tell me about you.
             </h3>
           </div>
           <div className="flex flex-wrap gap-4">
             <CalendlyButton className="btn-solid">Let's Talk</CalendlyButton>
-            <Link href="/testimonials" className="btn-outline">Read the Work</Link>
+            <Link href="/contact" className="btn-outline">Get in Touch</Link>
           </div>
         </div>
       </section>

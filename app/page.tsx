@@ -7,17 +7,17 @@ import facecard from "@/assets/KK_Facecard_BW.jpg";
 const lanes = [
   {
     num: "01",
-    title: "Professionals & Executives",
-    tags: "Career Clarity · Leadership Identity · Strategic Transitions",
-    pullquote: '"I know I have more in me. I just can\'t name the direction."',
-    desc: "Structured clarity work for professionals and executives at genuine inflection points — powered by the MINED® framework.",
-    cta: "Name Your Direction →",
-    href: "/career-clarity",
+    title: "Organisations",
+    tags: "Operating Models · Governance · Leadership Transformation · Fractional COO",
+    pullquote: '"We\'re growing faster than our systems can carry."',
+    desc: "Operating architecture, execution rhythms, and leadership systems for scaling organisations and leadership teams.",
+    cta: "Let's Look at Your Architecture →",
+    href: "/organisational-systems",
   },
   {
     num: "02",
     title: "Founders",
-    tags: "Business Architecture · Positioning · Traction Systems",
+    tags: "Founder Clarity · Business Architecture · Positioning · Traction Systems",
     pullquote: '"I\'m building hard. So why isn\'t momentum compounding?"',
     desc: "Founder identity, business model architecture, and traction systems — powered by the UTM™ framework.",
     cta: "Pressure-Test Your Model →",
@@ -25,12 +25,12 @@ const lanes = [
   },
   {
     num: "03",
-    title: "Organisations",
-    tags: "Operating Models · Governance · Fractional COO",
-    pullquote: '"We\'re growing faster than our systems can carry."',
-    desc: "Operating architecture, execution rhythms, and leadership systems for scaling organisations and leadership teams.",
-    cta: "See the Architecture →",
-    href: "/organisational-systems",
+    title: "Professionals & Executives",
+    tags: "Career Clarity · Leadership Identity · Strategic Transitions",
+    pullquote: '"I know I have more in me. I just can\'t name the direction."',
+    desc: "Structured clarity work for professionals and executives at genuine inflection points — powered by the MINED® framework.",
+    cta: "Start Naming Your Direction →",
+    href: "/career-clarity",
   },
 ];
 
@@ -242,10 +242,10 @@ export default function Home() {
         <div className="container max-w-[680px] mx-auto">
           <span className="eyebrow block mb-4">Your Move</span>
           <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem, 4vw, 3.6rem)" }}>
-            Your next chapter deserves better architecture.
+            Your next chapter deserves better architecture. Let&apos;s build it — together.
           </h2>
           <p className="text-dim font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.85 }}>
-            It starts with a conversation — direct, confidential, and without obligation. You&apos;ll talk to me, not a sales process.
+            It starts with a conversation — direct, confidential, and without obligation. You&apos;ll talk to me, not a sales process. The only goal: figuring out whether there&apos;s a meaningful fit for what you&apos;re navigating.
           </p>
           <CalendlyButton className="btn-solid">
             Let&apos;s Talk

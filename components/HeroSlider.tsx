@@ -25,7 +25,7 @@ const slides: Slide[] = [
     eyebrow: "Executive Operating System Architect · Fractional COO · Coach",
     line1: "Clarity → Architecture",
     line2: "→ Momentum.",
-    subtitle: "You're at the kind of inflection point where the next move matters — in your career, your business, or your organisation. The effort is there. The traction isn't. That gap is rarely an ambition problem. It's an architecture problem.",
+    subtitle: "You're at the kind of inflection point where the next move matters — in your career, your business, or your organisation. The effort is there. The traction isn't. That gap is rarely an ambition problem. It's an architecture problem. I'm Kayode Kolade, and I help professionals, founders, and organisations across the globe turn clarity into systems that hold — and systems into momentum that compounds.",
     image: execBg,
     imagePos: "center 20%",
     primary:   { label: "Find Your Path", href: "/career-clarity", calendly: false },

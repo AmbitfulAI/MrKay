@@ -73,7 +73,7 @@ export default function Footer() {
             <p className="eyebrow mb-6">Contact</p>
             <div className="flex flex-col gap-3 font-light leading-[1.7] text-muted" style={{ fontSize: "0.78rem" }}>
               <a href="mailto:hello@thekayodekolade.com" className="hover-gold">hello@thekayodekolade.com</a>
-              <span>All enquiries are treated with the utmost discretion.</span>
+              <span>Everything you share is handled with discretion.</span>
             </div>
             <p className="eyebrow" style={{ marginTop: "32px", marginBottom: "4px" }}>Newsletter</p>
             <p className="text-dim font-light" style={{ fontSize: "0.72rem", lineHeight: 1.7, marginBottom: "4px" }}>

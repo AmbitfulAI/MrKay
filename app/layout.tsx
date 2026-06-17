@@ -4,6 +4,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { SiteConfigProvider } from "@/components/SiteConfigProvider";
+import { sanityClient } from "@/sanity/client";
+import { siteConfigQuery } from "@/sanity/queries";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -26,11 +29,13 @@ export const metadata: Metadata = {
     "Strategic counsel for executives who lead at the highest level. Board advisory, leadership development, and executive strategy.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const siteConfig = await sanityClient.fetch(siteConfigQuery).catch(() => null);
+
   return (
     <html
       lang="en"
@@ -40,9 +45,11 @@ export default function RootLayout({
     >
       <body>
         <Providers>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
+          <SiteConfigProvider config={siteConfig}>
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+          </SiteConfigProvider>
         </Providers>
       </body>
     </html>

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function AdminRoot() {
-  redirect("/admin/notes");
+  redirect("/admin/site-config");
 }

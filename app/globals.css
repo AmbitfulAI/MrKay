@@ -1333,6 +1333,64 @@ textarea.form-input {
   .newsletter-full-row { flex-direction: column; align-items: stretch; }
 }
 
+/* ── Testimonial strip (mobile-swipeable, desktop grid) ── */
+.t-strip {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* bleed out of container padding on mobile so cards reach the edge */
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.t-strip::-webkit-scrollbar {
+  display: none;
+}
+.t-card {
+  flex: 0 0 82vw;
+  max-width: 82vw;
+  scroll-snap-align: start;
+  background: var(--surface);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+}
+/* add a trailing spacer so the last card scrolls fully into view */
+.t-strip::after {
+  content: "";
+  flex: 0 0 20px;
+}
+
+@media (min-width: 640px) {
+  .t-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    background: var(--surface-2);
+  }
+  .t-strip::after {
+    display: none;
+  }
+  .t-card {
+    flex: unset;
+    max-width: none;
+    padding: clamp(32px, 5vw, 56px);
+  }
+}
+@media (min-width: 768px) {
+  .t-strip.t-strip-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* ── Footer ── */
 .footer-link {
   font-family: var(--font-body);

@@ -20,10 +20,14 @@ const formats = [
     title: "Keynotes & Executive Speaking",
     body: "Talks on leadership, operating models, organisational effectiveness, strategy execution, founder architecture, career clarity, and building institutions across Africa and the diaspora. Structured arguments delivered with conviction — not motivation dressed as insight.",
   },
-  {
-    title: "Selected Experience",
-    body: "Designed and led leadership retreats bringing together 50+ leaders across multiple countries · Facilitated strategy alignment, organisational effectiveness, and leadership development sessions · Built and facilitated sessions on high-performing teams, execution, leadership accountability, and organisational change.",
-  },
+];
+
+const experience = [
+  "Designed and led leadership retreats bringing together 50+ leaders across multiple countries",
+  "Facilitated strategy alignment, organisational effectiveness, and leadership development sessions across education, impact, and operational environments",
+  "Former PMP, soft-skills and professional skills trainer",
+  "Led executive presentations and strategic rollouts for large-scale organisational initiatives",
+  "Built and facilitated sessions focused on high-performing teams, execution, leadership accountability, and organisational change",
 ];
 
 export default function WorkshopsSpeaking() {
@@ -31,7 +35,7 @@ export default function WorkshopsSpeaking() {
     <>
       <PageHero
         eyebrow="The Work — Strategic Facilitation, Retreats & Speaking"
-        title="Rooms That Produce Decisions."
+        title="Rooms That Produce Decisions. Your Team Will Still Be Using This Next Quarter."
         subtitle="Leadership retreats, executive offsites, strategic facilitation, workshops, and speaking engagements designed to create clarity, alignment, capability, and decisions that continue shaping execution long after the session ends. Most gatherings are designed around content. The work I facilitate is designed around outcomes."
       />
 
@@ -70,6 +74,33 @@ export default function WorkshopsSpeaking() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Selected Experience ── */}
+      <section className="bg-surface border-b border-surface-2 s-pad-sm">
+        <div className="container">
+          <span className="eyebrow block mb-6">Selected Experience</span>
+          <ul className="flex flex-col" style={{ gap: "0", listStyle: "none" }}>
+            {experience.map((item) => (
+              <li
+                key={item}
+                className="text-muted font-light"
+                style={{
+                  fontSize: "0.88rem",
+                  lineHeight: 1.85,
+                  padding: "16px 0",
+                  borderBottom: "1px solid var(--surface-2)",
+                  paddingLeft: "20px",
+                  borderLeft: "1px solid var(--gold)",
+                  marginBottom: "2px",
+                  background: "var(--bg)",
+                }}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

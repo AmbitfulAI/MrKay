@@ -2,7 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import CalendlyButton from "@/components/CalendlyButton";
 import HeroSlider from "@/components/HeroSlider";
+import TestimonialStrip from "@/components/TestimonialStrip";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
+import { sanityClient } from "@/sanity/client";
+import { heroSlidesQuery, siteConfigQuery, testimonialsForPageQuery } from "@/sanity/queries";
+
+export const revalidate = 60;
 
 const lanes = [
   {
@@ -34,12 +39,25 @@ const lanes = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [heroSlides, siteConfig, homeTestimonials] = await Promise.all([
+    sanityClient.fetch(heroSlidesQuery).catch(() => []),
+    sanityClient.fetch(siteConfigQuery).catch(() => null),
+    sanityClient.fetch(testimonialsForPageQuery, { page: "home" }).catch(() => []),
+  ]);
+
+  const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : [
+    { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
+    { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
+    { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
+    { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
+  ];
+
   return (
     <>
       {/* ── Hero ── */}
       <section className="bg-bg relative overflow-hidden flex flex-col justify-center min-h-svh pt-20 pb-16 md:pt-24 md:pb-20" style={{ position: "relative" }}>
-        <HeroSlider />
+        <HeroSlider slides={heroSlides} />
 
         <div
           className="absolute hidden md:flex flex-col items-center gap-2 opacity-35"
@@ -61,12 +79,7 @@ export default function Home() {
       <section className="bg-surface border-b border-surface-2" style={{ padding: "0" }}>
         <div className="container">
           <div className="grid grid-cols-2 lg:grid-cols-4" style={{ borderRight: "1px solid var(--surface-2)" }}>
-            {[
-              { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
-              { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
-              { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
-              { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
-            ].map((s) => (
+            {statsBar.map((s: { line: string; descriptor: string }) => (
               <div key={s.line} className="stats-cell">
                 <span className="display text-text" style={{ fontSize: "clamp(1.2rem, 2.2vw, 1.9rem)", color: "var(--gold)", lineHeight: 1, fontWeight: 600 }}>{s.line}</span>
                 <span className="eyebrow" style={{ marginTop: "10px", display: "block", color: "var(--dim)" }}>{s.descriptor}</span>
@@ -138,36 +151,16 @@ export default function Home() {
       <section className="bg-surface border-t border-surface-2 s-pad-md">
         <div className="container">
           <span className="eyebrow block mb-8">In Their Words</span>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[2px] bg-surface-2">
-            {[
-              {
-                quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.",
-                attribution: "Senior Professional, Technology Sector",
-              },
-              {
-                quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.",
-                attribution: "Ayodeji Akinola",
-              },
-            ].map((item) => (
-              <div
-                key={item.attribution}
-                className="bg-surface"
-                style={{ padding: "clamp(32px, 5vw, 56px)", display: "flex", flexDirection: "column", gap: "20px" }}
-              >
-                <span style={{ fontSize: "3.5rem", lineHeight: 1, color: "var(--gold)", fontFamily: "var(--font-display)", opacity: 0.5 }}>&ldquo;</span>
-                <blockquote
-                  className="text-muted font-light"
-                  style={{ fontSize: "clamp(0.9rem, 1.3vw, 1.05rem)", lineHeight: 1.85, marginTop: "-20px" }}
-                >
-                  {item.quote}
-                </blockquote>
-                <span className="gold-rule" />
-                <p className="text-dim uppercase tracking-[0.14em]" style={{ fontSize: "0.72rem" }}>
-                  {item.attribution}
-                </p>
-              </div>
-            ))}
-          </div>
+          <TestimonialStrip
+            items={homeTestimonials.length ? homeTestimonials.map((t: { quote: string; clientName: string; clientContext?: string }) => ({
+              quote:   t.quote,
+              name:    t.clientName,
+              context: t.clientContext,
+            })) : [
+              { quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.", name: "Senior Professional, Technology Sector" },
+              { quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.", name: "Ayodeji Akinola" },
+            ]}
+          />
           <div style={{ marginTop: "28px" }}>
             <Link href="/testimonials" className="hover-gold" style={{ fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase" }}>
               Read more →
@@ -236,6 +229,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Diagnostic Placeholder ── TODO: self-assessment quiz "Where are you stuck — clarity, architecture, or momentum?" */}
+      {/* <DiagnosticQuiz /> */}
 
       {/* ── Closing CTA ── */}
       <section className="bg-bg border-t border-surface-2 text-center s-pad-md">

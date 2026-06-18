@@ -1,6 +1,9 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
+import TestimonialStrip from "@/components/TestimonialStrip";
+import { sanityClient } from "@/sanity/client";
+import { testimonialsForPageQuery } from "@/sanity/queries";
 
 export const revalidate = 60;
 
@@ -27,22 +30,16 @@ const services = [
   },
 ];
 
-const testimonials = [
-  {
-    quote:
-      "He guided us on improving our Social Enterprise and Innovation Program — the cost of delivering quality training versus quantity trained, curriculum engagement, and how to assess the success of funded enterprises. The encounter was very valuable: we made concrete adjustments to our 2024 strategic plan, including making community trainers full-time staff.",
-    name: "James Otai",
-    context: "Imagine Her (Uganda)",
-  },
-  {
-    quote:
-      "You are an original thinker. Your guidance was never based on fluff — very practical insights. You changed how managers and specialists think about OKRs in general.",
-    name: "Programme Specialist",
-    context: "International Education Organisation",
-  },
+const FALLBACK_TESTIMONIALS = [
+  { name: "James Otai",          context: "Imagine Her (Uganda)",                  quote: "He guided us on improving our Social Enterprise and Innovation Program — the cost of delivering quality training versus quantity trained, curriculum engagement, and how to assess the success of funded enterprises. The encounter was very valuable: we made concrete adjustments to our 2024 strategic plan, including making community trainers full-time staff." },
+  { name: "Programme Specialist", context: "International Education Organisation", quote: "You are an original thinker. Your guidance was never based on fluff — very practical insights. You changed how managers and specialists think about OKRs in general." },
 ];
 
-export default function OrganisationalSystems() {
+export default async function OrganisationalSystems() {
+  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "organisational-systems" }).catch(() => []);
+  const testimonials = raw.length
+    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
+    : FALLBACK_TESTIMONIALS;
   return (
     <>
       <PageHero
@@ -127,43 +124,7 @@ export default function OrganisationalSystems() {
       <section className="bg-surface border-b border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-12">The Impact in Practice</span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-surface" style={{ padding: "48px 44px" }}>
-                <span
-                  className="display"
-                  style={{
-                    fontSize: "3.5rem",
-                    color: "var(--gold)",
-                    lineHeight: 1,
-                    display: "block",
-                    marginBottom: "24px",
-                    opacity: 0.4,
-                  }}
-                >
-                  &ldquo;
-                </span>
-                <blockquote
-                  className="display text-text"
-                  style={{
-                    fontSize: "clamp(1rem, 1.6vw, 1.2rem)",
-                    fontStyle: "italic",
-                    lineHeight: 1.55,
-                    marginBottom: "32px",
-                  }}
-                >
-                  {t.quote}
-                </blockquote>
-                <span className="gold-rule" style={{ marginBottom: "20px" }} />
-                <p className="eyebrow" style={{ marginBottom: "4px" }}>
-                  {t.name}
-                </p>
-                <p className="text-dim font-light" style={{ fontSize: "0.72rem", letterSpacing: "0.1em" }}>
-                  {t.context}
-                </p>
-              </div>
-            ))}
-          </div>
+          <TestimonialStrip items={testimonials} />
         </div>
       </section>
 

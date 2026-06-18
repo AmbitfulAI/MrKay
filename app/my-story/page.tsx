@@ -2,9 +2,14 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import Image from "next/image";
+import TestimonialStrip from "@/components/TestimonialStrip";
 import headshot from "@/assets/KK Headshot_BW.jpg";
 import upperbody from "@/assets/KK_Upperbody_BW.jpg";
 import facecardImg from "@/assets/KK_Facecard_BW.jpg";
+import { sanityClient } from "@/sanity/client";
+import { testimonialsForPageQuery } from "@/sanity/queries";
+
+export const revalidate = 60;
 
 const milestones = [
   {
@@ -15,22 +20,27 @@ const milestones = [
   {
     period: "The Operating Years",
     title: "Building Where There Was No Playbook",
-    body: "I was a pioneer team member at one of the first e-commerce marketplaces to launch on the African continent — building a category in a market where the infrastructure for it barely existed yet. From there I helped stand up a multinational business process outsourcing operation — at one point directing a 200-person team to deliver best-in-class customer outcomes against demanding service-level agreements. A conviction about the leadership my continent needs then drew me into education and impact.",
+    body: "I was a pioneer team member at one of the first e-commerce marketplaces to launch on the African continent — building a category in a market where the infrastructure for it barely existed yet. Standing up commercial operations where there was no playbook taught me something I've relied on ever since: structure isn't bureaucracy; in hard terrain, it's the only thing that lets ambition survive contact with reality. From there I helped stand up a multinational business process outsourcing operation — at one point directing a 200-person team to deliver best-in-class customer outcomes against demanding service-level agreements. A conviction about the leadership my continent needs then drew me into education and impact.",
   },
   {
     period: "Into the Executive Tier",
     title: "Operating Where the Stakes Were Absolute",
-    body: "As Country Manager, Operations & Strategy, I led a national operation end to end — its people, its performance, its outcomes — in an environment where the work interfaced directly with government immigration authorities, including the UK's UKVI and Australia's Department of Immigration and Border Protection, where the compliance bar is absolute. I performed strongly enough to be leaned on well beyond my own market — supporting other countries and being seconded to help restructure another national operation.",
+    body: "As Country Manager, Operations & Strategy, I led a national operation end to end — its people, its performance, its outcomes — in an environment where the stakes were anything but ordinary: the work interfaced directly with government immigration authorities, including the UK's UKVI and Australia's Department of Immigration and Border Protection, where the compliance bar is absolute and senior government stakeholders relied on the operation to deliver without fail. I performed strongly enough in that seat to be leaned on well beyond my own market — supporting other countries and being seconded to help restructure another national operation. From there I stepped up to Director of Enterprise Transformation & Strategic Operations, working directly with the COO and leading across two countries — Mauritius and Rwanda — where the canvas widened from one market to the whole enterprise: leading transformation, designing operating and performance architecture, and turning strategy into structures that could actually hold across the organisation.",
   },
   {
     period: "The Executive Seat",
     title: "Deputy COO, Multi-Country Operation",
-    body: "Deputy COO of a multi-country operation spanning Rwanda, Kenya, Uganda, and Tanzania, with managing directors across those countries reporting to me. I owned strategy and performance outcomes across the region, coached and held to account the senior leaders running each market, and built the operating rhythms, leadership retreats, and excellence standards an organisation needs to scale a high-performance culture. I led the hardest kind of change: closing down an operation in one country and standing up a new one in another. That is where the conviction beneath my whole practice finally proved itself: execution fails when architecture is missing — and most of what looks like a people problem or a strategy problem is an architecture problem in disguise.",
+    body: "Deputy COO of a multi-country operation spanning Rwanda, Kenya, Uganda, and Tanzania, with managing directors across those countries reporting to me. I owned strategy and performance outcomes across the region, coached and held to account the managing directors and senior leaders running each market, and built the operating rhythms, leadership retreats, and excellence standards an organisation needs to scale a high-performance culture. I made the strategic hiring calls and connected front-line teams to the executive table. And I led the hardest kind of change there is: I closed down an operation in one country and stood up a new one in another, did the on-the-ground reconnaissance for an expansion into a fifth market that we ultimately, and rightly, chose not to launch, and built the cultural and structural foundations each market needed to succeed — all while sparring directly with the COO and CEO as a thinking partner at the top of the house. That is where the conviction beneath my whole practice finally proved itself: execution fails when architecture is missing — and most of what looks like a people problem or a strategy problem is an architecture problem in disguise. I didn't learn that in a seminar. I learned it closing operations that couldn't hold, building ones that could, and sitting with leaders carrying weight they'd never been equipped to carry. Having climbed through every tier to get there, I don't advise at that level from theory — I recognise terrain I've already crossed.",
   },
   {
     period: "The Integration",
     title: "Where Structure Meets the Human",
-    body: "The coaching came first, not last. I was certified in brain-based coaching through the NeuroLeadership Institute before I stepped into the Deputy COO seat — which means when I coached and held managing directors to account, I was working from a trained discipline, not improvising. So the structural and the human were braided from the start. COO-level training through Operations Nation, organisational development training, and active membership of both the Organization Development Network and the International Coaching Federation followed. The Kayode Kolade Consulting is where both disciplines come together: decision-grade clarity for professionals, architecture for founders, and operating systems for organisations.",
+    body: "The coaching came first, not last. I was certified in brain-based coaching through the NeuroLeadership Institute before I stepped into the Deputy COO seat — which means when I coached and held managing directors to account, I was working from a trained discipline, not improvising. So the structural and the human were braided from the start. What I've done since is deliberately formalise the structure to match the practice: COO-level training through Operations Nation, organisational development training, and active membership of both the Organization Development Network and the International Coaching Federation. Because people, systems, and processes were never separate problems. They are one system — and most advisors are trained to see only one of the three.",
+  },
+  {
+    period: "The Practice Today",
+    title: "Founder-Led. Deliberately.",
+    body: "The Kayode Kolade Consulting is where both disciplines come together: decision-grade clarity for professionals, architecture for founders, and operating systems for organisations — the same work I once did from inside the executive seat, now brought to yours. The practice is live and selective: I currently advise professionals, founders, and organisations who want the structure beneath their ambition to actually hold. It's also deliberately founder-led. When you work with me, you get me — direct, undivided engagement on every assignment.",
   },
 ];
 
@@ -80,18 +90,17 @@ const principles = [
   },
 ];
 
-const testimonials = [
-  {
-    quote: "You showed me how to reflect growth and career progression in spite of having the same job title. Within about four months of applying what you shared, I got two job offers — and finally left after several years of applying here and there. Recruiters still reach out to me.",
-    author: "Victoria Ikuemonisan",
-  },
-  {
-    quote: "You helped me contextualise situations, develop a comprehensive pros and cons — and even did it with me. These interactions gave me better perspective and helped me make the best decisions.",
-    author: "Samson Richard",
-  },
+const FALLBACK_TESTIMONIALS = [
+  { name: "Victoria Ikuemonisan", quote: "You showed me how to reflect growth and career progression in spite of having the same job title. Within about four months of applying what you shared, I got two job offers — and finally left after several years of applying here and there. Recruiters still reach out to me." },
+  { name: "Samson Richard",       quote: "You helped me contextualise situations, develop a comprehensive pros and cons — and even did it with me. These interactions gave me better perspective and helped me make the best decisions." },
 ];
 
-export default function MyStory() {
+export default async function MyStory() {
+  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "my-story" }).catch(() => []);
+  const testimonials = raw.length
+    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
+    : FALLBACK_TESTIMONIALS;
+
   return (
     <>
       <PageHero
@@ -242,17 +251,7 @@ export default function MyStory() {
       <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-10 md:mb-12">In Their Words</span>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-[2px] bg-surface-2">
-            {testimonials.map((t) => (
-              <div key={t.author} className="bg-surface" style={{ padding: "48px 40px" }}>
-                <span className="gold-rule" style={{ marginBottom: "32px" }} />
-                <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9, marginBottom: "28px" }}>
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <span className="eyebrow">{t.author}</span>
-              </div>
-            ))}
-          </div>
+          <TestimonialStrip items={testimonials} />
         </div>
       </section>
 
@@ -260,8 +259,14 @@ export default function MyStory() {
       <section className="bg-bg border-t border-surface-2 text-center s-pad-md">
         <div className="container" style={{ maxWidth: "640px", margin: "0 auto" }}>
           <span className="eyebrow block mb-6">A Personal Note</span>
-          <p className="text-muted font-light" style={{ fontSize: "1rem", lineHeight: 1.9 }}>
-            Beyond the operating rooms and the frameworks, there's a conviction that drives all of it: the belief that genius sits inside every person, team, and organisation, and that my work is to mine it and help it reach its full potential. It's the headwater everything else flows from, including this practice.
+          <p className="text-muted font-light mb-6" style={{ fontSize: "1rem", lineHeight: 1.9 }}>
+            Beyond the operating rooms and the frameworks, there's a conviction that drives all of it — one I call <em style={{ color: "var(--gold)", fontStyle: "normal" }}>GeniusMined</em>: the belief that genius sits inside every person, team, and organisation, and that my work is to mine it and help it reach its full potential. It's the headwater everything else flows from, including this practice.
+          </p>
+          <p className="text-dim font-light" style={{ fontSize: "0.88rem", lineHeight: 1.85 }}>
+            If you want to know the person behind the work, that story lives{" "}
+            <a href="/the-person" className="hover-gold" style={{ borderBottom: "1px solid var(--gold)", paddingBottom: "1px" }}>
+              here →
+            </a>
           </p>
         </div>
       </section>

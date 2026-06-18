@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanityClient } from "@/sanity/client";
-import { testimonialsQuery } from "@/sanity/queries";
+import { faqsQuery } from "@/sanity/queries";
 
 export async function GET() {
-  const items = await sanityClient.fetch(testimonialsQuery);
+  const items = await sanityClient.fetch(faqsQuery);
   return NextResponse.json(items);
 }
 
 export async function POST(req: NextRequest) {
   const data = await req.json();
   const doc = {
-    _type: "testimonial",
-    quote: data.quote,
-    clientName: data.clientName,
-    clientContext: data.clientContext,
+    _type: "faq",
+    question: data.question,
+    answer: data.answer,
     order: data.order ? Number(data.order) : undefined,
-    pages: Array.isArray(data.pages) ? data.pages : [],
   };
   const created = await sanityClient.create(doc);
   return NextResponse.json(created, { status: 201 });

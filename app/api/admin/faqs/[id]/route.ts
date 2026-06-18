@@ -5,11 +5,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   const data = await req.json();
   const updated = await sanityClient.patch(id).set({
-    quote: data.quote,
-    clientName: data.clientName,
-    clientContext: data.clientContext,
+    question: data.question,
+    answer: data.answer,
     order: data.order ? Number(data.order) : undefined,
-    pages: Array.isArray(data.pages) ? data.pages : [],
   }).commit();
   return NextResponse.json(updated);
 }

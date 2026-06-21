@@ -18,17 +18,21 @@ export default function NewsletterForm({ variant = "full" }: Props) {
     setStatus("loading");
 
     try {
-      // ── Replace this block with your newsletter provider API call ──
-      // e.g. Mailchimp, ConvertKit, Brevo, Substack, etc.
-      await new Promise((res) => setTimeout(res, 900)); // placeholder delay
-      // ──────────────────────────────────────────────────────────────
-
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Request failed");
+      }
       setStatus("success");
       setMessage("You're in. Expect notes worth reading.");
       setEmail("");
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
+      setMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     }
   };
 

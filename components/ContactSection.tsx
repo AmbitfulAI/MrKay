@@ -15,11 +15,33 @@ export default function ContactSection({
 }: ContactSectionProps) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", organisation: "", role: "", situation: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => { e.preventDefault(); setSubmitted(true); };
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Something went wrong. Please try again.");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <section className={`${dark ? "bg-bg" : "bg-surface"} s-pad`}>
@@ -96,7 +118,12 @@ export default function ContactSection({
                   <label className="form-label" htmlFor="message">How can we help?</label>
                   <textarea id="message" name="message" className="form-input" placeholder="Briefly describe your situation..." value={form.message} onChange={handleChange} required />
                 </div>
-                <button type="submit" className="btn-solid self-start">Send It Over</button>
+                {error && (
+                  <p style={{ fontSize: "0.82rem", color: "var(--gold)", letterSpacing: "0.04em" }}>{error}</p>
+                )}
+                <button type="submit" className="btn-solid self-start" disabled={sending}>
+                  {sending ? "Sending…" : "Send It Over"}
+                </button>
               </form>
             )}
           </div>

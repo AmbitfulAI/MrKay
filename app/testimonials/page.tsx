@@ -1,8 +1,9 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { testimonialsQuery, successStoriesQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
+import { SuccessStory } from "@/lib/models/SuccessStory";
 
 export const revalidate = 60;
 
@@ -87,8 +88,8 @@ interface SanityStory {
 
 export default async function Testimonials() {
   const [sanityQuotes, sanityStories] = await Promise.all([
-    sanityFetch<SanityQuote>(testimonialsQuery),
-    sanityFetch<SanityStory>(successStoriesQuery),
+    (async () => { await connectDB(); return Testimonial.find().sort({ order: 1 }).lean(); })(),
+    SuccessStory.find().sort({ order: 1 }).lean(),
   ]);
 
   const activeQuotes = sanityQuotes.length > 0

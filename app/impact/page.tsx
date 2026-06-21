@@ -2,9 +2,8 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import Image from "next/image";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { impactOrgsQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import { connectDB } from "@/lib/db";
+import { ImpactOrg } from "@/lib/models/ImpactOrg";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -80,8 +79,8 @@ interface SanityOrg {
   description?: string;
   url?: string;
   active?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  image?: any;
+  imageUrl?: string;
+  alt?: string;
 }
 
 type OrgItem = {
@@ -98,7 +97,8 @@ type OrgItem = {
 };
 
 export default async function Impact() {
-  const sanityOrgs = await sanityFetch<SanityOrg>(impactOrgsQuery);
+  await connectDB();
+  const sanityOrgs = await ImpactOrg.find().sort({ order: 1 }).lean<SanityOrg[]>();
 
   const activeOrgs: OrgItem[] = sanityOrgs.length > 0
     ? sanityOrgs.map((org) => ({
@@ -109,8 +109,8 @@ export default async function Impact() {
         description: org.description ?? "",
         href: org.url ?? "#",
         active: org.active ?? true,
-        image: org.image ? urlFor(org.image).width(800).url() : execImg,
-        imageAlt: org.image?.alt ?? `TheKayodeKolade at ${org.name}`,
+        image: org.imageUrl || execImg,
+        imageAlt: org.alt ?? `TheKayodeKolade at ${org.name}`,
       }))
     : organisations;
 

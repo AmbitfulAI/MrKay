@@ -2,8 +2,8 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsForPageQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 
 export const revalidate = 60;
 
@@ -43,7 +43,8 @@ const deliverables = [
 ];
 
 export default async function CareerClarity() {
-  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "career-clarity" }).catch(() => []);
+  await connectDB();
+  const raw = await Testimonial.find({ pages: "career-clarity" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
   const testimonials = raw.length
     ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
     : FALLBACK_TESTIMONIALS;

@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { HeroSlide } from "@/lib/models/HeroSlide";
 import { HeroSlideForm } from "../HeroSlideForm";
 
 export default async function EditHeroSlide({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const item = (raw ?? null) as {
-    _id: string; eyebrow: string; line1: string; line2: string; subtitle: string;
-    image?: { asset?: { _ref?: string } }; imagePos?: string;
+  await connectDB();
+  const item = await HeroSlide.findById(id).lean<{
+    eyebrow: string; line1: string; line2: string; subtitle: string;
+    imageUrl?: string; imagePos?: string;
     primaryLabel?: string; primaryHref?: string; primaryCalendly?: boolean;
     secondaryLabel?: string; secondaryHref?: string; secondaryCalendly?: boolean;
     order?: number;
-  } | null;
+  }>();
   if (!item) notFound();
 
   return (
@@ -24,19 +25,19 @@ export default async function EditHeroSlide({ params }: { params: Promise<{ id: 
       <HeroSlideForm
         id={id}
         initialData={{
-          eyebrow:          item.eyebrow,
-          line1:            item.line1,
-          line2:            item.line2,
-          subtitle:         item.subtitle,
-          imagePos:         item.imagePos ?? "center top",
-          assetId:          item.image?.asset?._ref ?? "",
-          primaryLabel:     item.primaryLabel ?? "",
-          primaryHref:      item.primaryHref ?? "",
-          primaryCalendly:  item.primaryCalendly ? "true" : "false",
-          secondaryLabel:   item.secondaryLabel ?? "",
-          secondaryHref:    item.secondaryHref ?? "",
+          eyebrow:           item.eyebrow,
+          line1:             item.line1,
+          line2:             item.line2,
+          subtitle:          item.subtitle,
+          imagePos:          item.imagePos ?? "center top",
+          imageUrl:          item.imageUrl ?? "",
+          primaryLabel:      item.primaryLabel ?? "",
+          primaryHref:       item.primaryHref ?? "",
+          primaryCalendly:   item.primaryCalendly ? "true" : "false",
+          secondaryLabel:    item.secondaryLabel ?? "",
+          secondaryHref:     item.secondaryHref ?? "",
           secondaryCalendly: item.secondaryCalendly ? "true" : "false",
-          order:            item.order?.toString() ?? "",
+          order:             item.order?.toString() ?? "",
         }}
       />
     </div>

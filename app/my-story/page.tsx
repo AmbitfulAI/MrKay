@@ -6,8 +6,8 @@ import TestimonialStrip from "@/components/TestimonialStrip";
 import headshot from "@/assets/KK Headshot_BW.jpg";
 import upperbody from "@/assets/KK_Upperbody_BW.jpg";
 import facecardImg from "@/assets/KK_Facecard_BW.jpg";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsForPageQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 
 export const revalidate = 60;
 
@@ -96,7 +96,8 @@ const FALLBACK_TESTIMONIALS = [
 ];
 
 export default async function MyStory() {
-  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "my-story" }).catch(() => []);
+  await connectDB();
+  const raw = await Testimonial.find({ pages: "my-story" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
   const testimonials = raw.length
     ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
     : FALLBACK_TESTIMONIALS;

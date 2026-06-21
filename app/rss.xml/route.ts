@@ -1,10 +1,10 @@
-import { sanityClient } from "@/sanity/client";
-import { notesQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Note } from "@/lib/models/Note";
 
 export const revalidate = 3600;
 
-interface Note {
-  _id: string;
+interface NoteDoc {
+  _id: unknown;
   title: string;
   slug: string;
   category: string;
@@ -23,7 +23,8 @@ function escapeXml(str: string) {
 
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thekayodekolade.com";
-  const notes: Note[] = await sanityClient.fetch(notesQuery).catch(() => []);
+  await connectDB();
+  const notes = await Note.find().sort({ createdAt: -1 }).lean<NoteDoc[]>();
 
   const items = notes
     .map((note) => {

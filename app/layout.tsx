@@ -5,8 +5,8 @@ import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
-import { sanityClient } from "@/sanity/client";
-import { siteConfigQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { SiteConfig } from "@/lib/models/SiteConfig";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -34,7 +34,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteConfig = await sanityClient.fetch(siteConfigQuery).catch(() => null);
+  await connectDB();
+  const siteConfig = await SiteConfig.findById("siteConfig").lean<{ calendlyUrl?: string; contactEmail?: string; footerTagline?: string; footerBlurb?: string; linkedInUrl?: string; instagramUrl?: string; statsBar?: { line: string; descriptor: string }[] }>().catch(() => null);
 
   return (
     <html

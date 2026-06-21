@@ -4,8 +4,10 @@ import CalendlyButton from "@/components/CalendlyButton";
 import HeroSlider from "@/components/HeroSlider";
 import TestimonialStrip from "@/components/TestimonialStrip";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
-import { sanityClient } from "@/sanity/client";
-import { heroSlidesQuery, siteConfigQuery, testimonialsForPageQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { HeroSlide } from "@/lib/models/HeroSlide";
+import { SiteConfig } from "@/lib/models/SiteConfig";
+import { Testimonial } from "@/lib/models/Testimonial";
 
 export const revalidate = 60;
 
@@ -41,9 +43,9 @@ const lanes = [
 
 export default async function Home() {
   const [heroSlides, siteConfig, homeTestimonials] = await Promise.all([
-    sanityClient.fetch(heroSlidesQuery).catch(() => []),
-    sanityClient.fetch(siteConfigQuery).catch(() => null),
-    sanityClient.fetch(testimonialsForPageQuery, { page: "home" }).catch(() => []),
+    (async () => { await connectDB(); return HeroSlide.find().sort({ order: 1 }).lean(); })(),
+    SiteConfig.findById("siteConfig").lean(),
+    Testimonial.find({ pages: "home" }).sort({ order: 1 }).lean(),
   ]);
 
   const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : [

@@ -1,20 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sanityClient } from "@/sanity/client";
-import { faqsQuery } from "@/sanity/queries";
+import { revalidatePath } from "next/cache";
+import { connectDB } from "@/lib/db";
+import { Faq } from "@/lib/models/Faq";
 
 export async function GET() {
-  const items = await sanityClient.fetch(faqsQuery);
+  await connectDB();
+  const items = await Faq.find().sort({ order: 1 }).lean();
   return NextResponse.json(items);
 }
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const data = await req.json();
-  const doc = {
-    _type: "faq",
+  const faq = await Faq.create({
     question: data.question,
-    answer: data.answer,
-    order: data.order ? Number(data.order) : undefined,
-  };
-  const created = await sanityClient.create(doc);
-  return NextResponse.json(created, { status: 201 });
+    answer:   data.answer,
+    order:    data.order ? Number(data.order) : 99,
+  });
+  revalidatePath("/contact");
+  return NextResponse.json(faq.toJSON(), { status: 201 });
 }

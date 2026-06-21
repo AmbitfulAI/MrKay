@@ -11,7 +11,7 @@ interface FormData {
   secondaryLabel: string; secondaryHref: string; secondaryCalendly: string;
   order: string;
 }
-interface Props { initialData?: Partial<FormData> & { assetId?: string }; id?: string; }
+interface Props { initialData?: Partial<FormData> & { imageUrl?: string }; id?: string; }
 
 const input: React.CSSProperties = { width: "100%", background: "var(--surface)", border: "1px solid var(--surface-2)", color: "var(--text)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" };
 const labelStyle: React.CSSProperties = { display: "block", fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", marginBottom: "8px" };
@@ -28,7 +28,7 @@ export function HeroSlideForm({ initialData, id }: Props) {
     order: "",
     ...initialData,
   });
-  const [assetId, setAssetId] = useState(initialData?.assetId ?? "");
+  const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,12 +39,12 @@ export function HeroSlideForm({ initialData, id }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isEdit && !assetId) { setError("Please upload a background image."); return; }
+    if (!isEdit && !imageUrl) { setError("Please upload a background image."); return; }
     setSaving(true); setError("");
     const res = await fetch(isEdit ? `/api/admin/hero-slides/${id}` : "/api/admin/hero-slides", {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, assetId }),
+      body: JSON.stringify({ ...form, imageUrl }),
     });
     if (res.ok) { router.push("/admin/hero-slides"); router.refresh(); }
     else { setError("Something went wrong."); setSaving(false); }
@@ -54,7 +54,6 @@ export function HeroSlideForm({ initialData, id }: Props) {
     <form onSubmit={handleSubmit} style={{ maxWidth: "720px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
-        {/* Content */}
         <p style={sectionHead}>Slide Content</p>
         <div><label style={labelStyle}>Eyebrow Text *</label><input value={form.eyebrow} onChange={set("eyebrow")} required placeholder="Executive Operating System Architect · Fractional COO · Coach" style={input} /></div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
@@ -63,12 +62,10 @@ export function HeroSlideForm({ initialData, id }: Props) {
         </div>
         <div><label style={labelStyle}>Subtitle Paragraph *</label><textarea value={form.subtitle} onChange={set("subtitle")} required rows={4} placeholder="You're at the kind of inflection point…" style={{ ...input, resize: "vertical", lineHeight: 1.7 }} /></div>
 
-        {/* Image */}
         <p style={sectionHead}>Background Image</p>
-        <ImageUpload value={assetId} onChange={setAssetId} label={isEdit ? "Background Image (replace to change)" : "Background Image *"} />
+        <ImageUpload value={imageUrl} onChange={setImageUrl} label={isEdit ? "Background Image (replace to change)" : "Background Image *"} />
         <div style={{ maxWidth: "260px" }}><label style={labelStyle}>Image Position (CSS object-position)</label><input value={form.imagePos} onChange={set("imagePos")} placeholder="center top" style={input} /></div>
 
-        {/* Primary CTA */}
         <p style={sectionHead}>Primary CTA</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
           <div><label style={labelStyle}>Label *</label><input value={form.primaryLabel} onChange={set("primaryLabel")} required placeholder="Find Your Path" style={input} /></div>
@@ -81,7 +78,6 @@ export function HeroSlideForm({ initialData, id }: Props) {
           </select>
         </div>
 
-        {/* Secondary CTA */}
         <p style={sectionHead}>Secondary CTA</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
           <div><label style={labelStyle}>Label</label><input value={form.secondaryLabel} onChange={set("secondaryLabel")} placeholder="Meet Kayode" style={input} /></div>

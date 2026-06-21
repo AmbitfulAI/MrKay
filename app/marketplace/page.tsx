@@ -2,8 +2,8 @@ import PageHero from "@/components/PageHero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
 import CalendlyButton from "@/components/CalendlyButton";
 import type { Product } from "@/components/MarketplaceGrid";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { productsQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Product as ProductModel } from "@/lib/models/Product";
 
 export const revalidate = 60;
 
@@ -107,7 +107,8 @@ interface SanityProduct {
 }
 
 export default async function Marketplace() {
-  const sanityProducts = await sanityFetch<SanityProduct>(productsQuery);
+  await connectDB();
+  const sanityProducts = await ProductModel.find().sort({ order: 1 }).lean<SanityProduct[]>();
 
   const activeProducts: Product[] = sanityProducts.length > 0
     ? sanityProducts.map((p) => ({

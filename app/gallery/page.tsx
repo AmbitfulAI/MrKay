@@ -2,9 +2,8 @@ import PageHero from "@/components/PageHero";
 import GalleryGrid from "@/components/GalleryGrid";
 import type { GalleryImage } from "@/components/GalleryGrid";
 import CalendlyButton from "@/components/CalendlyButton";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { galleryQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import { connectDB } from "@/lib/db";
+import { GalleryImage as GalleryImageModel } from "@/lib/models/GalleryImage";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -55,18 +54,19 @@ interface SanityGalleryImage {
   title: string;
   caption?: string;
   category?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  image?: any;
+  imageUrl?: string;
+  alt?: string;
   span?: "wide" | "tall" | "normal";
 }
 
 export default async function Gallery() {
-  const sanityImages = await sanityFetch<SanityGalleryImage>(galleryQuery);
+  await connectDB();
+  const sanityImages = await GalleryImageModel.find().sort({ order: 1 }).lean<SanityGalleryImage[]>();
 
   const activeImages: GalleryImage[] = sanityImages.length > 0
     ? sanityImages.map((img) => ({
-        src: img.image ? urlFor(img.image).width(800).url() : execImg,
-        alt: img.image?.alt ?? img.title,
+        src: img.imageUrl || execImg,
+        alt: img.alt ?? img.title,
         title: img.title,
         caption: img.caption,
         category: img.category ?? "General",

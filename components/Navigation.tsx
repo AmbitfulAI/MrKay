@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/theme";
 
 const myWork = [
   { label: "Career & Executive Clarity",       href: "/career-executive-clarity" },

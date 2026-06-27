@@ -1,25 +1,16 @@
 import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
+import TestimonialStrip from "@/components/TestimonialStrip";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 
 export const revalidate = 60;
 
-const testimonials = [
-  {
-    quote:
-      "I was stuck on what to do next to make this transition. Kayode provided clarity on the steps I needed to take — finding out what my core skills and interests were, and leveraging this to decide on a career path. Our interactions provided both the drive and direction I needed. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.",
-    name: "Ayodeji Akinola",
-  },
-  {
-    quote:
-      "I got direction. I got practical, realistic scenarios that gave clarity. The interaction helped me make the right decision — one I am enjoying today.",
-    name: "Adeniran Kayode",
-  },
-  {
-    quote:
-      "After a decade-long career, I needed guidance on how to validate my interests and shape what to pursue in the next decade. I got the clarity to invest in digital transformation rather than the default path — better positioned for the modern COO role if I get there.",
-    name: "Temitope Awoyemi",
-  },
+const FALLBACK_TESTIMONIALS = [
+  { name: "Ayodeji Akinola",  quote: "I was stuck on what to do next to make this transition. Kayode provided clarity on the steps I needed to take — finding out what my core skills and interests were, and leveraging this to decide on a career path. Our interactions provided both the drive and direction I needed. I transitioned into project management, moved abroad for my master's, and graduated with a distinction." },
+  { name: "Adeniran Kayode",  quote: "I got direction. I got practical, realistic scenarios that gave clarity. The interaction helped me make the right decision — one I am enjoying today." },
+  { name: "Temitope Awoyemi", quote: "After a decade-long career, I needed guidance on how to validate my interests and shape what to pursue in the next decade. I got the clarity to invest in digital transformation rather than the default path — better positioned for the modern COO role if I get there." },
 ];
 
 const steps = [
@@ -51,7 +42,12 @@ const deliverables = [
   "Your 90-Day Objectives and Weekly Operating Rhythm — so clarity becomes movement, not a moment.",
 ];
 
-export default function CareerClarity() {
+export default async function CareerClarity() {
+  await connectDB();
+  const raw = await Testimonial.find({ pages: "career-clarity" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
+  const testimonials = raw.length
+    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
+    : FALLBACK_TESTIMONIALS;
   return (
     <>
       <PageHero
@@ -180,38 +176,7 @@ export default function CareerClarity() {
       <section className="bg-bg border-b border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-12">The Impact in Practice</span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[2px] bg-surface-2">
-            {testimonials.map((t) => (
-              <div key={t.name} className="bg-surface" style={{ padding: "44px 40px" }}>
-                <span
-                  className="display"
-                  style={{
-                    fontSize: "3.5rem",
-                    color: "var(--gold)",
-                    lineHeight: 1,
-                    display: "block",
-                    marginBottom: "20px",
-                    opacity: 0.4,
-                  }}
-                >
-                  &ldquo;
-                </span>
-                <blockquote
-                  className="display text-text"
-                  style={{
-                    fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)",
-                    fontStyle: "italic",
-                    lineHeight: 1.6,
-                    marginBottom: "28px",
-                  }}
-                >
-                  {t.quote}
-                </blockquote>
-                <span className="gold-rule" style={{ marginBottom: "16px" }} />
-                <p className="eyebrow">{t.name}</p>
-              </div>
-            ))}
-          </div>
+          <TestimonialStrip items={testimonials} cols={3} />
         </div>
       </section>
 

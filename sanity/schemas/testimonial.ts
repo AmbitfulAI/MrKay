@@ -9,6 +9,24 @@ export const testimonialSchema = defineType({
     defineField({ name: "clientName",    title: "Client Name",    type: "string", description: "e.g. CEO, Managing Director" }),
     defineField({ name: "clientContext", title: "Client Context", type: "string", description: "e.g. Financial Services, West Africa" }),
     defineField({ name: "order",         title: "Display Order",  type: "number" }),
+    defineField({
+      name: "pages",
+      title: "Show on Pages",
+      type: "array",
+      of: [{ type: "string" }],
+      description: "Which service pages should include this testimonial",
+      options: {
+        list: [
+          { title: "Homepage",                value: "home" },
+          { title: "Career Clarity",          value: "career-clarity" },
+          { title: "Organisational Systems",  value: "organisational-systems" },
+          { title: "My Story",                value: "my-story" },
+          { title: "Founder Architecture",    value: "founder-architecture" },
+          { title: "Workshops & Speaking",    value: "workshops-speaking" },
+          { title: "Testimonials Page",       value: "testimonials" },
+        ],
+      },
+    }),
   ],
   preview: { select: { title: "clientName", subtitle: "clientContext" } },
 });

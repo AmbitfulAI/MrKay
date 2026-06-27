@@ -41,6 +41,8 @@ export default function ContactSection() {
   const [dropdown, setDropdown] = useState(() => laneMap[laneParam] ?? "");
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const mapped = laneMap[laneParam] ?? "";
@@ -53,9 +55,26 @@ export default function ContactSection() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, enquiryType: dropdown }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Something went wrong. Please try again.");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   if (submitted) {
@@ -135,12 +154,12 @@ export default function ContactSection() {
           </optgroup>
 
           <optgroup label="— Mining the Genius (pro bono coaching) —">
-            <option>I'd like to be considered for a Mining the Genius session</option>
-            <option>I'd like to nominate someone for a Mining the Genius session</option>
+            <option>I&apos;d like to be considered for a Mining the Genius session</option>
+            <option>I&apos;d like to nominate someone for a Mining the Genius session</option>
           </optgroup>
 
           <optgroup label="— The Lighthouse (mentorship) —">
-            <option>I'd like to be considered for The Lighthouse</option>
+            <option>I&apos;d like to be considered for The Lighthouse</option>
           </optgroup>
 
           <optgroup label="— Other —">
@@ -163,7 +182,13 @@ export default function ContactSection() {
         />
       </div>
 
-      <button type="submit" className="btn-solid self-start">Send Note</button>
+      {error && (
+        <p style={{ fontSize: "0.82rem", color: "var(--gold)", letterSpacing: "0.04em" }}>{error}</p>
+      )}
+
+      <button type="submit" className="btn-solid self-start" disabled={sending}>
+        {sending ? "Sending…" : "Send Note"}
+      </button>
     </form>
   );
 }

@@ -4,6 +4,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { SiteConfigProvider } from "@/components/SiteConfigProvider";
+import { connectDB } from "@/lib/db";
+import { SiteConfig } from "@/lib/models/SiteConfig";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -26,23 +29,28 @@ export const metadata: Metadata = {
     "Operating advisory for executives, founders, and organisations. Clarity, architecture, and momentum — for the decisions and systems that have to hold.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await connectDB();
+  const siteConfig = await SiteConfig.findById("siteConfig").lean<{ calendlyUrl?: string; contactEmail?: string; footerTagline?: string; footerBlurb?: string; linkedInUrl?: string; instagramUrl?: string; statsBar?: { line: string; descriptor: string }[] }>().catch(() => null);
+
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${jost.variable}`}
+      className={`dark ${cormorant.variable} ${jost.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
       <body>
         <Providers>
-          <Navigation />
-          <main>{children}</main>
-          <Footer />
+          <SiteConfigProvider config={siteConfig}>
+            <Navigation />
+            <main>{children}</main>
+            <Footer />
+          </SiteConfigProvider>
         </Providers>
       </body>
     </html>

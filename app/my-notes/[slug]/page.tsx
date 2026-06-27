@@ -2,9 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getNoteBySlug, getRelatedNotes, notes as staticNotes } from "@/lib/notes";
-import { sanityFetch, sanityFetchOne } from "@/lib/sanity-fetch";
-import { noteBySlugQuery, noteSlugsQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import { connectDB } from "@/lib/db";
+import { Note } from "@/lib/models/Note";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -28,39 +27,27 @@ interface SanityNote {
   category: string;
   date: string;
   excerpt: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  featuredImage?: any;
-  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
+  featuredImage?: string;
+  body: string[];
 }
 
 export async function generateStaticParams() {
-  const fromSanity = await sanityFetch<{ slug: unknown }>(noteSlugsQuery);
+  await connectDB();
+  const fromDB = await Note.find().select("slug").lean<{ slug: string }[]>();
   const fromStatic = staticNotes.map((n) => ({ slug: n.slug }));
-
-  const sanityParams = fromSanity
-    .map((s) => {
-      const raw = s.slug;
-      const slug = typeof raw === "string" ? raw : (raw as { current?: string })?.current;
-      return slug ? { slug } : null;
-    })
-    .filter((x): x is { slug: string } => x !== null);
-
-  const all = [...fromStatic, ...sanityParams];
+  const all = [...fromStatic, ...fromDB];
   return [...new Map(all.map((s) => [s.slug, s])).values()];
 }
 
 export default async function NotePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const sanityNote = await sanityFetchOne<SanityNote>(noteBySlugQuery, { slug });
+  await connectDB();
+  const sanityNote = await Note.findOne({ slug }).lean<SanityNote>();
 
   if (sanityNote) {
-    const body = (sanityNote.blocks ?? [])
-      .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
-      .filter(Boolean);
-    const heroImageUrl = sanityNote.featuredImage
-      ? urlFor(sanityNote.featuredImage).width(1400).url()
-      : null;
+    const body = sanityNote.body ?? [];
+    const heroImageUrl = sanityNote.featuredImage || null;
     const related = getRelatedNotes(slug);
 
     return (

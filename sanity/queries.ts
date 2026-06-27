@@ -1,5 +1,51 @@
 import { groq } from "next-sanity";
 
+// ── Site Config (singleton) ────────────────────────────────────────────
+export const siteConfigQuery = groq`*[_type == "siteConfig"][0] {
+  calendlyUrl,
+  contactEmail,
+  footerTagline,
+  footerBlurb,
+  linkedInUrl,
+  instagramUrl,
+  statsBar[] { line, descriptor }
+}`;
+
+// ── Hero Slides ────────────────────────────────────────────────────────
+export const heroSlidesQuery = groq`*[_type == "heroSlide"] | order(order asc) {
+  _id,
+  eyebrow,
+  line1,
+  line2,
+  subtitle,
+  "imageUrl": image.asset->url,
+  imagePos,
+  primaryLabel,
+  primaryHref,
+  primaryCalendly,
+  secondaryLabel,
+  secondaryHref,
+  secondaryCalendly,
+  order
+}`;
+
+// ── FAQs ───────────────────────────────────────────────────────────────
+export const faqsQuery = groq`*[_type == "faq"] | order(order asc) {
+  _id,
+  question,
+  answer,
+  order
+}`;
+
+// ── Testimonials by page ───────────────────────────────────────────────
+export const testimonialsForPageQuery = groq`*[_type == "testimonial" && $page in pages] | order(order asc) {
+  _id,
+  quote,
+  clientName,
+  clientContext,
+  order
+}`;
+
 // ── Notes ──────────────────────────────────────────────────────────────
 export const notesQuery = groq`*[_type == "note"] | order(date desc) {
   _id,

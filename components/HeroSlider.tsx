@@ -5,90 +5,100 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import CalendlyButton from "@/components/CalendlyButton";
 
-import execBg       from "@/assets/KK_Exec_bg.jpg";
+import execBg from "@/assets/KK_Exec_bg.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
-import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
+import facecardImg from "@/assets/KK_Facecard_BW.jpg";
 
 interface Slide {
-  eyebrow:  string;
-  line1:    string;
-  line2:    string;
+  eyebrow: string;
+  line1: string;
+  line2: string;
   subtitle: string;
-  image:    StaticImageData;
+  image: string | StaticImageData;
   imagePos: string;
-  primaryLabel:   string;
-  primaryHref:    string;
+  primary: { label: string; href: string; calendly: boolean };
+  secondary: { label: string; href: string; calendly: boolean };
+}
+
+export interface SanitySlide {
+  _id: string;
+  eyebrow: string;
+  line1: string;
+  line2: string;
+  subtitle: string;
+  imageUrl: string;
+  imagePos: string;
+  primaryLabel: string;
+  primaryHref: string;
   primaryCalendly: boolean;
-  secondaryLabel:  string;
-  secondaryHref:   string;
+  secondaryLabel: string;
+  secondaryHref: string;
   secondaryCalendly: boolean;
 }
 
-const slides: Slide[] = [
+function toSlide(s: SanitySlide): Slide {
+  return {
+    eyebrow: s.eyebrow,
+    line1: s.line1,
+    line2: s.line2,
+    subtitle: s.subtitle,
+    image: s.imageUrl,
+    imagePos: s.imagePos || "center top",
+    primary: { label: s.primaryLabel, href: s.primaryHref || "", calendly: s.primaryCalendly },
+    secondary: { label: s.secondaryLabel, href: s.secondaryHref || "", calendly: s.secondaryCalendly },
+  };
+}
+
+const FALLBACK_SLIDES: Slide[] = [
   {
-    eyebrow:  "Strategic Advisor · Architect · Coach",
-    line1:    "Clarity → Architecture →",
-    line2:    "Momentum.",
+    eyebrow: "Strategic Advisor · Architect · Coach",
+    line1: "Clarity → Architecture →",
+    line2: "Momentum.",
     subtitle: "Operating advisory for executives, founders, and organisations. For the decisions and systems that have to hold.",
-    image:    execBg,
+    image: execBg,
     imagePos: "center 20%",
-    primaryLabel:   "Explore My Work",
-    primaryHref:    "/career-executive-clarity",
-    primaryCalendly: false,
-    secondaryLabel: "Meet Kayode",
-    secondaryHref:  "/meet-kayode",
-    secondaryCalendly: false,
+    primary: { label: "Explore My Work", href: "/career-executive-clarity", calendly: false },
+    secondary: { label: "Meet Kayode", href: "/meet-kayode", calendly: false },
   },
   {
-    eyebrow:  "Organisational Systems & Execution",
-    line1:    "Growing Faster Than",
-    line2:    "Your Systems Can Carry.",
+    eyebrow: "Organisational Systems & Execution",
+    line1: "Growing Faster Than",
+    line2: "Your Systems Can Carry.",
     subtitle: "Your organisation isn't underperforming because people don't care. It's under-designed for the outcomes you want.",
-    image:    upperbodyImg,
+    image: upperbodyImg,
     imagePos: "center top",
-    primaryLabel:   "Explore the Lane",
-    primaryHref:    "/organisational-systems-execution",
-    primaryCalendly: false,
-    secondaryLabel: "Let's Talk",
-    secondaryHref:  "",
-    secondaryCalendly: true,
+    primary: { label: "Explore the Lane", href: "/organisational-systems-execution", calendly: false },
+    secondary: { label: "Let's Talk", href: "", calendly: true },
   },
   {
-    eyebrow:  "Founder & Business Architecture",
-    line1:    "Building Hard.",
-    line2:    "So Why Isn't It Compounding?",
+    eyebrow: "Founder & Business Architecture",
+    line1: "Building Hard.",
+    line2: "So Why Isn't It Compounding?",
     subtitle: "You don't have an effort problem. You have an alignment problem. The architecture is what's missing.",
-    image:    facecardImg,
+    image: facecardImg,
     imagePos: "center top",
-    primaryLabel:   "Explore the Lane",
-    primaryHref:    "/founder-business-architecture",
-    primaryCalendly: false,
-    secondaryLabel: "Let's Talk",
-    secondaryHref:  "",
-    secondaryCalendly: true,
+    primary: { label: "Explore the Lane", href: "/founder-business-architecture", calendly: false },
+    secondary: { label: "Let's Talk", href: "", calendly: true },
   },
   {
-    eyebrow:  "Career & Executive Clarity",
-    line1:    "You Know You Have More in You.",
-    line2:    "You Just Can't Name the Direction Yet.",
+    eyebrow: "Career & Executive Clarity",
+    line1: "You Know You Have More in You.",
+    line2: "You Just Can't Name the Direction Yet.",
     subtitle: "You've performed. You've grown. But the next move isn't obvious anymore — and another job won't fix that.",
-    image:    execBg,
+    image: execBg,
     imagePos: "center 35%",
-    primaryLabel:   "Name Your Direction",
-    primaryHref:    "/career-executive-clarity",
-    primaryCalendly: false,
-    secondaryLabel: "Let's Talk",
-    secondaryHref:  "",
-    secondaryCalendly: true,
+    primary: { label: "Name Your Direction", href: "/career-executive-clarity", calendly: false },
+    secondary: { label: "Let's Talk", href: "", calendly: true },
   },
 ];
 
-const INTERVAL   = 5500;
+const INTERVAL = 5500;
 const CONTENT_MS = 400;
-const IMAGE_MS   = 800;
+const IMAGE_MS = 800;
 
-export default function HeroSlider() {
-  const [current,        setCurrent]        = useState(0);
+export default function HeroSlider({ slides: externalSlides }: { slides?: SanitySlide[] }) {
+  const slides = externalSlides?.length ? externalSlides.map(toSlide) : FALLBACK_SLIDES;
+  const [current, setCurrent] = useState(0);
   const [contentVisible, setContentVisible] = useState(true);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -107,7 +117,9 @@ export default function HeroSlider() {
 
   useEffect(() => {
     resetTimer();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -139,11 +151,11 @@ export default function HeroSlider() {
           priority={i === 0}
           sizes="100vw"
           style={{
-            objectFit:      "cover",
+            objectFit: "cover",
             objectPosition: slide.imagePos,
-            opacity:        i === current ? 0.18 : 0,
-            transition:     `opacity ${IMAGE_MS}ms ease`,
-            pointerEvents:  "none",
+            opacity: i === current ? 0.18 : 0,
+            transition: `opacity ${IMAGE_MS}ms ease`,
+            pointerEvents: "none",
           }}
         />
       ))}
@@ -164,18 +176,17 @@ export default function HeroSlider() {
         onMouseLeave={resetTimer}
       >
         <div style={{
-          opacity:        contentVisible ? 1 : 0,
-          transform:      contentVisible ? "translateY(0)" : "translateY(10px)",
-          transition:     `opacity ${CONTENT_MS}ms ease, transform ${CONTENT_MS}ms ease`,
-          minHeight:      "clamp(300px, 48vh, 560px)",
-          display:        "flex",
-          flexDirection:  "column",
+          opacity: contentVisible ? 1 : 0,
+          transform: contentVisible ? "translateY(0)" : "translateY(10px)",
+          transition: `opacity ${CONTENT_MS}ms ease, transform ${CONTENT_MS}ms ease`,
+          minHeight: "clamp(300px, 48vh, 560px)",
+          display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
         }}>
           <span className="eyebrow block mb-4 md:mb-8">{s.eyebrow}</span>
 
           {current === 3 ? (
-            /* Slide 4 — long sentences: line1 at shared size, line2 as smaller gold subtitle */
             <div className="mb-4 md:mb-8 max-w-[900px]">
               <h1
                 className="display text-text"
@@ -191,7 +202,6 @@ export default function HeroSlider() {
               </p>
             </div>
           ) : (
-            /* Slides 1–3 — short fragments: both lines in one h1 at shared line1 size */
             <h1
               className="display text-text max-w-[1000px] mb-4 md:mb-8"
               style={{ fontSize: "clamp(2.2rem, 4.8vw, 4.8rem)", lineHeight: 0.97 }}
@@ -211,13 +221,13 @@ export default function HeroSlider() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            {s.primaryCalendly
-              ? <CalendlyButton className="btn-solid">{s.primaryLabel}</CalendlyButton>
-              : <Link href={s.primaryHref} className="btn-solid">{s.primaryLabel}</Link>
+            {s.primary.calendly
+              ? <CalendlyButton className="btn-solid">{s.primary.label}</CalendlyButton>
+              : <Link href={s.primary.href} className="btn-solid">{s.primary.label}</Link>
             }
-            {s.secondaryCalendly
-              ? <CalendlyButton className="btn-outline">{s.secondaryLabel}</CalendlyButton>
-              : <Link href={s.secondaryHref} className="btn-outline">{s.secondaryLabel}</Link>
+            {s.secondary.calendly
+              ? <CalendlyButton className="btn-outline">{s.secondary.label}</CalendlyButton>
+              : <Link href={s.secondary.href} className="btn-outline">{s.secondary.label}</Link>
             }
           </div>
         </div>

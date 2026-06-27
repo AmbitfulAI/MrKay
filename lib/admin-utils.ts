@@ -1,4 +1,5 @@
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import mongoose from "mongoose";
 
 export function slugify(str: string): string {
   return str
@@ -10,17 +11,27 @@ export function slugify(str: string): string {
 }
 
 export async function generateUniqueSlug(
-  type: string,
+  modelName: string,
   title: string,
   excludeId?: string,
 ): Promise<string> {
+  await connectDB();
   const base = slugify(title);
-  const query = excludeId
-    ? `*[_type == $type && defined(slug.current) && _id != $excludeId].slug.current`
-    : `*[_type == $type && defined(slug.current)].slug.current`;
-  const existing = await sanityClient.fetch<string[]>(query, excludeId ? { type, excludeId } : { type });
-  if (!existing.includes(base)) return base;
+  const model = mongoose.model(modelName);
+  const filter = excludeId
+    ? { slug: { $regex: `^${base}` }, _id: { $ne: excludeId } }
+    : { slug: { $regex: `^${base}` } };
+  const existing = await model.find(filter).select("slug").lean<{ slug: string }[]>();
+  const slugs = existing.map((d) => d.slug);
+  if (!slugs.includes(base)) return base;
   let i = 2;
-  while (existing.includes(`${base}-${i}`)) i++;
+  while (slugs.includes(`${base}-${i}`)) i++;
   return `${base}-${i}`;
+}
+
+export function bodyToArray(text: string): string[] {
+  return text
+    .split(/\n\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 }

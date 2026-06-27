@@ -3,8 +3,9 @@ import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
 import Link from "next/link";
 import { notes as staticNotes, categories as staticCategories, type Note } from "@/lib/notes";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { notesQuery, noteCategoriesQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Note as NoteModel } from "@/lib/models/Note";
+import { NoteCategory } from "@/lib/models/NoteCategory";
 
 export const revalidate = 60;
 
@@ -39,9 +40,10 @@ interface SanityCategory {
 }
 
 export default async function MyNotes() {
+  await connectDB();
   const [sanityNotes, sanityCategories] = await Promise.all([
-    sanityFetch<SanityNote>(notesQuery),
-    sanityFetch<SanityCategory>(noteCategoriesQuery),
+    NoteModel.find().sort({ createdAt: -1 }).lean<SanityNote[]>(),
+    NoteCategory.find().sort({ order: 1 }).lean<SanityCategory[]>(),
   ]);
 
   const notes = sanityNotes.length > 0

@@ -2,8 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { PopupButton } from "react-calendly";
-
-const CALENDLY_URL = "https://calendly.com/thekayodekolade"; // ← replace with your Calendly link
+import { useSiteConfig } from "@/components/SiteConfigProvider";
 
 const subscribe = () => () => {};
 
@@ -14,17 +13,14 @@ interface Props {
 }
 
 export default function CalendlyButton({ children, className, style }: Props) {
-  const mounted = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const { calendlyUrl } = useSiteConfig();
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
 
   if (!mounted) return null;
 
   return (
     <PopupButton
-      url={CALENDLY_URL}
+      url={calendlyUrl}
       rootElement={document.body}
       text={typeof children === "string" ? children : "Book a Consultation"}
       className={className}

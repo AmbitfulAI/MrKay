@@ -1,6 +1,9 @@
 import PageHero from "@/components/PageHero";
 import Link from "next/link";
 import CalendlyButton from "@/components/CalendlyButton";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
+import { SuccessStory } from "@/lib/models/SuccessStory";
 
 export const metadata = {
   title: "Testimonials — TheKayodeKolade",
@@ -77,7 +80,26 @@ const caseStudies = [
   },
 ];
 
-export default function Testimonials() {
+export default async function Testimonials() {
+  const [dbQuotes, dbStories] = await Promise.all([
+    (async () => { await connectDB(); return Testimonial.find().sort({ order: 1 }).lean(); })(),
+    SuccessStory.find().sort({ order: 1 }).lean<Array<{ code: string; title: string; sector: string; client?: string; result?: string; story: string }>>(),
+  ]);
+
+  const activeQuotes = dbQuotes.length > 0
+    ? dbQuotes.map((q: { quote: string; clientName?: string; clientContext?: string }) => ({
+        quote: q.quote, name: q.clientName ?? "", context: q.clientContext ?? "",
+      }))
+    : testimonials;
+
+  const activeStories = dbStories.length > 0
+    ? dbStories.map((s) => ({
+        code: s.code, eyebrow: s.sector, title: s.title,
+        descriptor: s.client ?? "", outcome: s.result ?? "", body: s.story,
+      }))
+    : caseStudies;
+
+
   return (
     <>
       <PageHero
@@ -91,7 +113,7 @@ export default function Testimonials() {
         <div className="container">
           <span className="eyebrow block mb-12">In Their Words</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
-            {testimonials.map((q) => (
+            {activeQuotes.map((q) => (
               <div key={q.name} className="bg-surface" style={{ padding: "48px 44px" }}>
                 <span className="display" style={{ fontSize: "3.5rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "24px", opacity: 0.4 }}>&ldquo;</span>
                 <blockquote
@@ -120,7 +142,7 @@ export default function Testimonials() {
             Three engagements drawn from recent work. Where the client has given permission, the work is named. Where confidentiality requires it, identifying details are altered — but the work itself, and the outcome, is real.
           </p>
           <div className="flex flex-col gap-[2px] bg-surface-2">
-            {caseStudies.map((s) => (
+            {activeStories.map((s) => (
               <article key={s.code} className="bg-bg" style={{ padding: "64px 56px" }}>
                 <div className="flex justify-between items-start flex-wrap gap-4" style={{ marginBottom: "12px" }}>
                   <span className="eyebrow">{s.eyebrow}</span>

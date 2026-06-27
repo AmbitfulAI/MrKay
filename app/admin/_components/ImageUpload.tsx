@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 interface Props {
   value?: string;
-  onChange: (assetId: string) => void;
+  onChange: (imageUrl: string) => void;
   label?: string;
 }
 
@@ -24,8 +24,8 @@ export function ImageUpload({ value, onChange, label = "Image" }: Props) {
 
     const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
     if (res.ok) {
-      const { assetId } = await res.json();
-      onChange(assetId);
+      const { imageUrl } = await res.json();
+      onChange(imageUrl);
     } else {
       setError("Upload failed. Please try again.");
     }

@@ -1,31 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { sanityClient } from '@/sanity/client';
-import { generateUniqueSlug } from '@/lib/admin-utils';
+import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import { NoteCategory } from "@/lib/models/NoteCategory";
+import { generateUniqueSlug } from "@/lib/admin-utils";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  await connectDB();
   const { id } = await params;
   const { title, order } = await req.json();
-
-  const fields: Record<string, unknown> = {};
+  const update: Record<string, unknown> = {};
   if (title?.trim()) {
-    fields.title = title.trim();
-    const slug = await generateUniqueSlug('noteCategory', title, id);
-    fields['slug.current'] = slug;
+    update.title = title.trim();
+    update.slug  = await generateUniqueSlug("NoteCategory", title, id);
   }
-  if (order !== undefined) fields.order = order;
-
-  const updated = await sanityClient.patch(id).set(fields).commit();
-  return NextResponse.json(updated);
+  if (order !== undefined) update.order = order;
+  const cat = await NoteCategory.findByIdAndUpdate(id, update, { new: true });
+  if (!cat) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(cat.toJSON());
 }
 
 export async function DELETE(
   _: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  await connectDB();
   const { id } = await params;
-  await sanityClient.delete(id);
+  await NoteCategory.findByIdAndDelete(id);
   return NextResponse.json({ deleted: true });
 }

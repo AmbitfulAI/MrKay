@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   // Revalidate only the affected pages based on document type
   const pathMap: Record<string, string[]> = {
-    note: ["/my-notes", "/my-notes/[slug]"],
+    note: ["/my-notes", "/my-notes/[slug]", "/rss.xml"],
     testimonial: ["/testimonials"],
     successStory: ["/testimonials"],
     product: ["/marketplace"],

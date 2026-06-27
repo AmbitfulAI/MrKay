@@ -1,21 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsQuery } from "@/sanity/queries";
+import { revalidatePath } from "next/cache";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 
 export async function GET() {
-  const items = await sanityClient.fetch(testimonialsQuery);
+  await connectDB();
+  const items = await Testimonial.find().sort({ order: 1 }).lean();
   return NextResponse.json(items);
 }
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const data = await req.json();
-  const doc = {
-    _type: "testimonial",
-    quote: data.quote,
-    clientName: data.clientName,
+  const t = await Testimonial.create({
+    quote:         data.quote,
+    clientName:    data.clientName,
     clientContext: data.clientContext,
-    order: data.order ? Number(data.order) : undefined,
-  };
-  const created = await sanityClient.create(doc);
-  return NextResponse.json(created, { status: 201 });
+    order:         data.order ? Number(data.order) : 99,
+    pages:         Array.isArray(data.pages) ? data.pages : [],
+  });
+  revalidatePath("/testimonials");
+  return NextResponse.json(t.toJSON(), { status: 201 });
 }

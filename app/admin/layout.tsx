@@ -4,13 +4,18 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
-  { label: "Notes",           href: "/admin/notes",            exact: true },
-  { label: "↳ Categories",   href: "/admin/notes/categories", exact: false, sub: true },
+  { label: "Site Config",     href: "/admin/site-config",      exact: false },
+  { label: "Hero Slides",     href: "/admin/hero-slides",      exact: false },
+  { label: "FAQs",            href: "/admin/faqs",             exact: false },
   { label: "Testimonials",    href: "/admin/testimonials",     exact: false },
   { label: "Success Stories", href: "/admin/success-stories",  exact: false },
   { label: "Marketplace",     href: "/admin/marketplace",      exact: false },
   { label: "Gallery",         href: "/admin/gallery",          exact: false },
   { label: "Impact",          href: "/admin/impact",           exact: false },
+  { label: "Notes",           href: "/admin/notes",            exact: true },
+  { label: "↳ Categories",   href: "/admin/notes/categories", exact: false, sub: true },
+  { label: "Subscribers",    href: "/admin/subscribers",      exact: false },
+  { label: "Contact",        href: "/admin/contact",          exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

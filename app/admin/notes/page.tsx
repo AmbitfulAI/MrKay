@@ -1,25 +1,17 @@
 import Link from "next/link";
-import { sanityClient } from "@/sanity/client";
-import { notesQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Note } from "@/lib/models/Note";
 import { DeleteNoteButton } from "./DeleteNoteButton";
 
-interface SanityNote {
-  _id: string;
-  title: string;
-  slug: string;
-  category: string;
-  date: string;
-  excerpt: string;
-}
-
+interface NoteRow { _id: string; title: string; slug: string; category: string; date: string; }
 export const revalidate = 0;
 
 export default async function AdminNotes() {
-  const notes: SanityNote[] = await sanityClient.fetch(notesQuery);
+  await connectDB();
+  const notes = await Note.find().sort({ createdAt: -1 }).lean<NoteRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
-      {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "40px" }}>
         <div>
           <h1 className="display text-text" style={{ fontSize: "1.8rem" }}>Notes</h1>
@@ -32,13 +24,8 @@ export default async function AdminNotes() {
         </Link>
       </div>
 
-      {/* Table */}
       {notes.length === 0 ? (
-        <div style={{
-          border: "1px dashed var(--surface-2)",
-          padding: "64px",
-          textAlign: "center",
-        }}>
+        <div style={{ border: "1px dashed var(--surface-2)", padding: "64px", textAlign: "center" }}>
           <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>No notes yet.</p>
           <Link href="/admin/notes/new" style={{ color: "var(--gold)", fontSize: "0.82rem", marginTop: "12px", display: "inline-block" }}>
             Create your first note →
@@ -46,55 +33,22 @@ export default async function AdminNotes() {
         </div>
       ) : (
         <div style={{ border: "1px solid var(--surface-2)" }}>
-          {/* Table head */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 140px 120px 100px",
-            padding: "10px 20px",
-            borderBottom: "1px solid var(--surface-2)",
-            background: "var(--surface)",
-          }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 140px 120px 100px", padding: "10px 20px", borderBottom: "1px solid var(--surface-2)", background: "var(--surface)" }}>
             {["Title", "Category", "Date", ""].map((h) => (
-              <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>
-                {h}
-              </span>
+              <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>
             ))}
           </div>
-
-          {/* Rows */}
           {notes.map((note) => (
-            <div
-              key={note._id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 140px 120px 100px",
-                padding: "16px 20px",
-                borderBottom: "1px solid var(--surface-2)",
-                alignItems: "center",
-              }}
-            >
+            <div key={String(note._id)} style={{ display: "grid", gridTemplateColumns: "1fr 140px 120px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <div>
-                <p className="text-text font-light" style={{ fontSize: "0.9rem", marginBottom: "2px" }}>
-                  {note.title}
-                </p>
-                <p className="text-dim" style={{ fontSize: "0.7rem", fontFamily: "var(--font-body)" }}>
-                  /{note.slug}
-                </p>
+                <p className="text-text font-light" style={{ fontSize: "0.9rem", marginBottom: "2px" }}>{note.title}</p>
+                <p className="text-dim" style={{ fontSize: "0.7rem", fontFamily: "var(--font-body)" }}>/{note.slug}</p>
               </div>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                {note.category}
-              </span>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-                {note.date}
-              </span>
+              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category}</span>
+              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.date}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link
-                  href={`/admin/notes/${note._id}`}
-                  style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}
-                >
-                  Edit
-                </Link>
-                <DeleteNoteButton id={note._id} />
+                <Link href={`/admin/notes/${String(note._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteNoteButton id={String(note._id)} />
               </div>
             </div>
           ))}

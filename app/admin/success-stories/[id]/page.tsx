@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { SuccessStory } from "@/lib/models/SuccessStory";
 import { SuccessStoryForm } from "../SuccessStoryForm";
 
 export default async function EditSuccessStory({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const item = (raw ?? null) as { code: string; title: string; sector: string; client: string; result: string; story: string; order?: number } | null;
+  await connectDB();
+  const item = await SuccessStory.findById(id).lean<{ code: string; title: string; sector: string; client?: string; result?: string; story: string; order?: number }>().catch(() => null);
   if (!item) notFound();
 
   return (

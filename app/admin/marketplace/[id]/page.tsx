@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { Product } from "@/lib/models/Product";
 import { ProductForm } from "../ProductForm";
 
 export default async function EditProduct({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const item = (raw ?? null) as { title: string; subtitle: string; type: string; description: string; price: string; priceNote: string; tag: string; selarUrl: string; available: boolean; coverAccent: string; order?: number } | null;
+  await connectDB();
+  const item = await Product.findById(id).lean<{ title: string; subtitle?: string; type: string; description?: string; price?: string; priceNote?: string; tag?: string; selarUrl?: string; available?: boolean; coverAccent?: string; order?: number }>().catch(() => null);
   if (!item) notFound();
 
   return (

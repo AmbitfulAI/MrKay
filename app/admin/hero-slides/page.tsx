@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { sanityClient } from "@/sanity/client";
-import { heroSlidesQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { HeroSlide } from "@/lib/models/HeroSlide";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 
-interface Slide { _id: string; eyebrow: string; line1: string; line2: string; imageUrl?: string; order?: number; }
+interface SlideRow { _id: string; eyebrow: string; line1: string; line2: string; imageUrl?: string; order?: number; }
 export const revalidate = 0;
 
 export default async function AdminHeroSlides() {
-  const items: Slide[] = await sanityClient.fetch(heroSlidesQuery);
+  await connectDB();
+  const items = await HeroSlide.find().sort({ order: 1 }).lean<SlideRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -32,7 +33,7 @@ export default async function AdminHeroSlides() {
             {["#", "Headline", "Eyebrow", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "56px 1fr 200px 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "56px 1fr 200px 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               {item.imageUrl
                 // eslint-disable-next-line @next/next/no-img-element
                 ? <img src={`${item.imageUrl}?w=48&h=48&fit=crop`} alt="" style={{ width: "40px", height: "40px", objectFit: "cover", opacity: 0.7 }} />
@@ -43,8 +44,8 @@ export default async function AdminHeroSlides() {
               <p style={{ fontSize: "0.72rem", color: "var(--dim)", fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.eyebrow}</p>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/hero-slides/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/hero-slides" />
+                <Link href={`/admin/hero-slides/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={String(item._id)} endpoint="/api/admin/hero-slides" />
               </div>
             </div>
           ))}

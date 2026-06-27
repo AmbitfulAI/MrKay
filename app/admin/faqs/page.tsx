@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { sanityClient } from "@/sanity/client";
-import { faqsQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Faq } from "@/lib/models/Faq";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 
-interface Faq { _id: string; question: string; answer: string; order?: number; }
+interface FaqRow { _id: string; question: string; answer: string; order?: number; }
 export const revalidate = 0;
 
 export default async function AdminFaqs() {
-  const items: Faq[] = await sanityClient.fetch(faqsQuery);
+  await connectDB();
+  const items = await Faq.find().sort({ order: 1 }).lean<FaqRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -29,15 +30,15 @@ export default async function AdminFaqs() {
             {["Question", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "1fr 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "1fr 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <div>
                 <p style={{ fontSize: "0.88rem", color: "var(--text)", fontFamily: "var(--font-body)", marginBottom: "4px" }}>{item.question}</p>
                 <p style={{ fontSize: "0.75rem", color: "var(--dim)", fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.answer}</p>
               </div>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/faqs/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/faqs" />
+                <Link href={`/admin/faqs/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={String(item._id)} endpoint="/api/admin/faqs" />
               </div>
             </div>
           ))}

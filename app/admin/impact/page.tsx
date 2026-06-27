@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { sanityClient } from "@/sanity/client";
-import { impactOrgsQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { ImpactOrg } from "@/lib/models/ImpactOrg";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 
-interface ImpactOrg { _id: string; name: string; category: string; role: string; active: boolean; order?: number; }
+interface OrgRow { _id: string; name: string; category: string; role?: string; active?: boolean; order?: number; }
 export const revalidate = 0;
 
 export default async function AdminImpact() {
-  const items: ImpactOrg[] = await sanityClient.fetch(impactOrgsQuery);
+  await connectDB();
+  const items = await ImpactOrg.find().sort({ order: 1 }).lean<OrgRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -29,15 +30,15 @@ export default async function AdminImpact() {
             {["Name", "Category", "Role", "Active", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "1fr 160px 160px 80px 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "1fr 160px 160px 80px 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <p className="text-text font-light" style={{ fontSize: "0.88rem" }}>{item.name}</p>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.category}</span>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.role || "—"}</span>
               <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-body)", color: item.active ? "var(--gold)" : "var(--dim)" }}>{item.active ? "Yes" : "No"}</span>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/impact/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/impact" />
+                <Link href={`/admin/impact/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={String(item._id)} endpoint="/api/admin/impact" />
               </div>
             </div>
           ))}

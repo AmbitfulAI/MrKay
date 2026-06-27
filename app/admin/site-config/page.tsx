@@ -1,5 +1,5 @@
-import { sanityClient } from "@/sanity/client";
-import { siteConfigQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { SiteConfig } from "@/lib/models/SiteConfig";
 import { SiteConfigForm } from "./SiteConfigForm";
 
 export const revalidate = 0;
@@ -20,7 +20,8 @@ const DEFAULTS = {
 };
 
 export default async function AdminSiteConfig() {
-  const raw = await sanityClient.fetch(siteConfigQuery).catch(() => null);
+  await connectDB();
+  const raw = await SiteConfig.findById("siteConfig").lean<typeof DEFAULTS & { statsBar: { line: string; descriptor: string }[] }>().catch(() => null);
   const config = {
     ...DEFAULTS,
     ...raw,

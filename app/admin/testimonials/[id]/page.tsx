@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 import { TestimonialForm } from "../TestimonialForm";
 
 export default async function EditTestimonial({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const item = (raw ?? null) as { _id: string; quote: string; clientName: string; clientContext: string; order?: number; pages?: string[] } | null;
+  await connectDB();
+  const item = await Testimonial.findById(id).lean<{ quote: string; clientName: string; clientContext: string; order?: number; pages?: string[] }>().catch(() => null);
   if (!item) notFound();
 
   return (

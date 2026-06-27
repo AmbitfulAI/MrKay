@@ -11,6 +11,8 @@ declare global {
 
 export async function connectDB() {
   if (global._mongooseConn) return global._mongooseConn;
-  global._mongooseConn = mongoose.connect(MONGODB_URI);
+  global._mongooseConn = mongoose.connect(MONGODB_URI, {
+    connectTimeoutMS: 5000, // 5 second timeout
+  });
   return global._mongooseConn;
 }

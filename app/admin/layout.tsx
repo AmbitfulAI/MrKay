@@ -14,6 +14,8 @@ const navItems = [
   { label: "Impact",          href: "/admin/impact",           exact: false },
   { label: "Notes",           href: "/admin/notes",            exact: true },
   { label: "↳ Categories",   href: "/admin/notes/categories", exact: false, sub: true },
+  { label: "Subscribers",    href: "/admin/subscribers",      exact: false },
+  { label: "Contact",        href: "/admin/contact",          exact: false },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

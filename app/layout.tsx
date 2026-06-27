@@ -40,7 +40,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${jost.variable}`}
+      className={`dark ${cormorant.variable} ${jost.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >

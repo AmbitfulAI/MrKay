@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { connectDB } from "@/lib/db";
+import { ContactSubmission } from "@/lib/models/ContactSubmission";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -9,6 +11,9 @@ export async function POST(req: NextRequest) {
   }
 
   const { name, email, phone, organisation, role, situation, message } = body;
+
+  await connectDB();
+  await ContactSubmission.create({ name, email, phone: phone ?? "", organisation: organisation ?? "", role: role ?? "", situation: situation ?? "", message });
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST ?? "smtp.gmail.com",

@@ -1,107 +1,169 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
-interface ContactSectionProps {
-  heading?: string;
-  subheading?: string;
-  dark?: boolean;
-}
+const laneMap: Record<string, string> = {
+  career:          "A professional or executive navigating a career inflection point",
+  founder:         "A founder building or restructuring a business",
+  org:             "A leader of a scaling organisation",
+  speaking:        "Exploring a retreat, facilitation, or speaking engagement",
+  "mining-waitlist": "I'd like to be considered for a Mining the Genius session",
+  "mining-nominate": "I'd like to nominate someone for a Mining the Genius session",
+  lighthouse:      "I'd like to be considered for The Lighthouse",
+};
 
-export default function ContactSection({
-  heading = "Begin the conversation.",
-  subheading = "All engagements are confidential. Initial consultations are complimentary.",
-  dark = false,
-}: ContactSectionProps) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", organisation: "", role: "", situation: "", message: "" });
+const dynamicPlaceholder: Record<string, string> = {
+  "I'd like to be considered for a Mining the Genius session":
+    "Tell me a little about where you are and what kind of clarity you're hoping for. A few lines is enough.",
+  "I'd like to nominate someone for a Mining the Genius session":
+    "Tell me who you'd like to nominate and, if you're comfortable, a sentence or two about why this session would matter for them.",
+  "I'd like to be considered for The Lighthouse":
+    "Tell me where you are, what you're trying to build, and why you think this kind of relationship would change something for you. I read every one.",
+};
+
+const confirmationMessage: Record<string, string> = {
+  "I'd like to be considered for a Mining the Genius session":
+    "You're on the list. When a paid engagement funds a Mining the Genius session for you, you'll hear from me directly. There's no fixed timeline — but you're held in the queue, and you'll be reached in turn.",
+  "I'd like to nominate someone for a Mining the Genius session":
+    "Thank you for nominating someone. I'll be in touch to coordinate the session once your own engagement is underway, or if you've reached out independently, to discuss next steps.",
+  "I'd like to be considered for The Lighthouse":
+    "Thank you for writing. The Lighthouse is selective by design, and every note gets read personally. You'll hear from me within two business days.",
+};
+
+const defaultPlaceholder = "A few lines about your situation is enough. We'll go deeper in the conversation.";
+const defaultConfirmation = "Thank you. I read every note that comes through. You'll hear from me within two business days.";
+
+export default function ContactSection() {
+  const searchParams = useSearchParams();
+  const laneParam = searchParams.get("lane") ?? "";
+
+  const [dropdown, setDropdown] = useState(() => laneMap[laneParam] ?? "");
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+  useEffect(() => {
+    const mapped = laneMap[laneParam] ?? "";
+    setDropdown(mapped);
+  }, [laneParam]);
+
+  const textareaPlaceholder = dynamicPlaceholder[dropdown] ?? defaultPlaceholder;
+  const confirmation = confirmationMessage[dropdown] ?? defaultConfirmation;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e: FormEvent) => { e.preventDefault(); setSubmitted(true); };
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <div id="form" className="flex flex-col gap-4 border border-border p-10 md:p-12" style={{ borderTopColor: "var(--gold)" }}>
+        <span className="eyebrow">Note Received</span>
+        <p className="display text-text" style={{ fontSize: "1.6rem", lineHeight: 1.3 }}>
+          Thank you for writing.
+        </p>
+        <p className="text-muted font-light" style={{ fontSize: "0.88rem", lineHeight: 1.85 }}>
+          {confirmation}
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <section className={`${dark ? "bg-bg" : "bg-surface"} s-pad`}>
-      <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
-          {/* Left: copy */}
-          <div>
-            <span className="eyebrow block mb-6">Get in Touch</span>
-            <h2 className="display text-text mb-6" style={{ fontSize: "clamp(2rem, 4vw, 3.6rem)" }}>
-              {heading}
-            </h2>
-            <span className="gold-rule mb-7" />
-            <p className="text-muted font-light max-w-none md:max-w-[360px] mb-10" style={{ fontSize: "0.9rem", lineHeight: 1.85 }}>
-              {subheading}
-            </p>
-            <a href="mailto:hello@thekayodekolade.com" className="btn-outline">hello@thekayodekolade.com</a>
-          </div>
-
-          {/* Right: form */}
-          <div>
-            {submitted ? (
-              <div className="flex flex-col gap-4 border border-border p-10 md:p-12" style={{ borderTopColor: "var(--gold)" }}>
-                <span className="eyebrow">Message Received</span>
-                <p className="display text-text" style={{ fontSize: "1.6rem", lineHeight: 1.3 }}>
-                  Thank you for reaching out.
-                </p>
-                <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.8 }}>
-                  We will be in contact within two business days.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="name">Full Name</label>
-                    <input id="name" name="name" type="text" className="form-input" placeholder="Your name" value={form.name} onChange={handleChange} required />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="email">Email</label>
-                    <input id="email" name="email" type="email" className="form-input" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="organisation">Organisation <span className="text-dim" style={{ fontSize: "0.75em" }}>(optional)</span></label>
-                    <input id="organisation" name="organisation" type="text" className="form-input" placeholder="Company name" value={form.organisation} onChange={handleChange} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label" htmlFor="phone">Phone</label>
-                    <input id="phone" name="phone" type="tel" className="form-input" placeholder="+61 000 000 000" value={form.phone} onChange={handleChange} />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="role">What best describes you?</label>
-                  <select id="role" name="role" className="form-input" value={form.role} onChange={handleChange}>
-                    <option value="">Select your situation</option>
-                    <option value="professional">A professional or executive at a crossroads</option>
-                    <option value="founder">A founder building or restructuring a business</option>
-                    <option value="organisation">A leader of a scaling organisation</option>
-                    <option value="other">Something else</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="situation">Where are you right now?</label>
-                  <select id="situation" name="situation" className="form-input" value={form.situation} onChange={handleChange}>
-                    <option value="">Select...</option>
-                    <option value="crossroads">At a career crossroads</option>
-                    <option value="building">Building a business</option>
-                    <option value="leading">Leading an organisation</option>
-                    <option value="other">Something else</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label className="form-label" htmlFor="message">How can we help?</label>
-                  <textarea id="message" name="message" className="form-input" placeholder="Briefly describe your situation..." value={form.message} onChange={handleChange} required />
-                </div>
-                <button type="submit" className="btn-solid self-start">Send It Over</button>
-              </form>
-            )}
-          </div>
+    <form id="form" onSubmit={handleSubmit} className="flex flex-col gap-8">
+      {/* Row 1: Name + Email */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="form-group">
+          <label className="form-label" htmlFor="name">Full Name</label>
+          <input
+            id="name" name="name" type="text"
+            className="form-input"
+            placeholder="e.g. Kayode Kolade"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor="email">Email</label>
+          <input
+            id="email" name="email" type="email"
+            className="form-input"
+            placeholder="e.g. you@yourcompany.com"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
         </div>
       </div>
-    </section>
+
+      {/* Row 2: Phone */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="form-group">
+          <label className="form-label" htmlFor="phone">Phone <span style={{ opacity: 0.5, fontWeight: 300 }}>(optional)</span></label>
+          <input
+            id="phone" name="phone" type="tel"
+            className="form-input"
+            placeholder="Include country code"
+            value={form.phone}
+            onChange={handleChange}
+          />
+        </div>
+      </div>
+
+      {/* Row 3: Dropdown */}
+      <div className="form-group">
+        <label className="form-label" htmlFor="dropdown">What best describes you?</label>
+        <select
+          id="dropdown"
+          className="form-input"
+          value={dropdown}
+          onChange={(e) => setDropdown(e.target.value)}
+          required
+          style={{ cursor: "pointer" }}
+        >
+          <option value="" disabled>Please select…</option>
+
+          <optgroup label="— Commercial engagements —">
+            <option>A professional or executive navigating a career inflection point</option>
+            <option>A founder building or restructuring a business</option>
+            <option>A leader of a scaling organisation</option>
+            <option>Exploring a retreat, facilitation, or speaking engagement</option>
+          </optgroup>
+
+          <optgroup label="— Mining the Genius (pro bono coaching) —">
+            <option>I'd like to be considered for a Mining the Genius session</option>
+            <option>I'd like to nominate someone for a Mining the Genius session</option>
+          </optgroup>
+
+          <optgroup label="— The Lighthouse (mentorship) —">
+            <option>I'd like to be considered for The Lighthouse</option>
+          </optgroup>
+
+          <optgroup label="— Other —">
+            <option>Something else</option>
+          </optgroup>
+        </select>
+      </div>
+
+      {/* Row 4: Free text */}
+      <div className="form-group">
+        <label className="form-label" htmlFor="message">Tell me what you&apos;re working on</label>
+        <textarea
+          id="message" name="message"
+          className="form-input"
+          placeholder={textareaPlaceholder}
+          value={form.message}
+          onChange={handleChange}
+          required
+          style={{ minHeight: "120px", resize: "vertical" }}
+        />
+      </div>
+
+      <button type="submit" className="btn-solid self-start">Send Note</button>
+    </form>
   );
 }

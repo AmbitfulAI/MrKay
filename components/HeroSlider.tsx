@@ -5,57 +5,87 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import CalendlyButton from "@/components/CalendlyButton";
 
-import execBg      from "@/assets/KK_Exec_bg.jpg";
+import execBg       from "@/assets/KK_Exec_bg.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
 import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
 
 interface Slide {
-  eyebrow: string;
-  line1: string;
-  line2: string;
+  eyebrow:  string;
+  line1:    string;
+  line2:    string;
   subtitle: string;
-  image: StaticImageData;
+  image:    StaticImageData;
   imagePos: string;
-  primary:   { label: string; href: string; calendly: boolean };
-  secondary: { label: string; href: string; calendly: boolean };
+  primaryLabel:   string;
+  primaryHref:    string;
+  primaryCalendly: boolean;
+  secondaryLabel:  string;
+  secondaryHref:   string;
+  secondaryCalendly: boolean;
 }
 
 const slides: Slide[] = [
   {
-    eyebrow: "Executive Operating System Architect · Fractional COO · Coach",
-    line1: "Clarity → Architecture",
-    line2: "→ Momentum.",
-    subtitle: "You're at the kind of inflection point where the next move matters — in your career, your business, or your organisation. The effort is there. The traction isn't. That gap is rarely an ambition problem. It's an architecture problem. I'm Kayode Kolade, and I help professionals, founders, and organisations across the globe turn clarity into systems that hold — and systems into momentum that compounds.",
-    image: execBg,
+    eyebrow:  "Strategic Advisor · Architect · Coach",
+    line1:    "Clarity → Architecture →",
+    line2:    "Momentum.",
+    subtitle: "Operating advisory for executives, founders, and organisations. For the decisions and systems that have to hold.",
+    image:    execBg,
     imagePos: "center 20%",
-    primary:   { label: "Find Your Path", href: "/career-clarity", calendly: false },
-    secondary: { label: "Meet Kayode",    href: "/my-story",       calendly: false },
+    primaryLabel:   "Explore My Work",
+    primaryHref:    "/career-executive-clarity",
+    primaryCalendly: false,
+    secondaryLabel: "Meet Kayode",
+    secondaryHref:  "/meet-kayode",
+    secondaryCalendly: false,
   },
   {
-    eyebrow: "Organisational Systems & Execution",
-    line1: "Growing Faster Than",
-    line2: "Your Systems Can Carry.",
-    subtitle: "Your people are capable. Execution still depends on heroic effort. Operating models, governance, and execution architecture that make performance repeatable — not accidental.",
-    image: upperbodyImg,
+    eyebrow:  "Organisational Systems & Execution",
+    line1:    "Growing Faster Than",
+    line2:    "Your Systems Can Carry.",
+    subtitle: "Your organisation isn't underperforming because people don't care. It's under-designed for the outcomes you want.",
+    image:    upperbodyImg,
     imagePos: "center top",
-    primary:   { label: "See How We Fix This", href: "/organisational-systems", calendly: false },
-    secondary: { label: "Let's Talk",          href: "",                        calendly: true  },
+    primaryLabel:   "Explore the Lane",
+    primaryHref:    "/organisational-systems-execution",
+    primaryCalendly: false,
+    secondaryLabel: "Let's Talk",
+    secondaryHref:  "",
+    secondaryCalendly: true,
   },
   {
-    eyebrow: "Founder & Business Architecture",
-    line1: "Building Hard. So Why",
-    line2: "Isn't It Compounding?",
-    subtitle: "Vision, drive, and too many ideas — but the offer isn't sharp, the business depends entirely on you, and activity isn't converting into traction. Let's fix the architecture.",
-    image: facecardImg,
+    eyebrow:  "Founder & Business Architecture",
+    line1:    "Building Hard.",
+    line2:    "So Why Isn't It Compounding?",
+    subtitle: "You don't have an effort problem. You have an alignment problem. The architecture is what's missing.",
+    image:    facecardImg,
     imagePos: "center top",
-    primary:   { label: "Pressure-Test Your Model", href: "/founder-architecture", calendly: false },
-    secondary: { label: "Let's Talk",               href: "",                      calendly: true  },
+    primaryLabel:   "Explore the Lane",
+    primaryHref:    "/founder-business-architecture",
+    primaryCalendly: false,
+    secondaryLabel: "Let's Talk",
+    secondaryHref:  "",
+    secondaryCalendly: true,
+  },
+  {
+    eyebrow:  "Career & Executive Clarity",
+    line1:    "You Know You Have More in You.",
+    line2:    "You Just Can't Name the Direction Yet.",
+    subtitle: "You've performed. You've grown. But the next move isn't obvious anymore — and another job won't fix that.",
+    image:    execBg,
+    imagePos: "center 35%",
+    primaryLabel:   "Name Your Direction",
+    primaryHref:    "/career-executive-clarity",
+    primaryCalendly: false,
+    secondaryLabel: "Let's Talk",
+    secondaryHref:  "",
+    secondaryCalendly: true,
   },
 ];
 
-const INTERVAL   = 5000;
-const CONTENT_MS = 400; // content fade duration
-const IMAGE_MS   = 800; // image cross-fade duration (slower = smoother)
+const INTERVAL   = 5500;
+const CONTENT_MS = 400;
+const IMAGE_MS   = 800;
 
 export default function HeroSlider() {
   const [current,        setCurrent]        = useState(0);
@@ -78,6 +108,7 @@ export default function HeroSlider() {
   useEffect(() => {
     resetTimer();
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const goTo = (index: number) => {
@@ -97,7 +128,7 @@ export default function HeroSlider() {
 
   return (
     <>
-      {/* ── Background images — all rendered, current one fades in ── */}
+      {/* Background images */}
       {slides.map((slide, i) => (
         <Image
           key={i}
@@ -126,7 +157,7 @@ export default function HeroSlider() {
         }}
       />
 
-      {/* ── Slide content ── */}
+      {/* Slide content */}
       <div
         className="container"
         onMouseEnter={() => { if (timerRef.current) clearInterval(timerRef.current); }}
@@ -136,35 +167,57 @@ export default function HeroSlider() {
           opacity:        contentVisible ? 1 : 0,
           transform:      contentVisible ? "translateY(0)" : "translateY(10px)",
           transition:     `opacity ${CONTENT_MS}ms ease, transform ${CONTENT_MS}ms ease`,
-          minHeight:      "clamp(380px, 52vh, 560px)",
+          minHeight:      "clamp(300px, 48vh, 560px)",
           display:        "flex",
           flexDirection:  "column",
           justifyContent: "center",
         }}>
-          <span className="eyebrow block mb-8 md:mb-10">{s.eyebrow}</span>
+          <span className="eyebrow block mb-4 md:mb-8">{s.eyebrow}</span>
 
-          <h1
-            className="display text-text max-w-[900px] mb-8 md:mb-10"
-            style={{ fontSize: "clamp(2.2rem, 5vw, 5.5rem)", lineHeight: 1.05 }}
-          >
-            {s.line1}<br />
-            <em style={{ fontStyle: "italic", color: "var(--gold)" }}>{s.line2}</em>
-          </h1>
+          {current === 3 ? (
+            /* Slide 4 — long sentences: line1 at shared size, line2 as smaller gold subtitle */
+            <div className="mb-4 md:mb-8 max-w-[900px]">
+              <h1
+                className="display text-text"
+                style={{ fontSize: "clamp(2.2rem, 4.8vw, 4.8rem)", lineHeight: 1.0, marginBottom: "clamp(10px, 1.5vw, 20px)" }}
+              >
+                {s.line1}
+              </h1>
+              <p
+                className="display"
+                style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.6rem)", fontStyle: "italic", color: "var(--gold)", lineHeight: 1.4 }}
+              >
+                {s.line2}
+              </p>
+            </div>
+          ) : (
+            /* Slides 1–3 — short fragments: both lines in one h1 at shared line1 size */
+            <h1
+              className="display text-text max-w-[1000px] mb-4 md:mb-8"
+              style={{ fontSize: "clamp(2.2rem, 4.8vw, 4.8rem)", lineHeight: 0.97 }}
+            >
+              {s.line1}<br />
+              <em style={{ fontStyle: "italic", color: "var(--gold)" }}>{s.line2}</em>
+            </h1>
+          )}
 
-          <span className="gold-rule mb-6 md:mb-8" />
+          <span className="gold-rule mb-4 md:mb-6" />
 
           <p
-            className="text-muted font-light max-w-[520px] mb-10 md:mb-12"
+            className="text-muted font-light max-w-[520px] mb-5 md:mb-10"
             style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}
           >
             {s.subtitle}
           </p>
 
-          <div className="flex flex-wrap gap-4">
-            <Link href={s.primary.href} className="btn-solid">{s.primary.label}</Link>
-            {s.secondary.calendly
-              ? <CalendlyButton className="btn-outline">{s.secondary.label}</CalendlyButton>
-              : <Link href={s.secondary.href} className="btn-outline">{s.secondary.label}</Link>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            {s.primaryCalendly
+              ? <CalendlyButton className="btn-solid">{s.primaryLabel}</CalendlyButton>
+              : <Link href={s.primaryHref} className="btn-solid">{s.primaryLabel}</Link>
+            }
+            {s.secondaryCalendly
+              ? <CalendlyButton className="btn-outline">{s.secondaryLabel}</CalendlyButton>
+              : <Link href={s.secondaryHref} className="btn-outline">{s.secondaryLabel}</Link>
             }
           </div>
         </div>

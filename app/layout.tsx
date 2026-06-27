@@ -21,9 +21,9 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "TheKayodeKolade — Advisor · Coach · Confidant",
+  title: "TheKayodeKolade — Advisor · Architect · Coach",
   description:
-    "Strategic counsel for executives who lead at the highest level. Board advisory, leadership development, and executive strategy.",
+    "Operating advisory for executives, founders, and organisations. Clarity, architecture, and momentum — for the decisions and systems that have to hold.",
 };
 
 export default function RootLayout({

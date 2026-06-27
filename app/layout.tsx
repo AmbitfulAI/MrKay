@@ -5,8 +5,7 @@ import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
-import { connectDB } from "@/lib/db";
-import { SiteConfig } from "@/lib/models/SiteConfig";
+import { getSiteConfig } from "@/lib/data/site-config";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -34,8 +33,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await connectDB();
-  const siteConfig = await SiteConfig.findById("siteConfig").lean<{ calendlyUrl?: string; contactEmail?: string; footerTagline?: string; footerBlurb?: string; linkedInUrl?: string; instagramUrl?: string; statsBar?: { line: string; descriptor: string }[] }>().catch(() => null);
+  const siteConfig = await getSiteConfig();
 
   return (
     <html

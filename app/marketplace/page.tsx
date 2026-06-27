@@ -2,8 +2,7 @@ import PageHero from "@/components/PageHero";
 import MarketplaceGrid from "@/components/MarketplaceGrid";
 import CalendlyButton from "@/components/CalendlyButton";
 import type { Product } from "@/components/MarketplaceGrid";
-import { connectDB } from "@/lib/db";
-import { Product as ProductModel } from "@/lib/models/Product";
+import { getProducts } from "@/lib/data/products";
 
 export const revalidate = 60;
 
@@ -92,39 +91,8 @@ const products: Product[] = [
   },
 ];
 
-interface SanityProduct {
-  _id: string;
-  title: string;
-  subtitle?: string;
-  type: "Book" | "Course";
-  description?: string;
-  price?: string;
-  priceNote?: string;
-  tag?: string;
-  selarUrl?: string;
-  available?: boolean;
-  coverAccent?: string;
-}
-
 export default async function Marketplace() {
-  await connectDB();
-  const sanityProducts = await ProductModel.find().sort({ order: 1 }).lean<SanityProduct[]>();
-
-  const activeProducts: Product[] = sanityProducts.length > 0
-    ? sanityProducts.map((p) => ({
-        id: p._id,
-        type: p.type,
-        title: p.title,
-        subtitle: p.subtitle ?? "",
-        description: p.description ?? "",
-        price: p.price ?? "",
-        priceNote: p.priceNote,
-        tag: p.tag,
-        href: p.selarUrl ?? "#",
-        available: p.available ?? true,
-        coverAccent: p.coverAccent ?? "linear-gradient(135deg, #1a1208 0%, #2d1f0a 60%, #1c1510 100%)",
-      }))
-    : products;
+  const activeProducts = await getProducts(products);
 
   return (
     <>

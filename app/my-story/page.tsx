@@ -6,8 +6,7 @@ import TestimonialStrip from "@/components/TestimonialStrip";
 import headshot from "@/assets/KK Headshot_BW.jpg";
 import upperbody from "@/assets/KK_Upperbody_BW.jpg";
 import facecardImg from "@/assets/KK_Facecard_BW.jpg";
-import { connectDB } from "@/lib/db";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
@@ -91,16 +90,12 @@ const principles = [
 ];
 
 const FALLBACK_TESTIMONIALS = [
-  { name: "Victoria Ikuemonisan", quote: "You showed me how to reflect growth and career progression in spite of having the same job title. Within about four months of applying what you shared, I got two job offers — and finally left after several years of applying here and there. Recruiters still reach out to me." },
-  { name: "Samson Richard",       quote: "You helped me contextualise situations, develop a comprehensive pros and cons — and even did it with me. These interactions gave me better perspective and helped me make the best decisions." },
+  { name: "Victoria Ikuemonisan", context: "Career & Executive Clarity", quote: "You showed me how to reflect growth and career progression in spite of having the same job title. Within about four months of applying what you shared, I got two job offers — and finally left after several years of applying here and there. Recruiters still reach out to me." },
+  { name: "Samson Richard",       context: "Career & Executive Clarity", quote: "You helped me contextualise situations, develop a comprehensive pros and cons — and even did it with me. These interactions gave me better perspective and helped me make the best decisions." },
 ];
 
 export default async function MyStory() {
-  await connectDB();
-  const raw = await Testimonial.find({ pages: "my-story" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("my-story", FALLBACK_TESTIMONIALS);
 
   return (
     <>

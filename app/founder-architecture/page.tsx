@@ -2,13 +2,12 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { connectDB } from "@/lib/db";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
 const FALLBACK_TESTIMONIALS = [
-  { name: "Founder, early-stage organisation", quote: "We were trying to define what my organisation is aiming to achieve. I needed help understanding structure and how to build out ideas that are marketable. Together we created a revised vision, mission, goals, and business model for the organisation I am building." },
+  { name: "Founder, early-stage organisation", context: "Founder & Business Architecture", quote: "We were trying to define what my organisation is aiming to achieve. I needed help understanding structure and how to build out ideas that are marketable. Together we created a revised vision, mission, goals, and business model for the organisation I am building." },
 ];
 
 const steps = [
@@ -36,11 +35,7 @@ const deliverables = [
 ];
 
 export default async function FounderArchitecture() {
-  await connectDB();
-  const raw = await Testimonial.find({ pages: "founder-architecture" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("founder-architecture", FALLBACK_TESTIMONIALS);
   return (
     <>
       <PageHero

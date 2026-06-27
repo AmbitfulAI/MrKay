@@ -1,8 +1,7 @@
 import { Suspense } from "react";
 import ContactSection from "@/components/ContactSection";
 import CalendlyButton from "@/components/CalendlyButton";
-import { connectDB } from "@/lib/db";
-import { Faq } from "@/lib/models/Faq";
+import { getFaqs } from "@/lib/data/faqs";
 
 export const revalidate = 60;
 
@@ -22,9 +21,7 @@ const FALLBACK_FAQS = [
 ];
 
 export default async function Contact() {
-  await connectDB();
-  const rawFaqs = await Faq.find().sort({ order: 1 }).lean<Array<{ question: string; answer: string }>>().catch(() => []);
-  const faqs: Array<{ question: string; answer: string }> = rawFaqs.length ? rawFaqs : FALLBACK_FAQS;
+  const faqs = await getFaqs(FALLBACK_FAQS);
   return (
     <>
       {/* ── Hero + Form (above the fold) ── */}

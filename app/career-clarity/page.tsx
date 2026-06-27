@@ -2,15 +2,14 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { connectDB } from "@/lib/db";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
 const FALLBACK_TESTIMONIALS = [
-  { name: "Ayodeji Akinola",  quote: "I was stuck on what to do next to make this transition. Kayode provided clarity on the steps I needed to take — finding out what my core skills and interests were, and leveraging this to decide on a career path. Our interactions provided both the drive and direction I needed. I transitioned into project management, moved abroad for my master's, and graduated with a distinction." },
-  { name: "Adeniran Kayode",  quote: "I got direction. I got practical, realistic scenarios that gave clarity. The interaction helped me make the right decision — one I am enjoying today." },
-  { name: "Temitope Awoyemi", quote: "After a decade-long career, I needed guidance on how to validate my interests and shape what to pursue in the next decade. I got the clarity to invest in digital transformation rather than the default path — better positioned for the modern COO role if I get there." },
+  { name: "Ayodeji Akinola",  context: "Career & Executive Clarity", quote: "I was stuck on what to do next to make this transition. Kayode provided clarity on the steps I needed to take — finding out what my core skills and interests were, and leveraging this to decide on a career path. Our interactions provided both the drive and direction I needed. I transitioned into project management, moved abroad for my master's, and graduated with a distinction." },
+  { name: "Adeniran Kayode",  context: "Career & Executive Clarity", quote: "I got direction. I got practical, realistic scenarios that gave clarity. The interaction helped me make the right decision — one I am enjoying today." },
+  { name: "Temitope Awoyemi", context: "Career & Executive Clarity", quote: "After a decade-long career, I needed guidance on how to validate my interests and shape what to pursue in the next decade. I got the clarity to invest in digital transformation rather than the default path — better positioned for the modern COO role if I get there." },
 ];
 
 const steps = [
@@ -43,11 +42,7 @@ const deliverables = [
 ];
 
 export default async function CareerClarity() {
-  await connectDB();
-  const raw = await Testimonial.find({ pages: "career-clarity" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("career-clarity", FALLBACK_TESTIMONIALS);
   return (
     <>
       <PageHero

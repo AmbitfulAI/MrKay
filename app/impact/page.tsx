@@ -1,8 +1,5 @@
 import Link from "next/link";
 import CalendlyButton from "@/components/CalendlyButton";
-import { connectDB } from "@/lib/db";
-import { ImpactOrg } from "@/lib/models/ImpactOrg";
-import execImg from "@/assets/KK_Exec_bg.jpg";
 
 export const revalidate = 60;
 
@@ -11,107 +8,7 @@ export const metadata = {
   description: "Mining the Genius. Beyond the Invoice. The commercial practice is one expression of a deeper conviction. This is where the others live.",
 };
 
-const organisations = [
-  {
-    name: "Organisation Name One",
-    category: "Education & Leadership",
-    role: "Board Advisory Member",
-    since: "2019",
-    description:
-      "Supporting the development of emerging leaders across underserved communities through structured mentorship, skills training, and access to senior professional networks.",
-    href: "https://example.com",
-    active: true,
-    image: execImg,
-    imageAlt: "TheKayodeKolade at Organisation Name One",
-  },
-  {
-    name: "Organisation Name Two",
-    category: "Governance & Policy",
-    role: "Independent Advisor",
-    since: "2021",
-    description:
-      "Providing independent counsel on governance reform and institutional strengthening for public sector organisations navigating structural transformation.",
-    href: "https://example.com",
-    active: true,
-    image: upperbodyImg,
-    imageAlt: "TheKayodeKolade at Organisation Name Two",
-  },
-  {
-    name: "Organisation Name Three",
-    category: "Youth Development",
-    role: "Programme Mentor",
-    since: "2020",
-    description:
-      "Mentoring young professionals at the early stages of their careers — helping them build clarity of direction, professional confidence, and the habits of excellent leadership.",
-    href: "https://example.com",
-    active: true,
-    image: facecardImg,
-    imageAlt: "TheKayodeKolade at Organisation Name Three",
-  },
-  {
-    name: "Organisation Name Four",
-    category: "Faith & Community",
-    role: "Volunteer & Speaker",
-    since: "2015",
-    description:
-      "Contributing to community building and values-based leadership development through speaking engagements, workshops, and long-term volunteer engagement.",
-    href: "https://example.com",
-    active: false,
-    image: headshotImg,
-    imageAlt: "TheKayodeKolade at Organisation Name Four",
-  },
-];
-
-const causes = [
-  { label: "Leadership Development",  body: "Equipping the next generation of African leaders with the capability, character, and confidence to lead at the highest levels." },
-  { label: "Governance Reform",       body: "Contributing to institutions that strengthen public governance, board accountability, and the integrity of leadership structures." },
-  { label: "Faith-Based Community",   body: "Serving within faith communities that build people — not just careers — and that ground leadership in purpose rather than position." },
-  { label: "Education Access",        body: "Supporting access to quality professional education for young people who have the talent but not yet the opportunity." },
-];
-
-interface SanityOrg {
-  _id: string;
-  name: string;
-  category: string;
-  role?: string;
-  since?: string;
-  description?: string;
-  url?: string;
-  active?: boolean;
-  imageUrl?: string;
-  alt?: string;
-}
-
-type OrgItem = {
-  name: string;
-  category: string;
-  role: string;
-  since: string;
-  description: string;
-  href: string;
-  active: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  image: any;
-  imageAlt: string;
-};
-
 export default async function Impact() {
-  await connectDB();
-  const sanityOrgs = await ImpactOrg.find().sort({ order: 1 }).lean<SanityOrg[]>();
-
-  const activeOrgs: OrgItem[] = sanityOrgs.length > 0
-    ? sanityOrgs.map((org) => ({
-        name: org.name,
-        category: org.category,
-        role: org.role ?? "",
-        since: org.since ?? "",
-        description: org.description ?? "",
-        href: org.url ?? "#",
-        active: org.active ?? true,
-        image: org.imageUrl || execImg,
-        imageAlt: org.alt ?? `TheKayodeKolade at ${org.name}`,
-      }))
-    : organisations;
 
   return (
     <>

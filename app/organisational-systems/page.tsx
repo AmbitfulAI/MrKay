@@ -2,8 +2,7 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { connectDB } from "@/lib/db";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
@@ -36,11 +35,7 @@ const FALLBACK_TESTIMONIALS = [
 ];
 
 export default async function OrganisationalSystems() {
-  await connectDB();
-  const raw = await Testimonial.find({ pages: "organisational-systems" }).sort({ order: 1 }).lean<Array<{ quote: string; clientName: string; clientContext: string }>>().catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("organisational-systems", FALLBACK_TESTIMONIALS);
   return (
     <>
       <PageHero

@@ -4,10 +4,9 @@ import CalendlyButton from "@/components/CalendlyButton";
 import HeroSlider from "@/components/HeroSlider";
 import TestimonialStrip from "@/components/TestimonialStrip";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
-import { connectDB } from "@/lib/db";
-import { HeroSlide } from "@/lib/models/HeroSlide";
-import { SiteConfig } from "@/lib/models/SiteConfig";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { getHeroSlides } from "@/lib/data/hero-slides";
+import { getSiteConfig } from "@/lib/data/site-config";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
@@ -42,19 +41,26 @@ const services = [
   },
 ];
 
+const FALLBACK_STATS = [
+  { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
+  { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
+  { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
+  { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
+];
+
+const FALLBACK_HOME_TESTIMONIALS = [
+  { quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.", name: "Senior Professional, Technology Sector", context: "" },
+  { quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.", name: "Ayodeji Akinola", context: "Career & Executive Clarity" },
+];
+
 export default async function Home() {
   const [heroSlides, siteConfig, homeTestimonials] = await Promise.all([
-    (async () => { await connectDB(); return HeroSlide.find().sort({ order: 1 }).lean(); })(),
-    SiteConfig.findById("siteConfig").lean(),
-    Testimonial.find({ pages: "home" }).sort({ order: 1 }).lean(),
+    getHeroSlides(),
+    getSiteConfig(),
+    getTestimonialsByPage("home", FALLBACK_HOME_TESTIMONIALS),
   ]);
 
-  const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : [
-    { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
-    { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
-    { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
-    { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
-  ];
+  const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : FALLBACK_STATS;
 
   return (
     <>
@@ -197,14 +203,11 @@ export default async function Home() {
         <div className="container">
           <span className="eyebrow block mb-8">In Their Words</span>
           <TestimonialStrip
-            items={homeTestimonials.length ? homeTestimonials.map((t: { quote: string; clientName: string; clientContext?: string }) => ({
+            items={homeTestimonials.map((t) => ({
               quote:   t.quote,
-              name:    t.clientName,
-              context: t.clientContext,
-            })) : [
-              { quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.", name: "Senior Professional, Technology Sector" },
-              { quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.", name: "Ayodeji Akinola" },
-            ]}
+              name:    t.name,
+              context: t.context,
+            }))}
           />
           <div style={{ marginTop: "28px" }}>
             <Link href="/testimonials" className="hover-gold" style={{ fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase" }}>

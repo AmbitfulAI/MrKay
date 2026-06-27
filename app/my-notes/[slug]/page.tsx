@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNoteBySlug, getRelatedNotes, notes as staticNotes } from "@/lib/notes";
-import { connectDB } from "@/lib/db";
-import { Note } from "@/lib/models/Note";
+import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes } from "@/lib/notes";
+import { getNoteSlugs, getNoteBySlug } from "@/lib/data/notes";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -20,55 +19,19 @@ const imageMap = {
   upperbody: upperbodyImg,
 };
 
-interface SanityNote {
-  _id: string;
-  slug: string;
-  title: string;
-  category: string;
-  date: string;
-  excerpt: string;
-  featuredImage?: string;
-  body: string[];
-}
-
 export async function generateStaticParams() {
-  await connectDB();
-  const fromDB = await Note.find().select("slug").lean<{ slug: string }[]>();
-  const fromStatic = staticNotes.map((n) => ({ slug: n.slug }));
-  const all = [...fromStatic, ...fromDB];
-  return [...new Map(all.map((s) => [s.slug, s])).values()];
+  return getNoteSlugs();
 }
 
 export default async function NotePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  await connectDB();
-  const sanityNote = await Note.findOne({ slug }).lean<SanityNote>();
-
-  if (sanityNote) {
-    const body = sanityNote.body ?? [];
-    const heroImageUrl = sanityNote.featuredImage || null;
-    const related = getRelatedNotes(slug);
-
-    return (
-      <NoteDetail
-        title={sanityNote.title}
-        category={sanityNote.category}
-        date={sanityNote.date}
-        excerpt={sanityNote.excerpt}
-        body={body}
-        heroSrc={heroImageUrl ?? undefined}
-        heroAlt={sanityNote.title}
-        related={related}
-      />
-    );
-  }
-
-  const note = getNoteBySlug(slug);
+  const note = await getNoteBySlug(slug);
   if (!note) notFound();
 
   const related = getRelatedNotes(slug);
-  const heroStaticImage = note.image ? imageMap[note.image] : undefined;
+
+  const n = note as { featuredImage?: string; image?: "headshot" | "exec" | "facecard" | "upperbody" };
+  const heroSrc = n.featuredImage ?? (n.image ? imageMap[n.image] : undefined);
 
   return (
     <NoteDetail
@@ -77,7 +40,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
       date={note.date}
       excerpt={note.excerpt}
       body={note.body}
-      heroSrc={heroStaticImage}
+      heroSrc={heroSrc}
       heroAlt={note.title}
       related={related}
     />

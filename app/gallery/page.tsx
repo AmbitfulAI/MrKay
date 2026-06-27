@@ -2,8 +2,7 @@ import PageHero from "@/components/PageHero";
 import GalleryGrid from "@/components/GalleryGrid";
 import type { GalleryImage } from "@/components/GalleryGrid";
 import CalendlyButton from "@/components/CalendlyButton";
-import { connectDB } from "@/lib/db";
-import { GalleryImage as GalleryImageModel } from "@/lib/models/GalleryImage";
+import { getGalleryImages } from "@/lib/data/gallery";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -49,33 +48,22 @@ const images: GalleryImage[] = [
 
 const staticCategories = ["All", "Portrait", "Professional"];
 
-interface SanityGalleryImage {
-  _id: string;
-  title: string;
-  caption?: string;
-  category?: string;
-  imageUrl?: string;
-  alt?: string;
-  span?: "wide" | "tall" | "normal";
-}
-
 export default async function Gallery() {
-  await connectDB();
-  const sanityImages = await GalleryImageModel.find().sort({ order: 1 }).lean<SanityGalleryImage[]>();
+  const dbImages = await getGalleryImages();
 
-  const activeImages: GalleryImage[] = sanityImages.length > 0
-    ? sanityImages.map((img) => ({
-        src: img.imageUrl || execImg,
-        alt: img.alt ?? img.title,
+  const activeImages: GalleryImage[] = dbImages.length > 0
+    ? dbImages.map((img) => ({
+        src: img.imageUrl ?? execImg,
+        alt: img.alt,
         title: img.title,
         caption: img.caption,
-        category: img.category ?? "General",
-        span: img.span ?? "normal",
+        category: img.category,
+        span: img.span,
       }))
     : images;
 
-  const activeCategories = sanityImages.length > 0
-    ? ["All", ...Array.from(new Set(sanityImages.map((i) => i.category).filter(Boolean) as string[]))]
+  const activeCategories = dbImages.length > 0
+    ? ["All", ...Array.from(new Set(dbImages.map((i) => i.category)))]
     : staticCategories;
 
   return (

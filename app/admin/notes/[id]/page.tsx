@@ -11,7 +11,7 @@ export default async function EditNote({ params }: { params: Promise<{ id: strin
   await connectDB();
   const [note, cats] = await Promise.all([
     Note.findById(id).lean<{ title: string; category: string; date: string; excerpt: string; body: string[] }>(),
-    NoteCategory.find().sort({ order: 1 }).lean<{ title: string }[]>(),
+    NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
   if (!note) notFound();
   const categories = cats.map((c) => c.title);

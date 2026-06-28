@@ -9,13 +9,14 @@ export async function PATCH(
 ) {
   await connectDB();
   const { id } = await params;
-  const { title, order, tagline, description, themes } = await req.json();
+  const { title, order, type, tagline, description, themes } = await req.json();
   const update: Record<string, unknown> = {};
   if (title?.trim()) {
     update.title = title.trim();
     update.slug  = await generateUniqueSlug("NoteCategory", title, id);
   }
   if (order !== undefined) update.order = order;
+  if (type !== undefined) update.type = type;
   if (tagline !== undefined) update.tagline = tagline;
   if (description !== undefined) update.description = description;
   if (Array.isArray(themes)) update.themes = themes;

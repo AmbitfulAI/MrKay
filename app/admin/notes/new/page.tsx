@@ -6,7 +6,7 @@ import { NoteForm } from "../NoteForm";
 
 export default async function NewNote() {
   await connectDB();
-  const cats = await NoteCategory.find().sort({ order: 1 }).lean<{ title: string }[]>();
+  const cats = await NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>();
   const categories = cats.map((c) => c.title);
 
   return (

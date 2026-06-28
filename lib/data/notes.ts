@@ -43,7 +43,7 @@ const FALLBACK_CATEGORIES = [
 
 export async function getNoteCategories(): Promise<{ title: string; slug: string }[]> {
   await connectDB();
-  const cats = await NoteCategory.find().sort({ order: 1 }).lean<{ title: string; slug: string }[]>().catch(() => []);
+  const cats = await NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string; slug: string }[]>().catch(() => []);
   return cats.length ? cats.map((c) => ({ title: c.title, slug: c.slug })) : FALLBACK_CATEGORIES;
 }
 
@@ -51,7 +51,7 @@ export async function getNotes(): Promise<{ notes: Note[]; categories: string[] 
   await connectDB();
   const [dbNotes, dbCategories] = await Promise.all([
     NoteModel.find().sort({ createdAt: -1 }).lean<DBNote[]>(),
-    NoteCategory.find().sort({ order: 1 }).lean<{ title: string }[]>(),
+    NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
 
   const notes = dbNotes.length ? dbNotes.map(mapDBNote) : staticNotes;

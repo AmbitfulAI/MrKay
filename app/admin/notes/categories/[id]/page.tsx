@@ -8,6 +8,7 @@ interface Category {
   _id: string;
   title: string;
   slug: string;
+  type: string;
   order: number;
   tagline: string;
   description: string;
@@ -36,6 +37,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
         id={String(cat._id)}
         initialData={{
           title: cat.title,
+          type: cat.type ?? "writing",
           tagline: cat.tagline ?? "",
           description: cat.description ?? "",
           themes: (cat.themes ?? []).join("\n"),

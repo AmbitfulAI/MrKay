@@ -7,6 +7,7 @@ interface Props {
   id: string;
   initialData: {
     title: string;
+    type: string;
     tagline: string;
     description: string;
     themes: string;
@@ -42,7 +43,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
   const [error, setError] = useState("");
 
   function set(field: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
   }
 
@@ -59,7 +60,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
     const res = await fetch(`/api/admin/notes/categories/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: form.title, tagline: form.tagline, description: form.description, themes }),
+      body: JSON.stringify({ title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes }),
     });
 
     if (res.ok) {
@@ -76,9 +77,18 @@ export default function CategoryEditForm({ id, initialData }: Props) {
     <form onSubmit={handleSubmit} style={{ maxWidth: "760px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
-        <div>
-          <label style={labelStyle}>Title *</label>
-          <input type="text" value={form.title} onChange={set("title")} required style={inputStyle} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 180px", gap: "20px" }}>
+          <div>
+            <label style={labelStyle}>Title *</label>
+            <input type="text" value={form.title} onChange={set("title")} required style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Type</label>
+            <select value={form.type} onChange={set("type")} style={inputStyle}>
+              <option value="writing">Writing</option>
+              <option value="visual-diary">Visual Diary</option>
+            </select>
+          </div>
         </div>
 
         <div>

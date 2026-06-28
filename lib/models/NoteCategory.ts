@@ -4,6 +4,7 @@ const NoteCategorySchema = new Schema(
   {
     title:       { type: String, required: true },
     slug:        { type: String, required: true, unique: true },
+    type:        { type: String, enum: ["writing", "visual-diary"], default: "writing" },
     order:       { type: Number, default: 99 },
     tagline:     { type: String, default: "" },
     description: { type: String, default: "" },

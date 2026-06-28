@@ -1,14 +1,11 @@
-import GalleryGrid from "@/components/GalleryGrid";
-import type { GalleryImage } from "@/components/GalleryGrid";
 import Link from "next/link";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { galleryQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import GalleryGrid from "@/components/GalleryGrid";
+import { getGalleryImages, getGalleryCategories } from "@/lib/data/gallery";
 
-import execImg      from "@/assets/KK_Exec_bg.jpg";
-import facecardImg  from "@/assets/KK_Facecard_BW.jpg";
+import execImg     from "@/assets/KK_Exec_bg.jpg";
+import facecardImg from "@/assets/KK_Facecard_BW.jpg";
 import upperbodyImg from "@/assets/KK_Upperbody_BW.jpg";
-import headshotImg  from "@/assets/KK Headshot_BW.jpg";
+import headshotImg from "@/assets/KK Headshot_BW.jpg";
 
 export const revalidate = 60;
 
@@ -17,72 +14,25 @@ export const metadata = {
   description: "Photography is my quiet language. Stories of places, people, textures, cultures, and everyday moments. Welcome to the archive.",
 };
 
-const staticImages: GalleryImage[] = [
-  {
-    src: facecardImg,
-    alt: "TheKayodeKolade",
-    title: "The Advisor",
-    caption: "In conversation — the posture that defines the work.",
-    category: "Portrait",
-    span: "tall",
-  },
-  {
-    src: execImg,
-    alt: "TheKayodeKolade — Executive Setting",
-    title: "In the Room",
-    caption: "Where the real decisions get made.",
-    category: "Professional",
-    span: "wide",
-  },
-  {
-    src: upperbodyImg,
-    alt: "TheKayodeKolade",
-    title: "Present",
-    caption: "Stillness before the session.",
-    category: "Portrait",
-    span: "normal",
-  },
-  {
-    src: headshotImg,
-    alt: "TheKayodeKolade",
-    title: "TheKayodeKolade",
-    caption: "Advisor · Architect · Coach",
-    category: "Professional",
-    span: "normal",
-  },
+const staticImages = [
+  { src: facecardImg,   alt: "TheKayodeKolade",                    title: "The Advisor",        caption: "In conversation — the posture that defines the work.", category: "Portrait",     span: "tall"   as const },
+  { src: execImg,       alt: "TheKayodeKolade — Executive Setting", title: "In the Room",        caption: "Where the real decisions get made.",                   category: "Professional", span: "wide"   as const },
+  { src: upperbodyImg,  alt: "TheKayodeKolade",                    title: "Present",            caption: "Stillness before the session.",                        category: "Portrait",     span: "normal" as const },
+  { src: headshotImg,   alt: "TheKayodeKolade",                    title: "TheKayodeKolade",    caption: "Advisor · Architect · Coach",                          category: "Professional", span: "normal" as const },
 ];
 
-interface SanityGalleryImage {
-  _id: string;
-  title: string;
-  caption?: string;
-  category?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  image?: any;
-  span?: "wide" | "tall" | "normal";
-}
-
 export default async function VisualDiary() {
-  const sanityImages = await sanityFetch<SanityGalleryImage>(galleryQuery);
+  const [dbImages, categories] = await Promise.all([
+    getGalleryImages(),
+    getGalleryCategories(),
+  ]);
 
-  const activeImages: GalleryImage[] = sanityImages.length > 0
-    ? sanityImages.map((img) => ({
-        src: img.image ? urlFor(img.image).width(800).url() : execImg,
-        alt: img.image?.alt ?? img.title,
-        title: img.title,
-        caption: img.caption,
-        category: img.category ?? "General",
-        span: img.span ?? "normal",
-      }))
+  const images = dbImages.length
+    ? dbImages.map((img) => ({ ...img, src: img.imageUrl ?? execImg }))
     : staticImages;
-
-  const activeCategories = sanityImages.length > 0
-    ? ["All", ...Array.from(new Set(sanityImages.map((i) => i.category).filter(Boolean) as string[]))]
-    : ["All", "Portrait", "Professional"];
 
   return (
     <>
-      {/* ── Hero ── */}
       <section className="bg-bg border-b border-surface-2" style={{ paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 6vw, 80px)" }}>
         <div className="container">
           <span className="eyebrow block mb-6" style={{ color: "var(--gold)" }}>#GeniusMinedWorks</span>
@@ -96,10 +46,8 @@ export default async function VisualDiary() {
         </div>
       </section>
 
-      {/* ── Gallery ── */}
-      <GalleryGrid images={activeImages} categories={activeCategories} />
+      <GalleryGrid images={images} categories={categories} />
 
-      {/* ── Soft handoff ── */}
       <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container">
           <p className="text-dim font-light" style={{ fontSize: "0.85rem", lineHeight: 1.9 }}>

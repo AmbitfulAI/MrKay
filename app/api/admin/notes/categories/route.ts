@@ -11,12 +11,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   await connectDB();
-  const { title, order, tagline, description, themes } = await req.json();
+  const { title, order, type, tagline, description, themes } = await req.json();
   if (!title?.trim()) return NextResponse.json({ error: "Title required" }, { status: 400 });
   const slug = await generateUniqueSlug("NoteCategory", title);
   const cat = await NoteCategory.create({
     title: title.trim(),
     slug,
+    type: type ?? "writing",
     order: order ?? 99,
     tagline: tagline ?? "",
     description: description ?? "",

@@ -15,15 +15,18 @@ export async function POST(req: NextRequest) {
   await connectDB();
   await ContactSubmission.create({ name, email, phone: phone ?? "", organisation: organisation ?? "", role: role ?? "", situation: situation ?? "", message });
 
+  const port = Number(process.env.SMTP_PORT ?? 587);
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST ?? "smtp.gmail.com",
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: false,
+    port,
+    secure: port === 465,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
   });
+
+  const from = process.env.SMTP_FROM ?? `"MrKay Website" <${process.env.SMTP_USER}>`;
 
   const lines = [
     `Name: ${name}`,
@@ -37,7 +40,7 @@ export async function POST(req: NextRequest) {
   ].filter(Boolean).join("\n");
 
   await transporter.sendMail({
-    from: `"MrKay Website" <${process.env.SMTP_USER}>`,
+    from,
     to: process.env.CONTACT_TO_EMAIL ?? process.env.SMTP_USER,
     replyTo: email,
     subject: `New enquiry from ${name}`,

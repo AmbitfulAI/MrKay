@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sanityClient } from "@/sanity/client";
-import { heroSlidesQuery } from "@/sanity/queries";
+import { revalidatePath } from "next/cache";
+import { connectDB } from "@/lib/db";
+import { HeroSlide } from "@/lib/models/HeroSlide";
 
 export async function GET() {
-  const items = await sanityClient.fetch(heroSlidesQuery);
+  await connectDB();
+  const items = await HeroSlide.find().sort({ order: 1 }).lean();
   return NextResponse.json(items);
 }
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const data = await req.json();
-  const doc = {
-    _type: "heroSlide",
-    eyebrow:  data.eyebrow,
-    line1:    data.line1,
-    line2:    data.line2,
-    subtitle: data.subtitle,
-    image: data.assetId
-      ? { _type: "image", asset: { _type: "reference", _ref: data.assetId } }
-      : undefined,
-    imagePos:         data.imagePos || "center top",
-    primaryLabel:     data.primaryLabel,
-    primaryHref:      data.primaryHref || "",
-    primaryCalendly:  data.primaryCalendly === "true",
-    secondaryLabel:   data.secondaryLabel || "",
-    secondaryHref:    data.secondaryHref || "",
-    secondaryCalendly: data.secondaryCalendly === "true",
-    order: data.order ? Number(data.order) : undefined,
-  };
-  const created = await sanityClient.create(doc);
-  return NextResponse.json(created, { status: 201 });
+  const slide = await HeroSlide.create({
+    eyebrow:           data.eyebrow,
+    line1:             data.line1,
+    line2:             data.line2,
+    subtitle:          data.subtitle,
+    imageUrl:          data.imageUrl ?? "",
+    imagePos:          data.imagePos || "center top",
+    primaryLabel:      data.primaryLabel,
+    primaryHref:       data.primaryHref || "",
+    primaryCalendly:   data.primaryCalendly === "true" || data.primaryCalendly === true,
+    secondaryLabel:    data.secondaryLabel || "",
+    secondaryHref:     data.secondaryHref || "",
+    secondaryCalendly: data.secondaryCalendly === "true" || data.secondaryCalendly === true,
+    order:             data.order ? Number(data.order) : 99,
+  });
+  revalidatePath("/");
+  return NextResponse.json(slide.toJSON(), { status: 201 });
 }

@@ -5,8 +5,8 @@ import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
-import { sanityClient } from "@/sanity/client";
-import { siteConfigQuery } from "@/sanity/queries";
+import { getSiteConfig } from "@/lib/data/site-config";
+import { getNoteCategories } from "@/lib/data/notes";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -24,9 +24,9 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "TheKayodeKolade — Advisor · Coach · Confidant",
+  title: "TheKayodeKolade — Advisor · Architect · Coach",
   description:
-    "Strategic counsel for executives who lead at the highest level. Board advisory, leadership development, and executive strategy.",
+    "Operating advisory for executives, founders, and organisations. Clarity, architecture, and momentum — for the decisions and systems that have to hold.",
 };
 
 export default async function RootLayout({
@@ -34,19 +34,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteConfig = await sanityClient.fetch(siteConfigQuery).catch(() => null);
+  const [siteConfig, writingCategories] = await Promise.all([
+    getSiteConfig(),
+    getNoteCategories(),
+  ]);
 
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${jost.variable}`}
+      className={`dark ${cormorant.variable} ${jost.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
       <body>
         <Providers>
           <SiteConfigProvider config={siteConfig}>
-            <Navigation />
+            <Navigation writingCategories={writingCategories} />
             <main>{children}</main>
             <Footer />
           </SiteConfigProvider>

@@ -1,41 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sanityClient } from "@/sanity/client";
-import { notesQuery } from "@/sanity/queries";
-import { generateUniqueSlug } from "@/lib/admin-utils";
-
-function textToBlocks(text: string) {
-  return text
-    .split(/\n\n+/)
-    .map((para) => para.trim())
-    .filter(Boolean)
-    .map((para) => ({
-      _type: "block",
-      _key: crypto.randomUUID(),
-      style: "normal",
-      markDefs: [],
-      children: [{ _type: "span", _key: crypto.randomUUID(), text: para, marks: [] }],
-    }));
-}
+import { revalidatePath } from "next/cache";
+import { connectDB } from "@/lib/db";
+import { Note } from "@/lib/models/Note";
+import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
 
 export async function GET() {
-  const notes = await sanityClient.fetch(notesQuery);
+  await connectDB();
+  const notes = await Note.find().sort({ createdAt: -1 }).lean();
   return NextResponse.json(notes);
 }
 
 export async function POST(req: NextRequest) {
+  await connectDB();
   const data = await req.json();
-  const slug = await generateUniqueSlug("note", data.title);
-
-  const doc = {
-    _type: "note",
-    title: data.title,
-    slug: { _type: "slug", current: slug },
+  const slug = await generateUniqueSlug("Note", data.title);
+  const note = await Note.create({
+    title:    data.title,
+    slug,
     category: data.category,
-    date: data.date,
-    excerpt: data.excerpt,
-    body: textToBlocks(data.body ?? ""),
-  };
-
-  const created = await sanityClient.create(doc);
-  return NextResponse.json(created, { status: 201 });
+    date:     data.date,
+    excerpt:  data.excerpt,
+    body:     bodyToArray(data.body ?? ""),
+    featuredImage: data.featuredImage ?? "",
+  });
+  revalidatePath("/my-notes");
+  return NextResponse.json(note.toJSON(), { status: 201 });
 }

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { Faq } from "@/lib/models/Faq";
 import { FaqForm } from "../FaqForm";
 
 export default async function EditFaq({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const item = (raw ?? null) as { _id: string; question: string; answer: string; order?: number } | null;
+  await connectDB();
+  const item = await Faq.findById(id).lean<{ question: string; answer: string; order?: number }>().catch(() => null);
   if (!item) notFound();
 
   return (

@@ -4,13 +4,14 @@ import { Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { Note } from "@/lib/notes";
+import { useCategories } from "@/components/CategoriesProvider";
 
 interface Props {
   posts: Note[];
-  categories: string[];
 }
 
-function NotesFilterInner({ posts, categories }: Props) {
+function NotesFilterInner({ posts }: Props) {
+  const categories = useCategories();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -120,3 +121,4 @@ export default function NotesFilter(props: Props) {
     </Suspense>
   );
 }
+

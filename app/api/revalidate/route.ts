@@ -1,9 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 
-// Sanity webhook calls this endpoint when content changes.
-// Configure in Sanity: Manage → API → Webhooks → URL: /api/revalidate
-// Add header: { "x-revalidate-secret": "<your secret>" }
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-revalidate-secret");
 
@@ -12,20 +9,24 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const type = body?._type as string | undefined;
+  const type = body?.type as string | undefined;
 
-  // Revalidate only the affected pages based on document type
   const pathMap: Record<string, string[]> = {
-    note: ["/my-notes", "/my-notes/[slug]"],
-    testimonial: ["/testimonials"],
-    successStory: ["/testimonials"],
-    product: ["/marketplace"],
-    galleryImage: ["/gallery"],
-    impactOrg: ["/impact"],
+    note:          ["/my-notes", "/my-notes/[slug]", "/rss.xml"],
+    testimonial:   ["/testimonials"],
+    successStory:  ["/testimonials"],
+    product:       ["/marketplace"],
+    galleryImage:  ["/visual-diary", "/gallery"],
+    impactOrg:     ["/impact"],
+    heroSlide:     ["/"],
+    siteConfig:    ["/"],
+    faq:           ["/contact"],
+    category:      ["/writing", "/writing/[slug]", "/my-notes"],
   };
 
-  const paths =
-    type && pathMap[type] ? pathMap[type] : Object.values(pathMap).flat();
+  const paths = type && pathMap[type]
+    ? pathMap[type]
+    : Object.values(pathMap).flat();
 
   paths.forEach((p) => revalidatePath(p));
 

@@ -4,54 +4,63 @@ import CalendlyButton from "@/components/CalendlyButton";
 import HeroSlider from "@/components/HeroSlider";
 import TestimonialStrip from "@/components/TestimonialStrip";
 import facecard from "@/assets/KK_Facecard_BW.jpg";
-import { sanityClient } from "@/sanity/client";
-import { heroSlidesQuery, siteConfigQuery, testimonialsForPageQuery } from "@/sanity/queries";
+import { getHeroSlides } from "@/lib/data/hero-slides";
+import { getSiteConfig } from "@/lib/data/site-config";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
-const lanes = [
+const services = [
   {
     num: "01",
-    title: "Organisations",
-    tags: "Operating Models · Governance · Leadership Transformation · Fractional COO",
-    pullquote: '"We\'re growing faster than our systems can carry."',
-    desc: "Operating architecture, execution rhythms, and leadership systems for scaling organisations and leadership teams.",
-    cta: "Let's Look at Your Architecture →",
-    href: "/organisational-systems",
+    title: "Career & Executive Clarity",
+    href: "/career-executive-clarity",
+    framework: "MINED®",
+    desc: "For professionals and executives navigating the next inflection point. We name what's next — with rigour, not guesswork.",
   },
   {
     num: "02",
-    title: "Founders",
-    tags: "Founder Clarity · Business Architecture · Positioning · Traction Systems",
-    pullquote: '"I\'m building hard. So why isn\'t momentum compounding?"',
-    desc: "Founder identity, business model architecture, and traction systems — powered by the UTM™ framework.",
-    cta: "Pressure-Test Your Model →",
-    href: "/founder-architecture",
+    title: "Founder & Business Architecture",
+    href: "/founder-business-architecture",
+    framework: "UTM™",
+    desc: "For founders building or restructuring. We uncover, transform, and multiply — until the architecture can carry the ambition.",
   },
   {
     num: "03",
-    title: "Professionals & Executives",
-    tags: "Career Clarity · Leadership Identity · Strategic Transitions",
-    pullquote: '"I know I have more in me. I just can\'t name the direction."',
-    desc: "Structured clarity work for professionals and executives at genuine inflection points — powered by the MINED® framework.",
-    cta: "Start Naming Your Direction →",
-    href: "/career-clarity",
+    title: "Organisational Systems & Execution",
+    href: "/organisational-systems-execution",
+    framework: null,
+    desc: "For scaling organisations whose systems haven't caught up with their growth. Operating model, governance, and execution design.",
   },
+  {
+    num: "04",
+    title: "Retreats, Facilitation & Speaking",
+    href: "/retreats-facilitation-speaking",
+    framework: null,
+    desc: "Leadership retreats and strategic facilitation designed backwards from the decisions they need to produce.",
+  },
+];
+
+const FALLBACK_STATS = [
+  { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
+  { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
+  { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
+  { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
+];
+
+const FALLBACK_HOME_TESTIMONIALS = [
+  { quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.", name: "Senior Professional, Technology Sector", context: "" },
+  { quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.", name: "Ayodeji Akinola", context: "Career & Executive Clarity" },
 ];
 
 export default async function Home() {
   const [heroSlides, siteConfig, homeTestimonials] = await Promise.all([
-    sanityClient.fetch(heroSlidesQuery).catch(() => []),
-    sanityClient.fetch(siteConfigQuery).catch(() => null),
-    sanityClient.fetch(testimonialsForPageQuery, { page: "home" }).catch(() => []),
+    getHeroSlides(),
+    getSiteConfig(),
+    getTestimonialsByPage("home", FALLBACK_HOME_TESTIMONIALS),
   ]);
 
-  const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : [
-    { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
-    { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
-    { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
-    { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
-  ];
+  const statsBar = siteConfig?.statsBar?.length ? siteConfig.statsBar : FALLBACK_STATS;
 
   return (
     <>
@@ -65,24 +74,32 @@ export default async function Home() {
         >
           <span
             className="text-text"
-            style={{ fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase" }}
+            style={{
+              fontSize: "0.55rem",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+            }}
           >
             Scroll
           </span>
           <div
-            style={{ width: "1px", height: "40px", background: "linear-gradient(180deg, var(--gold), transparent)" }}
+            style={{
+              width: "1px",
+              height: "40px",
+              background: "linear-gradient(180deg, var(--gold), transparent)",
+            }}
           />
         </div>
       </section>
 
-      {/* ── Stat Bar ── */}
+      {/* ── Credibility Strip ── */}
       <section className="bg-surface border-b border-surface-2" style={{ padding: "0" }}>
         <div className="container">
           <div className="grid grid-cols-2 lg:grid-cols-4" style={{ borderRight: "1px solid var(--surface-2)" }}>
             {statsBar.map((s: { line: string; descriptor: string }) => (
               <div key={s.line} className="stats-cell">
-                <span className="display text-text" style={{ fontSize: "clamp(1.2rem, 2.2vw, 1.9rem)", color: "var(--gold)", lineHeight: 1, fontWeight: 600 }}>{s.line}</span>
-                <span className="eyebrow" style={{ marginTop: "10px", display: "block", color: "var(--dim)" }}>{s.descriptor}</span>
+                <span className="display text-text" style={{ fontSize: "clamp(1rem, 1.6vw, 1.3rem)", color: "var(--gold)", lineHeight: 1.2 }}>{s.line}</span>
+                <span className="eyebrow" style={{ marginTop: "10px", display: "block", color: "var(--dim)", fontSize: "0.55rem" }}>{s.descriptor}</span>
               </div>
             ))}
           </div>
@@ -93,53 +110,87 @@ export default async function Home() {
       <section className="bg-surface border-b border-surface-2 s-pad-md">
         <div className="container">
           <div className="max-w-[860px] mx-auto text-center flex flex-col items-center gap-6 md:gap-8">
-            <span className="eyebrow">The Philosophy</span>
+            <span className="eyebrow">Conviction</span>
             <span className="gold-rule" />
             <blockquote
               className="display text-text"
-              style={{ fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)", fontStyle: "italic", lineHeight: 1.25 }}
+              style={{
+                fontSize: "clamp(1.4rem, 3.5vw, 2.8rem)",
+                fontStyle: "italic",
+                lineHeight: 1.25,
+              }}
             >
-              &ldquo;Clarity is the decision. Architecture is the system that protects it. Momentum is what happens when both exist.&rdquo;
+              &ldquo;Clarity is not a luxury. It is the precondition for everything
+              that follows — every decision, every structure, every system that
+              has to hold.&rdquo;
             </blockquote>
-            <p className="text-dim uppercase tracking-[0.15em]" style={{ fontSize: "0.85rem" }}>
+            <p
+              className="text-dim uppercase tracking-[0.15em]"
+              style={{ fontSize: "0.85rem" }}
+            >
               — Kayode Kolade
             </p>
           </div>
         </div>
       </section>
 
-      {/* ── Three Lanes / How I Help ── */}
+      {/* ── Services / My Work ── */}
       <section className="bg-bg s-pad">
         <div className="container">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end border-b border-surface-2 pb-8 mb-0 gap-4">
             <div>
-              <span className="eyebrow block mb-4">Start Here</span>
-              <h2 className="display text-text" style={{ fontSize: "clamp(1.8rem, 4vw, 3.2rem)" }}>
-                Three Lanes. One Operating Philosophy.
+              <span className="eyebrow block mb-4">My Work</span>
+              <h2
+                className="display text-text"
+                style={{ fontSize: "clamp(1.8rem, 4vw, 3.2rem)" }}
+              >
+                Four Ways I Work
               </h2>
             </div>
+            <Link
+              href="/meet-kayode"
+              className="hover-gold flex items-center gap-2"
+              style={{
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+              }}
+            >
+              Meet Kayode <span style={{ color: "var(--gold)" }}>→</span>
+            </Link>
           </div>
-          <p className="text-muted font-light mt-6 mb-10" style={{ fontSize: "0.9rem", lineHeight: 1.9, maxWidth: "640px" }}>
-            Most people arrive here in one of three situations. Find yours — and I&apos;ll show you exactly how we&apos;d work together.
-          </p>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[2px] bg-surface-2 mt-0">
-            {lanes.map((lane) => (
-              <Link key={lane.href} href={lane.href} className="service-card" style={{ display: "flex", flexDirection: "column" }}>
-                <span className="service-card-num display">{lane.num}</span>
-                <h3 className="display text-text mb-1" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.5rem)" }}>
-                  {lane.title}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[2px] bg-surface-2 mt-0">
+            {services.map((s) => (
+              <Link key={s.href} href={s.href} className="service-card group">
+                <span className="service-card-num display">{s.num}</span>
+                <h3 className="display text-text mb-2" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)" }}>
+                  {s.title}
                 </h3>
-                <p style={{ fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--dim)", marginBottom: "16px" }}>
-                  {lane.tags}
+                {s.framework && (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
+                      color: "var(--gold)",
+                      border: "1px solid color-mix(in srgb, var(--gold) 40%, transparent)",
+                      padding: "2px 8px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {s.framework}
+                  </span>
+                )}
+                {!s.framework && <div style={{ marginBottom: "10px", height: "22px" }} />}
+                <p className="text-dim font-light" style={{ fontSize: "0.82rem", lineHeight: 1.8 }}>
+                  {s.desc}
                 </p>
-                <p style={{ fontStyle: "italic", color: "var(--gold)", fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "12px" }}>
-                  {lane.pullquote}
-                </p>
-                <p className="text-dim font-light" style={{ fontSize: "0.82rem", lineHeight: 1.8, marginBottom: "auto" }}>
-                  {lane.desc}
-                </p>
-                <span className="service-card-arrow" style={{ marginTop: "20px" }}>
-                  {lane.cta}
+                <span
+                  className="service-card-arrow"
+                  style={{ color: "var(--gold)", transition: "transform 0.2s ease" }}
+                >
+                  →
                 </span>
               </Link>
             ))}
@@ -152,14 +203,11 @@ export default async function Home() {
         <div className="container">
           <span className="eyebrow block mb-8">In Their Words</span>
           <TestimonialStrip
-            items={homeTestimonials.length ? homeTestimonials.map((t: { quote: string; clientName: string; clientContext?: string }) => ({
+            items={homeTestimonials.map((t) => ({
               quote:   t.quote,
-              name:    t.clientName,
-              context: t.clientContext,
-            })) : [
-              { quote: "Kayode is a true and impactful leader. You'd not have an encounter with him and remain the same.", name: "Senior Professional, Technology Sector" },
-              { quote: "Our interactions provided both the drive and direction I needed to take the next bold steps. I transitioned into project management, moved abroad for my master's, and graduated with a distinction.", name: "Ayodeji Akinola" },
-            ]}
+              name:    t.name,
+              context: t.context,
+            }))}
           />
           <div style={{ marginTop: "28px" }}>
             <Link href="/testimonials" className="hover-gold" style={{ fontSize: "0.68rem", letterSpacing: "0.22em", textTransform: "uppercase" }}>
@@ -169,28 +217,43 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── About Strip ── */}
-      <section className="bg-bg border-t border-surface-2 s-pad">
+      {/* ── About ── */}
+      <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
             <div>
-              <span className="eyebrow block mb-6">Who You&apos;d Be Working With</span>
+              <span className="eyebrow block mb-6">The Architect Behind the Work</span>
               <h2
                 className="display text-text mb-6"
-                style={{ fontSize: "clamp(1.8rem, 3.5vw, 3rem)", lineHeight: 1.15 }}
+                style={{
+                  fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
+                  lineHeight: 1.15,
+                }}
               >
-                I built this practice in operating rooms, not lecture halls.
+                Clarity. Architecture. Momentum.
               </h2>
               <span className="gold-rule mb-7" />
-              <p className="text-muted font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-                I&apos;m an operations leader, executive systems thinker, consultant, and coach. I&apos;ve led multi-country programmes, designed governance and OKR systems inside growing organisations, and coached leaders and professionals through their most consequential transitions. The Kayode Kolade Consulting is deliberately founder-led — which means you get me. Direct, undivided attention on every engagement. Not a junior team. Not a process. One advisor, every time.
+              <p
+                className="text-muted font-light mb-4"
+                style={{ fontSize: "0.9rem", lineHeight: 1.9 }}
+              >
+                Kayode Kolade is a Netherlands-based operating advisor, executive coach, and organisational architect. COO-level leadership across Africa and Europe. Formal credentials in coaching, organisational development, and operating systems.
               </p>
-              <Link href="/my-story" className="btn-outline">
+              <p
+                className="text-dim font-light mb-10"
+                style={{ fontSize: "0.9rem", lineHeight: 1.9 }}
+              >
+                Every engagement is direct and confidential — you work with Kayode, not a team. Full attention. No delegation.
+              </p>
+              <Link href="/meet-kayode" className="btn-outline">
                 Meet Kayode
               </Link>
             </div>
 
-            <div className="relative hidden md:block overflow-hidden" style={{ aspectRatio: "4/5" }}>
+            <div
+              className="relative hidden md:block overflow-hidden"
+              style={{ aspectRatio: "4/5" }}
+            >
               <Image
                 src={facecard}
                 alt="Kayode Kolade"
@@ -200,52 +263,68 @@ export default async function Home() {
               />
               <div
                 className="absolute top-0 right-0 w-[60px] h-[60px] pointer-events-none"
-                style={{ borderTop: "1px solid var(--gold)", borderRight: "1px solid var(--gold)" }}
+                style={{
+                  borderTop: "1px solid var(--gold)",
+                  borderRight: "1px solid var(--gold)",
+                }}
               />
               <div
                 className="absolute bottom-0 left-0 w-[60px] h-[60px] pointer-events-none"
-                style={{ borderBottom: "1px solid var(--gold)", borderLeft: "1px solid var(--gold)" }}
+                style={{
+                  borderBottom: "1px solid var(--gold)",
+                  borderLeft: "1px solid var(--gold)",
+                }}
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Beyond the Work ── */}
-      <section className="bg-surface border-t border-surface-2 s-pad-sm">
+      {/* ── Beyond the Work strip ── */}
+      <section className="bg-bg border-t border-surface-2 s-pad-sm">
         <div className="container">
-          <div style={{ maxWidth: "640px" }}>
-            <span className="eyebrow block mb-5">Beyond the Work</span>
-            <h2 className="display text-text mb-5" style={{ fontSize: "clamp(1.5rem, 3vw, 2.4rem)", lineHeight: 1.2 }}>
-              The thinking you can take with you.
-            </h2>
-            <span className="gold-rule mb-7" />
-            <p className="text-muted font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-              Not ready for a conversation? Start with the writing — reflections on clarity, leadership, systems, and the realities of building across Africa and the diaspora. Take what&apos;s useful. More dimensions of this platform will unfold over time.
-            </p>
-            <Link href="/my-notes" className="btn-outline">
-              Read the Notes
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+            <div>
+              <span className="eyebrow block mb-5">Beyond the Work</span>
+              <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.6rem, 3vw, 2.6rem)", lineHeight: 1.15 }}>
+                The Human Behind the Architecture.
+              </h2>
+              <p className="text-muted font-light" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
+                Photography from places walked through. Books that have shaped how I think. Reflections on clarity, leadership, systems, and the realities of building across borders. The personal side of the practice, for those who want to understand the person they&apos;d be working with.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 md:items-end">
+              <Link href="/beyond-the-work" className="btn-outline">
+                Beyond the Work →
+              </Link>
+              <Link href="/visual-diary" className="hover-gold eyebrow" style={{ color: "var(--gold)" }}>
+                #GeniusMinedWorks · Visual Diary →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Diagnostic Placeholder ── TODO: self-assessment quiz "Where are you stuck — clarity, architecture, or momentum?" */}
-      {/* <DiagnosticQuiz /> */}
-
-      {/* ── Closing CTA ── */}
+      {/* ── CTA ── */}
       <section className="bg-bg border-t border-surface-2 text-center s-pad-md">
         <div className="container max-w-[680px] mx-auto">
-          <span className="eyebrow block mb-4">Your Move</span>
-          <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem, 4vw, 3.6rem)" }}>
-            Your next chapter deserves better architecture. Let&apos;s build it — together.
+          <span className="eyebrow block mb-4">Take the Next Step</span>
+          <h2
+            className="display text-text mb-6"
+            style={{ fontSize: "clamp(1.8rem, 4vw, 3.6rem)" }}
+          >
+            Ready to name what&apos;s next?
           </h2>
-          <p className="text-dim font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.85 }}>
-            It starts with a conversation — direct, confidential, and without obligation. You&apos;ll talk to me, not a sales process. The only goal: figuring out whether there&apos;s a meaningful fit for what you&apos;re navigating.
+          <p
+            className="text-dim font-light mb-10"
+            style={{ fontSize: "0.9rem", lineHeight: 1.85 }}
+          >
+            All engagements are handled with complete discretion. You&apos;ll be talking to Kayode directly — not a process, not a team.
           </p>
-          <CalendlyButton className="btn-solid">
-            Let&apos;s Talk
-          </CalendlyButton>
+          <div className="flex flex-wrap justify-center gap-4">
+            <CalendlyButton className="btn-solid">Let&apos;s Talk</CalendlyButton>
+            <Link href="/contact#form" className="btn-outline">Start the Conversation</Link>
+          </div>
         </div>
       </section>
     </>

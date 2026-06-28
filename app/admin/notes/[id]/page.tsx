@@ -1,55 +1,31 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { sanityClient } from "@/sanity/client";
+import { connectDB } from "@/lib/db";
+import { Note } from "@/lib/models/Note";
+import { Category } from "@/lib/models/Category";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
 import { NoteForm } from "../NoteForm";
-
-interface SanityNote {
-  _id: string;
-  title: string;
-  slug: { current: string };
-  category: string;
-  date: string;
-  excerpt: string;
-  body?: Array<{ children?: Array<{ text?: string }> }>;
-}
-
-function blocksToText(blocks: SanityNote["body"] = []) {
-  return blocks
-    .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
-    .filter(Boolean)
-    .join("\n\n");
-}
 
 export default async function EditNote({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
-  const raw = await sanityClient.getDocument(id).catch(() => undefined);
-  const note = (raw ?? null) as SanityNote | null;
+  await connectDB();
+  const [note, cats] = await Promise.all([
+    Note.findById(id).lean<{ title: string; category: string; date: string; excerpt: string; body: string[] }>(),
+    Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
+  ]);
   if (!note) notFound();
-
-  const initialData = {
-    title: note.title,
-    category: note.category ?? "",
-    date: note.date ?? "",
-    excerpt: note.excerpt ?? "",
-    body: blocksToText(note.body),
-  };
+  const categories = cats.map((c) => c.title);
 
   return (
-    <div style={{ padding: "40px 48px" }}>
-      <div style={{ marginBottom: "36px" }}>
-        <Link
-          href="/admin/notes"
-          style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", textDecoration: "none" }}
-        >
-          ← Notes
-        </Link>
-        <h1 className="display text-text" style={{ fontSize: "1.8rem", marginTop: "16px" }}>Edit Note</h1>
-        <p className="text-dim font-light" style={{ fontSize: "0.75rem", marginTop: "4px", fontFamily: "var(--font-body)" }}>
-          {note.title}
-        </p>
+    <CategoriesProvider initial={categories}>
+      <div style={{ padding: "40px 48px" }}>
+        <div style={{ marginBottom: "36px" }}>
+          <Link href="/admin/notes" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", textDecoration: "none" }}>← Notes</Link>
+          <h1 className="display text-text" style={{ fontSize: "1.8rem", marginTop: "16px" }}>Edit Note</h1>
+          <p className="text-dim font-light" style={{ fontSize: "0.75rem", marginTop: "4px", fontFamily: "var(--font-body)" }}>{note.title}</p>
+        </div>
+        <NoteForm initialData={{ title: note.title, category: note.category, date: note.date, excerpt: note.excerpt, body: note.body.join("\n\n") }} id={id} />
       </div>
-      <NoteForm initialData={initialData} id={id} />
-    </div>
+    </CategoriesProvider>
   );
 }

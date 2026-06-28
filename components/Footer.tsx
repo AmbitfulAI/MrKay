@@ -5,18 +5,20 @@ import NewsletterForm from "@/components/NewsletterForm";
 import { useSiteConfig } from "@/components/SiteConfigProvider";
 
 const services = [
-  { label: "Career & Executive Clarity",      href: "/career-clarity" },
-  { label: "Founder & Business Architecture", href: "/founder-architecture" },
-  { label: "Organisational Systems",          href: "/organisational-systems" },
-  { label: "Workshops & Speaking",            href: "/workshops-speaking" },
+  { label: "Career & Executive Clarity",        href: "/career-executive-clarity" },
+  { label: "Founder & Business Architecture",   href: "/founder-business-architecture" },
+  { label: "Organisational Systems & Execution", href: "/organisational-systems-execution" },
+  { label: "Retreats, Facilitation & Speaking", href: "/retreats-facilitation-speaking" },
 ];
+
 const company = [
-  { label: "Meet Kayode", href: "/my-story" },
-  { label: "Testimonials", href: "/testimonials" },
-  { label: "Impact",       href: "/impact" },
-  { label: "My Notes",     href: "/my-notes" },
-  { label: "Marketplace",  href: "/marketplace" },
-  { label: "Contact",      href: "/contact" },
+  { label: "Meet Kayode",    href: "/meet-kayode" },
+  { label: "Beyond the Work", href: "/beyond-the-work" },
+  { label: "Visual Diary",   href: "/visual-diary" },
+  { label: "Testimonials",   href: "/testimonials" },
+  { label: "Impact",         href: "/impact" },
+  { label: "Writing",        href: "/writing" },
+  { label: "Contact",        href: "/contact" },
 ];
 
 export default function Footer() {
@@ -24,7 +26,6 @@ export default function Footer() {
   return (
     <footer className="bg-surface border-t border-border" style={{ paddingTop: "72px", paddingBottom: "40px" }}>
       <div className="container">
-        {/* Top grid: 1 col mobile → 2 col tablet → 4 col desktop */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-10 md:gap-16 border-b border-surface-2" style={{ paddingBottom: "64px" }}>
           {/* Brand */}
           <div>
@@ -56,7 +57,7 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <p className="eyebrow mb-6">Services</p>
+            <p className="eyebrow mb-6">My Work</p>
             <ul className="flex flex-col gap-[14px] list-none">
               {services.map((s) => <li key={s.href}><Link href={s.href} className="footer-link">{s.label}</Link></li>)}
             </ul>
@@ -72,14 +73,14 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <p className="eyebrow mb-6">Contact</p>
+            <p className="eyebrow mb-6">Get in Touch</p>
             <div className="flex flex-col gap-3 font-light leading-[1.7] text-muted" style={{ fontSize: "0.78rem" }}>
               <a href={`mailto:${contactEmail}`} className="hover-gold">{contactEmail}</a>
-              <span>Everything you share is handled with discretion.</span>
+              <span>All enquiries are treated with the utmost discretion.</span>
             </div>
             <p className="eyebrow" style={{ marginTop: "32px", marginBottom: "4px" }}>Newsletter</p>
             <p className="text-dim font-light" style={{ fontSize: "0.72rem", lineHeight: 1.7, marginBottom: "4px" }}>
-              Notes on clarity, leadership, and systems — written for people building their next chapter.
+              Notes on leadership, systems & conviction.
             </p>
             <NewsletterForm variant="compact" />
           </div>

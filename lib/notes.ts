@@ -12,7 +12,7 @@ export const notes: Note[] = [
   {
     slug: "the-cost-of-unclear-leadership",
     date: "May 2026",
-    category: "Leadership",
+    category: "GeniusMined",
     title: "The Cost of Unclear Leadership",
     excerpt:
       "When executives avoid defining what they stand for, organisations fill the vacuum — rarely well. Clarity of position is not a luxury. It is the precondition for everything else.",
@@ -29,7 +29,7 @@ export const notes: Note[] = [
   {
     slug: "governance-is-not-compliance",
     date: "April 2026",
-    category: "Board Work",
+    category: "GeniusMined",
     title: "Governance Is Not Compliance",
     excerpt:
       "Too many boards conflate the two. Compliance is a floor, not a ceiling. The boards that navigate genuine complexity are those that treat governance as a thinking discipline, not an audit exercise.",
@@ -44,7 +44,7 @@ export const notes: Note[] = [
   {
     slug: "succession-the-conversation-nobody-wants",
     date: "March 2026",
-    category: "Strategy",
+    category: "GeniusMined",
     title: "Succession: The Conversation Nobody Wants",
     excerpt:
       "Organisations that plan for succession only when forced to are organisations that have already lost. The real work — identifying, developing, and preparing successors — happens years before the transition.",
@@ -60,7 +60,7 @@ export const notes: Note[] = [
   {
     slug: "what-media-ready-actually-means",
     date: "February 2026",
-    category: "Media & Speaking",
+    category: "GeniusMined",
     title: "What 'Media Ready' Actually Means",
     excerpt:
       "It is not polish. It is not a set of rehearsed answers. It is knowing what you believe, why you believe it, and how to hold that position under pressure — in any room, with any audience.",
@@ -76,7 +76,7 @@ export const notes: Note[] = [
   {
     slug: "the-difference-between-authority-and-position",
     date: "January 2026",
-    category: "Leadership",
+    category: "GeniusMined",
     title: "The Difference Between Authority and Position",
     excerpt:
       "Position is granted. Authority is earned — through consistency, competence, and the willingness to make decisions others defer. The executives who last understand this distinction early.",
@@ -91,7 +91,7 @@ export const notes: Note[] = [
   {
     slug: "what-the-psalms-taught-me-about-pressure",
     date: "December 2025",
-    category: "Faith & Life",
+    category: "GraceJunkie",
     image: "facecard",
     title: "What the Psalms Taught Me About Pressure",
     excerpt:
@@ -107,7 +107,7 @@ export const notes: Note[] = [
   {
     slug: "on-stillness-a-note-to-myself",
     date: "November 2025",
-    category: "Faith & Life",
+    category: "GraceJunkie",
     image: "headshot",
     title: "On Stillness: A Note to Myself",
     excerpt:
@@ -125,7 +125,7 @@ export const notes: Note[] = [
   {
     slug: "a-letter-i-never-sent",
     date: "October 2025",
-    category: "Creative",
+    category: "RareMusingWork",
     title: "A Letter I Never Sent",
     excerpt:
       "To the version of me who thought that getting the title was the same thing as earning the right to lead. It was not. Here is what I wish someone had said earlier.",
@@ -143,12 +143,9 @@ export const notes: Note[] = [
 
 export const categories = [
   "All",
-  "Leadership",
-  "Board Work",
-  "Strategy",
-  "Media & Speaking",
-  "Faith & Life",
-  "Creative",
+  "GeniusMined",
+  "GraceJunkie",
+  "RareMusingWork",
 ];
 
 export function getNoteBySlug(slug: string): Note | undefined {

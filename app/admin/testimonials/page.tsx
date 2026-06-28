@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsQuery } from "@/sanity/queries";
+import { connectDB } from "@/lib/db";
+import { Testimonial } from "@/lib/models/Testimonial";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 
-interface Testimonial { _id: string; quote: string; clientName: string; clientContext: string; order?: number; pages?: string[]; }
+interface TestimonialRow { _id: string; quote: string; clientName: string; clientContext: string; order?: number; pages?: string[]; }
 export const revalidate = 0;
 
 export default async function AdminTestimonials() {
-  const items: Testimonial[] = await sanityClient.fetch(testimonialsQuery);
+  await connectDB();
+  const items = await Testimonial.find().sort({ order: 1 }).lean<TestimonialRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -29,16 +30,19 @@ export default async function AdminTestimonials() {
             {["Quote", "Client", "Pages", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "1fr 180px 1fr 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "1fr 180px 1fr 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <p className="text-text font-light" style={{ fontSize: "0.88rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: "16px" }}>{item.quote}</p>
-              <div><p style={{ fontSize: "0.78rem", color: "var(--text)", fontFamily: "var(--font-body)" }}>{item.clientName}</p><p style={{ fontSize: "0.68rem", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{item.clientContext}</p></div>
+              <div>
+                <p style={{ fontSize: "0.78rem", color: "var(--text)", fontFamily: "var(--font-body)" }}>{item.clientName}</p>
+                <p style={{ fontSize: "0.68rem", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{item.clientContext}</p>
+              </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
                 {(item.pages ?? []).map((p) => <span key={p} style={{ fontSize: "0.58rem", letterSpacing: "0.1em", textTransform: "uppercase", padding: "2px 7px", background: "var(--gold-glow)", color: "var(--gold)", fontFamily: "var(--font-body)", borderRadius: "2px" }}>{p}</span>)}
               </div>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/testimonials/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/testimonials" />
+                <Link href={`/admin/testimonials/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={String(item._id)} endpoint="/api/admin/testimonials" />
               </div>
             </div>
           ))}

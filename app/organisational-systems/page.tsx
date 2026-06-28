@@ -2,8 +2,7 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsForPageQuery } from "@/sanity/queries";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
@@ -36,10 +35,7 @@ const FALLBACK_TESTIMONIALS = [
 ];
 
 export default async function OrganisationalSystems() {
-  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "organisational-systems" }).catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("organisational-systems", FALLBACK_TESTIMONIALS);
   return (
     <>
       <PageHero

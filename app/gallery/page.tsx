@@ -2,9 +2,7 @@ import PageHero from "@/components/PageHero";
 import GalleryGrid from "@/components/GalleryGrid";
 import type { GalleryImage } from "@/components/GalleryGrid";
 import CalendlyButton from "@/components/CalendlyButton";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { galleryQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import { getGalleryImages } from "@/lib/data/gallery";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -20,7 +18,6 @@ const images: GalleryImage[] = [
     title: "The Advisor",
     caption: "In conversation — the posture that defines the work.",
     category: "Portrait",
-    span: "tall",
   },
   {
     src: execImg,
@@ -28,7 +25,6 @@ const images: GalleryImage[] = [
     title: "In the Room",
     caption: "Where the real decisions get made.",
     category: "Professional",
-    span: "wide",
   },
   {
     src: upperbodyImg,
@@ -36,7 +32,6 @@ const images: GalleryImage[] = [
     title: "Present",
     caption: "Stillness before the session.",
     category: "Portrait",
-    span: "normal",
   },
   {
     src: headshotImg,
@@ -44,38 +39,26 @@ const images: GalleryImage[] = [
     title: "TheKayodeKolade",
     caption: "Advisor · Coach · Confidant",
     category: "Professional",
-    span: "normal",
   },
 ];
 
 const staticCategories = ["All", "Portrait", "Professional"];
 
-interface SanityGalleryImage {
-  _id: string;
-  title: string;
-  caption?: string;
-  category?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  image?: any;
-  span?: "wide" | "tall" | "normal";
-}
-
 export default async function Gallery() {
-  const sanityImages = await sanityFetch<SanityGalleryImage>(galleryQuery);
+  const dbImages = await getGalleryImages();
 
-  const activeImages: GalleryImage[] = sanityImages.length > 0
-    ? sanityImages.map((img) => ({
-        src: img.image ? urlFor(img.image).width(800).url() : execImg,
-        alt: img.image?.alt ?? img.title,
+  const activeImages: GalleryImage[] = dbImages.length > 0
+    ? dbImages.map((img) => ({
+        src: img.imageUrl ?? execImg,
+        alt: img.alt,
         title: img.title,
         caption: img.caption,
-        category: img.category ?? "General",
-        span: img.span ?? "normal",
+        category: img.category,
       }))
     : images;
 
-  const activeCategories = sanityImages.length > 0
-    ? ["All", ...Array.from(new Set(sanityImages.map((i) => i.category).filter(Boolean) as string[]))]
+  const activeCategories = dbImages.length > 0
+    ? ["All", ...Array.from(new Set(dbImages.map((i) => i.category)))]
     : staticCategories;
 
   return (
@@ -88,7 +71,6 @@ export default async function Gallery() {
 
       <GalleryGrid images={activeImages} categories={activeCategories} />
 
-      {/* ── CTA ── */}
       <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
           <div>

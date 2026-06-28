@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCategories } from "@/components/CategoriesProvider";
 
 interface NoteFormData {
   title: string;
@@ -51,16 +52,9 @@ export function NoteForm({ initialData, id }: Props) {
     ...initialData,
   });
 
-  const [categories, setCategories] = useState<{ _id: string; title: string }[]>([]);
+  const categories = useCategories();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetch("/api/admin/notes/categories")
-      .then((r) => r.json())
-      .then((data: { _id: string; title: string }[]) => setCategories(data.filter((c) => c._id)))
-      .catch(() => {});
-  }, []);
 
   function set(field: keyof NoteFormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -116,8 +110,8 @@ export function NoteForm({ initialData, id }: Props) {
             {categories.length > 0 ? (
               <select value={form.category} onChange={set("category")} required style={inputStyle}>
                 <option value="">Select a category</option>
-                {categories.map((c) => (
-                  <option key={c._id} value={c.title}>{c.title}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
             ) : (
@@ -126,7 +120,7 @@ export function NoteForm({ initialData, id }: Props) {
                 value={form.category}
                 onChange={set("category")}
                 required
-                placeholder="e.g. Leadership"
+                placeholder="e.g. GeniusMined"
                 style={inputStyle}
               />
             )}

@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNoteBySlug, getRelatedNotes, notes as staticNotes } from "@/lib/notes";
-import { sanityFetch, sanityFetchOne } from "@/lib/sanity-fetch";
-import { noteBySlugQuery, noteSlugsQuery } from "@/sanity/queries";
-import { urlFor } from "@/lib/image-url";
+import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes } from "@/lib/notes";
+import { getNoteSlugs, getNoteBySlug } from "@/lib/data/notes";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -21,67 +19,19 @@ const imageMap = {
   upperbody: upperbodyImg,
 };
 
-interface SanityNote {
-  _id: string;
-  slug: string;
-  title: string;
-  category: string;
-  date: string;
-  excerpt: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  featuredImage?: any;
-  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
-}
-
 export async function generateStaticParams() {
-  const fromSanity = await sanityFetch<{ slug: unknown }>(noteSlugsQuery);
-  const fromStatic = staticNotes.map((n) => ({ slug: n.slug }));
-
-  const sanityParams = fromSanity
-    .map((s) => {
-      const raw = s.slug;
-      const slug = typeof raw === "string" ? raw : (raw as { current?: string })?.current;
-      return slug ? { slug } : null;
-    })
-    .filter((x): x is { slug: string } => x !== null);
-
-  const all = [...fromStatic, ...sanityParams];
-  return [...new Map(all.map((s) => [s.slug, s])).values()];
+  return getNoteSlugs();
 }
 
 export default async function NotePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  const sanityNote = await sanityFetchOne<SanityNote>(noteBySlugQuery, { slug });
-
-  if (sanityNote) {
-    const body = (sanityNote.blocks ?? [])
-      .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
-      .filter(Boolean);
-    const heroImageUrl = sanityNote.featuredImage
-      ? urlFor(sanityNote.featuredImage).width(1400).url()
-      : null;
-    const related = getRelatedNotes(slug);
-
-    return (
-      <NoteDetail
-        title={sanityNote.title}
-        category={sanityNote.category}
-        date={sanityNote.date}
-        excerpt={sanityNote.excerpt}
-        body={body}
-        heroSrc={heroImageUrl ?? undefined}
-        heroAlt={sanityNote.title}
-        related={related}
-      />
-    );
-  }
-
-  const note = getNoteBySlug(slug);
+  const note = await getNoteBySlug(slug);
   if (!note) notFound();
 
   const related = getRelatedNotes(slug);
-  const heroStaticImage = note.image ? imageMap[note.image] : undefined;
+
+  const n = note as { featuredImage?: string; image?: "headshot" | "exec" | "facecard" | "upperbody" };
+  const heroSrc = n.featuredImage ?? (n.image ? imageMap[n.image] : undefined);
 
   return (
     <NoteDetail
@@ -90,7 +40,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
       date={note.date}
       excerpt={note.excerpt}
       body={note.body}
-      heroSrc={heroStaticImage}
+      heroSrc={heroSrc}
       heroAlt={note.title}
       related={related}
     />

@@ -2,57 +2,13 @@ import PageHero from "@/components/PageHero";
 import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
 import Link from "next/link";
-import { notes as staticNotes, categories as staticCategories, type Note } from "@/lib/notes";
-import { sanityFetch } from "@/lib/sanity-fetch";
-import { notesQuery, noteCategoriesQuery } from "@/sanity/queries";
+import { getNotes } from "@/lib/data/notes";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
 
 export const revalidate = 60;
 
-interface SanityNote {
-  _id: string;
-  slug: string;
-  title: string;
-  category: string;
-  date: string;
-  excerpt: string;
-  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
-}
-
-function mapSanityNote(n: SanityNote): Note {
-  return {
-    slug: n.slug,
-    title: n.title,
-    category: n.category,
-    date: n.date,
-    excerpt: n.excerpt,
-    body: (n.blocks ?? []).map((b) =>
-      (b.children ?? []).map((c) => c.text ?? "").join("")
-    ).filter(Boolean),
-  };
-}
-
-interface SanityCategory {
-  _id: string;
-  title: string;
-  slug: string;
-  order?: number;
-}
-
 export default async function MyNotes() {
-  const [sanityNotes, sanityCategories] = await Promise.all([
-    sanityFetch<SanityNote>(notesQuery),
-    sanityFetch<SanityCategory>(noteCategoriesQuery),
-  ]);
-
-  const notes = sanityNotes.length > 0
-    ? sanityNotes.map(mapSanityNote)
-    : staticNotes;
-
-  const uniqueCategories = sanityCategories.length > 0
-    ? ["All", ...sanityCategories.map((c) => c.title)]
-    : sanityNotes.length > 0
-    ? ["All", ...Array.from(new Set(sanityNotes.map((n) => n.category)))]
-    : staticCategories;
+  const { notes, categories: uniqueCategories } = await getNotes();
 
   return (
     <>
@@ -62,7 +18,9 @@ export default async function MyNotes() {
         subtitle="Notes, essays, and perspectives on leadership, strategy, faith, and the discipline of leading well — written as I think, not as I present."
       />
 
-      <NotesFilter posts={notes} categories={uniqueCategories} />
+      <CategoriesProvider initial={uniqueCategories}>
+        <NotesFilter posts={notes} />
+      </CategoriesProvider>
 
       <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">

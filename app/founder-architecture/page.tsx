@@ -2,13 +2,12 @@ import PageHero from "@/components/PageHero";
 import CalendlyButton from "@/components/CalendlyButton";
 import Link from "next/link";
 import TestimonialStrip from "@/components/TestimonialStrip";
-import { sanityClient } from "@/sanity/client";
-import { testimonialsForPageQuery } from "@/sanity/queries";
+import { getTestimonialsByPage } from "@/lib/data/testimonials";
 
 export const revalidate = 60;
 
 const FALLBACK_TESTIMONIALS = [
-  { name: "Founder, early-stage organisation", quote: "We were trying to define what my organisation is aiming to achieve. I needed help understanding structure and how to build out ideas that are marketable. Together we created a revised vision, mission, goals, and business model for the organisation I am building." },
+  { name: "Founder, early-stage organisation", context: "Founder & Business Architecture", quote: "We were trying to define what my organisation is aiming to achieve. I needed help understanding structure and how to build out ideas that are marketable. Together we created a revised vision, mission, goals, and business model for the organisation I am building." },
 ];
 
 const steps = [
@@ -36,10 +35,7 @@ const deliverables = [
 ];
 
 export default async function FounderArchitecture() {
-  const raw = await sanityClient.fetch(testimonialsForPageQuery, { page: "founder-architecture" }).catch(() => []);
-  const testimonials = raw.length
-    ? raw.map((t: { quote: string; clientName: string; clientContext?: string }) => ({ quote: t.quote, name: t.clientName, context: t.clientContext }))
-    : FALLBACK_TESTIMONIALS;
+  const testimonials = await getTestimonialsByPage("founder-architecture", FALLBACK_TESTIMONIALS);
   return (
     <>
       <PageHero

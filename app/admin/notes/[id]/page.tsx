@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
-import { NoteCategory } from "@/lib/models/NoteCategory";
-import { NoteCategoriesProvider } from "@/components/NoteCategoriesProvider";
+import { Category } from "@/lib/models/Category";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
 import { NoteForm } from "../NoteForm";
 
 export default async function EditNote({ params }: { params: Promise<{ id: string }> }) {
@@ -11,13 +11,13 @@ export default async function EditNote({ params }: { params: Promise<{ id: strin
   await connectDB();
   const [note, cats] = await Promise.all([
     Note.findById(id).lean<{ title: string; category: string; date: string; excerpt: string; body: string[] }>(),
-    NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
+    Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
   if (!note) notFound();
   const categories = cats.map((c) => c.title);
 
   return (
-    <NoteCategoriesProvider initial={categories}>
+    <CategoriesProvider initial={categories}>
       <div style={{ padding: "40px 48px" }}>
         <div style={{ marginBottom: "36px" }}>
           <Link href="/admin/notes" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", textDecoration: "none" }}>← Notes</Link>
@@ -26,6 +26,6 @@ export default async function EditNote({ params }: { params: Promise<{ id: strin
         </div>
         <NoteForm initialData={{ title: note.title, category: note.category, date: note.date, excerpt: note.excerpt, body: note.body.join("\n\n") }} id={id} />
       </div>
-    </NoteCategoriesProvider>
+    </CategoriesProvider>
   );
 }

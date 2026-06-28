@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
+import { Category } from "@/lib/models/Category";
 import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
 
 export async function GET(
@@ -39,6 +40,10 @@ export async function PATCH(
   if (!note) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/my-notes");
   revalidatePath(`/my-notes/${slug}`);
+  const cat = await Category.findOne({ title: data.category, type: "writing" })
+    .lean<{ slug: string }>()
+    .catch(() => null);
+  if (cat) revalidatePath(`/writing/${cat.slug}`);
   return NextResponse.json(note.toJSON());
 }
 
@@ -48,7 +53,13 @@ export async function DELETE(
 ) {
   await connectDB();
   const { id } = await params;
-  await Note.findByIdAndDelete(id);
+  const deleted = await Note.findByIdAndDelete(id).lean<{ category: string }>();
   revalidatePath("/my-notes");
+  if (deleted?.category) {
+    const cat = await Category.findOne({ title: deleted.category, type: "writing" })
+      .lean<{ slug: string }>()
+      .catch(() => null);
+    if (cat) revalidatePath(`/writing/${cat.slug}`);
+  }
   return NextResponse.json({ deleted: true });
 }

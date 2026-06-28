@@ -22,12 +22,12 @@ if (fs.existsSync(envPath)) {
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) throw new Error("MONGODB_URI not set in .env.local");
 
-const NoteCategorySchema = new mongoose.Schema(
+const CategorySchema = new mongoose.Schema(
   { title: String, slug: String, type: String, order: Number, tagline: String, description: String, themes: [String] },
   { timestamps: true }
 );
-const NoteCategory =
-  mongoose.models.NoteCategory ?? mongoose.model("NoteCategory", NoteCategorySchema);
+const Category =
+  mongoose.models.Category ?? mongoose.model("Category", CategorySchema);
 
 const CATEGORIES = [
   {
@@ -89,8 +89,14 @@ const VISUAL_DIARY_CATEGORIES = [
 
 async function run() {
   await mongoose.connect(MONGODB_URI!);
-  await NoteCategory.deleteMany({});
-  await NoteCategory.insertMany([...CATEGORIES, ...VISUAL_DIARY_CATEGORIES]);
+  // Drop old notecategories collection if it exists
+  const collections = await mongoose.connection.db!.listCollections({ name: "notecategories" }).toArray();
+  if (collections.length) {
+    await mongoose.connection.db!.dropCollection("notecategories");
+    console.log("✓ Dropped old notecategories collection");
+  }
+  await Category.deleteMany({});
+  await Category.insertMany([...CATEGORIES, ...VISUAL_DIARY_CATEGORIES]);
   console.log(`✓ Seeded ${CATEGORIES.length} writing categories:`);
   CATEGORIES.forEach((c) => console.log(`  · ${c.title}`));
   console.log(`✓ Seeded ${VISUAL_DIARY_CATEGORIES.length} visual diary categories:`);

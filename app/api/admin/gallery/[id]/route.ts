@@ -15,13 +15,12 @@ export async function PATCH(
     caption:  data.caption,
     category: data.category,
     alt:      data.alt ?? "",
-    span:     data.span || "normal",
     order:    data.order ? Number(data.order) : 99,
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
   const img = await GalleryImage.findByIdAndUpdate(id, update, { new: true });
   if (!img) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  revalidatePath("/gallery");
+  revalidatePath("/visual-diary");
   return NextResponse.json(img.toJSON());
 }
 
@@ -32,6 +31,6 @@ export async function DELETE(
   await connectDB();
   const { id } = await params;
   await GalleryImage.findByIdAndDelete(id);
-  revalidatePath("/gallery");
+  revalidatePath("/visual-diary");
   return NextResponse.json({ deleted: true });
 }

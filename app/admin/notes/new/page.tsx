@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { connectDB } from "@/lib/db";
-import { NoteCategory } from "@/lib/models/NoteCategory";
-import { NoteCategoriesProvider } from "@/components/NoteCategoriesProvider";
+import { Category } from "@/lib/models/Category";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
 import { NoteForm } from "../NoteForm";
 
 export default async function NewNote() {
   await connectDB();
-  const cats = await NoteCategory.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>();
+  const cats = await Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>();
   const categories = cats.map((c) => c.title);
 
   return (
-    <NoteCategoriesProvider initial={categories}>
+    <CategoriesProvider initial={categories}>
       <div style={{ padding: "40px 48px" }}>
         <div style={{ marginBottom: "36px" }}>
           <Link
@@ -23,6 +23,6 @@ export default async function NewNote() {
         </div>
         <NoteForm />
       </div>
-    </NoteCategoriesProvider>
+    </CategoriesProvider>
   );
 }

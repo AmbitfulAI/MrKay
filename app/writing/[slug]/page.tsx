@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
-import { NoteCategory } from "@/lib/models/NoteCategory";
+import { Category } from "@/lib/models/Category";
+import { Note as NoteModel } from "@/lib/models/Note";
+import { notes as staticNotes, type Note } from "@/lib/notes";
 
 export const revalidate = 60;
 
-interface Category {
+interface WritingCategory {
   title: string;
   slug: string;
   tagline: string;
@@ -13,9 +15,17 @@ interface Category {
   themes: string[];
 }
 
+interface DBNote {
+  slug: string;
+  title: string;
+  category: string;
+  date: string;
+  excerpt: string;
+}
+
 export async function generateStaticParams() {
   await connectDB();
-  const cats = await NoteCategory.find({ type: "writing" })
+  const cats = await Category.find({ type: "writing" })
     .select("slug")
     .lean<{ slug: string }[]>()
     .catch(() => []);
@@ -29,8 +39,8 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   await connectDB();
-  const cat = await NoteCategory.findOne({ slug, type: "writing" })
-    .lean<Category>()
+  const cat = await Category.findOne({ slug, type: "writing" })
+    .lean<WritingCategory>()
     .catch(() => null);
   if (!cat) return {};
   return {
@@ -46,10 +56,26 @@ export default async function WritingCategoryPage({
 }) {
   const { slug } = await params;
   await connectDB();
-  const cat = await NoteCategory.findOne({ slug, type: "writing" })
-    .lean<Category>()
+  const cat = await Category.findOne({ slug, type: "writing" })
+    .lean<WritingCategory>()
     .catch(() => null);
   if (!cat) notFound();
+
+  const dbNotes = await NoteModel.find({ category: cat.title })
+    .sort({ createdAt: -1 })
+    .lean<DBNote[]>()
+    .catch(() => []);
+
+  const notes: Note[] = dbNotes.length
+    ? dbNotes.map((n) => ({
+        slug: n.slug,
+        title: n.title,
+        category: n.category,
+        date: n.date,
+        excerpt: n.excerpt,
+        body: [],
+      }))
+    : staticNotes.filter((n) => n.category === cat.title);
 
   const paragraphs = cat.description
     ? cat.description.split("\n\n").filter(Boolean)
@@ -116,7 +142,7 @@ export default async function WritingCategoryPage({
       )}
 
       {cat.themes.length > 0 && (
-        <section className="bg-bg s-pad">
+        <section className="bg-bg border-b border-surface-2 s-pad">
           <div className="container">
             <span className="eyebrow block mb-8">
               Themes you&apos;ll find here
@@ -151,16 +177,54 @@ export default async function WritingCategoryPage({
 
       <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container">
-          <p
-            className="text-dim font-light"
-            style={{
-              fontSize: "0.88rem",
-              lineHeight: 1.9,
-              fontStyle: "italic",
-            }}
-          >
-            First pieces coming soon.
-          </p>
+          {notes.length > 0 ? (
+            <div className="flex flex-col">
+              {notes.map((note) => (
+                <Link
+                  key={note.slug}
+                  href={`/my-notes/${note.slug}`}
+                  className="blog-row"
+                >
+                  <div className="blog-row-meta">
+                    <span className="eyebrow">{note.category}</span>
+                    <span
+                      className="text-dim font-light"
+                      style={{
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.18em",
+                        marginTop: "6px",
+                        display: "block",
+                      }}
+                    >
+                      {note.date}
+                    </span>
+                  </div>
+                  <div className="blog-row-body">
+                    <h2
+                      className="display text-text mb-3"
+                      style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}
+                    >
+                      {note.title}
+                    </h2>
+                    <p
+                      className="text-muted font-light"
+                      style={{ fontSize: "0.85rem", lineHeight: 1.85 }}
+                    >
+                      {note.excerpt}
+                    </p>
+                  </div>
+                  <span className="blog-row-arrow">→</span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p
+              className="text-dim font-light"
+              style={{ fontSize: "0.88rem", lineHeight: 1.9, fontStyle: "italic" }}
+            >
+              First pieces coming soon.
+            </p>
+          )}
         </div>
       </section>
     </>

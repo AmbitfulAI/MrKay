@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const NoteCategorySchema = new Schema(
+const CategorySchema = new Schema(
   {
     title:       { type: String, required: true },
     slug:        { type: String, required: true, unique: true },
@@ -14,7 +14,7 @@ const NoteCategorySchema = new Schema(
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-NoteCategorySchema.set("toJSON", { transform: (_: unknown, ret: any) => { ret._id = String(ret._id); delete ret.__v; return ret; } });
+CategorySchema.set("toJSON", { transform: (_: unknown, ret: any) => { ret._id = String(ret._id); delete ret.__v; return ret; } });
 
-export const NoteCategory =
-  mongoose.models.NoteCategory ?? mongoose.model("NoteCategory", NoteCategorySchema);
+export const Category =
+  mongoose.models.Category ?? mongoose.model("Category", CategorySchema);

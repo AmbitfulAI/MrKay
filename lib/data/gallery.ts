@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { GalleryImage as GalleryImageModel } from "@/lib/models/GalleryImage";
-import { NoteCategory } from "@/lib/models/NoteCategory";
+import { Category } from "@/lib/models/Category";
 
 export interface GalleryItem {
   imageUrl: string | null;
@@ -8,7 +8,6 @@ export interface GalleryItem {
   title: string;
   caption?: string;
   category: string;
-  span: "wide" | "tall" | "normal";
 }
 
 interface DBGalleryImage {
@@ -17,19 +16,29 @@ interface DBGalleryImage {
   category?: string;
   imageUrl?: string;
   alt?: string;
-  span?: "wide" | "tall" | "normal";
 }
 
 const FALLBACK_GALLERY_CATEGORIES = ["All", "Portrait", "Professional"];
+const FALLBACK_GALLERY_CATEGORY_TITLES = ["Portrait", "Professional"];
 
 export async function getGalleryCategories(): Promise<string[]> {
   await connectDB();
-  const cats = await NoteCategory
+  const cats = await Category
     .find({ type: "visual-diary" })
     .sort({ order: 1 })
     .lean<{ title: string }[]>()
     .catch(() => []);
   return cats.length ? ["All", ...cats.map((c) => c.title)] : FALLBACK_GALLERY_CATEGORIES;
+}
+
+export async function getGalleryCategoryTitles(): Promise<string[]> {
+  await connectDB();
+  const cats = await Category
+    .find({ type: "visual-diary" })
+    .sort({ order: 1 })
+    .lean<{ title: string }[]>()
+    .catch(() => []);
+  return cats.length ? cats.map((c) => c.title) : FALLBACK_GALLERY_CATEGORY_TITLES;
 }
 
 export async function getGalleryImages(): Promise<GalleryItem[]> {
@@ -45,6 +54,5 @@ export async function getGalleryImages(): Promise<GalleryItem[]> {
     title: img.title,
     caption: img.caption,
     category: img.category ?? "General",
-    span: img.span ?? "normal",
   }));
 }

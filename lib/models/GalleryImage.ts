@@ -7,7 +7,6 @@ const GalleryImageSchema = new Schema(
     category: { type: String, default: "" },
     imageUrl: { type: String, default: "" },
     alt:      { type: String, default: "" },
-    span:     { type: String, default: "normal" },
     order:    { type: Number, default: 99 },
   },
   { timestamps: true }

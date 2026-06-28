@@ -15,10 +15,10 @@ export const metadata = {
 };
 
 const staticImages = [
-  { src: facecardImg,   alt: "TheKayodeKolade",                    title: "The Advisor",        caption: "In conversation — the posture that defines the work.", category: "Portrait",     span: "tall"   as const },
-  { src: execImg,       alt: "TheKayodeKolade — Executive Setting", title: "In the Room",        caption: "Where the real decisions get made.",                   category: "Professional", span: "wide"   as const },
-  { src: upperbodyImg,  alt: "TheKayodeKolade",                    title: "Present",            caption: "Stillness before the session.",                        category: "Portrait",     span: "normal" as const },
-  { src: headshotImg,   alt: "TheKayodeKolade",                    title: "TheKayodeKolade",    caption: "Advisor · Architect · Coach",                          category: "Professional", span: "normal" as const },
+  { src: facecardImg,   alt: "TheKayodeKolade",                    title: "The Advisor",     caption: "In conversation — the posture that defines the work.", category: "Portrait"     },
+  { src: execImg,       alt: "TheKayodeKolade — Executive Setting", title: "In the Room",     caption: "Where the real decisions get made.",                   category: "Professional" },
+  { src: upperbodyImg,  alt: "TheKayodeKolade",                    title: "Present",         caption: "Stillness before the session.",                        category: "Portrait"     },
+  { src: headshotImg,   alt: "TheKayodeKolade",                    title: "TheKayodeKolade", caption: "Advisor · Architect · Coach",                          category: "Professional" },
 ];
 
 export default async function VisualDiary() {

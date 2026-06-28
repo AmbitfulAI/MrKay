@@ -18,9 +18,8 @@ export async function POST(req: NextRequest) {
     category: data.category,
     imageUrl: data.imageUrl ?? "",
     alt:      data.alt ?? "",
-    span:     data.span || "normal",
     order:    data.order ? Number(data.order) : 99,
   });
-  revalidatePath("/gallery");
+  revalidatePath("/visual-diary");
   return NextResponse.json(img.toJSON(), { status: 201 });
 }

@@ -18,7 +18,6 @@ const images: GalleryImage[] = [
     title: "The Advisor",
     caption: "In conversation — the posture that defines the work.",
     category: "Portrait",
-    span: "tall",
   },
   {
     src: execImg,
@@ -26,7 +25,6 @@ const images: GalleryImage[] = [
     title: "In the Room",
     caption: "Where the real decisions get made.",
     category: "Professional",
-    span: "wide",
   },
   {
     src: upperbodyImg,
@@ -34,7 +32,6 @@ const images: GalleryImage[] = [
     title: "Present",
     caption: "Stillness before the session.",
     category: "Portrait",
-    span: "normal",
   },
   {
     src: headshotImg,
@@ -42,7 +39,6 @@ const images: GalleryImage[] = [
     title: "TheKayodeKolade",
     caption: "Advisor · Coach · Confidant",
     category: "Professional",
-    span: "normal",
   },
 ];
 
@@ -58,7 +54,6 @@ export default async function Gallery() {
         title: img.title,
         caption: img.caption,
         category: img.category,
-        span: img.span,
       }))
     : images;
 
@@ -76,7 +71,6 @@ export default async function Gallery() {
 
       <GalleryGrid images={activeImages} categories={activeCategories} />
 
-      {/* ── CTA ── */}
       <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container flex flex-col sm:flex-row justify-between items-start sm:items-center gap-8">
           <div>

@@ -1,15 +1,9 @@
 import { connectDB } from "@/lib/db";
 import { SiteConfig } from "@/lib/models/SiteConfig";
+import type { SiteConfigShape } from "@/lib/site-config-defaults";
 
-export interface SiteConfigData {
-  calendlyUrl?: string;
-  contactEmail?: string;
-  footerTagline?: string;
-  footerBlurb?: string;
-  linkedInUrl?: string;
-  instagramUrl?: string;
-  statsBar?: { line: string; descriptor: string }[];
-}
+export type { SiteConfigShape };
+export type SiteConfigData = Partial<SiteConfigShape>;
 
 export async function getSiteConfig(): Promise<SiteConfigData | null> {
   await connectDB();

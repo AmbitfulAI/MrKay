@@ -3,7 +3,7 @@ import NotesFilter from "@/components/NotesFilter";
 import NewsletterForm from "@/components/NewsletterForm";
 import Link from "next/link";
 import { getNotes } from "@/lib/data/notes";
-import { NoteCategoriesProvider } from "@/components/NoteCategoriesProvider";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
 
 export const revalidate = 60;
 
@@ -18,9 +18,9 @@ export default async function MyNotes() {
         subtitle="Notes, essays, and perspectives on leadership, strategy, faith, and the discipline of leading well — written as I think, not as I present."
       />
 
-      <NoteCategoriesProvider initial={uniqueCategories}>
+      <CategoriesProvider initial={uniqueCategories}>
         <NotesFilter posts={notes} />
-      </NoteCategoriesProvider>
+      </CategoriesProvider>
 
       <section className="bg-surface border-t border-surface-2 s-pad">
         <div className="container">

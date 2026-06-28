@@ -9,7 +9,6 @@ export interface GalleryImage {
   title: string;
   caption?: string;
   category: string;
-  span?: "wide" | "tall" | "normal";
 }
 
 interface Props {
@@ -78,6 +77,7 @@ export default function GalleryGrid({ images, categories }: Props) {
                       height={height}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       style={{ width: "100%", height: "auto", display: "block" }}
+                      priority={i === 0}
                     />
                     <div className="vd-overlay">
                       <div className="vd-overlay-inner">

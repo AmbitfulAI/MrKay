@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
-import { NoteCategory } from "@/lib/models/NoteCategory";
+import { Category } from "@/lib/models/Category";
 import CategoryEditForm from "./CategoryEditForm";
 
 interface Category {
@@ -18,7 +18,7 @@ interface Category {
 export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   await connectDB();
-  const cat = await NoteCategory.findById(id).lean<Category>();
+  const cat = await Category.findById(id).lean<Category>();
   if (!cat) notFound();
 
   return (

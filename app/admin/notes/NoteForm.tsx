@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useNoteCategories } from "@/components/NoteCategoriesProvider";
+import { useCategories } from "@/components/CategoriesProvider";
 
 interface NoteFormData {
   title: string;
@@ -52,7 +52,7 @@ export function NoteForm({ initialData, id }: Props) {
     ...initialData,
   });
 
-  const categories = useNoteCategories();
+  const categories = useCategories();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 

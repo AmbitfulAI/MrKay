@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { NoteCategory } from "@/lib/models/NoteCategory";
+import { Category } from "@/lib/models/Category";
 import { generateUniqueSlug } from "@/lib/admin-utils";
 
 export async function PATCH(
@@ -13,14 +13,14 @@ export async function PATCH(
   const update: Record<string, unknown> = {};
   if (title?.trim()) {
     update.title = title.trim();
-    update.slug  = await generateUniqueSlug("NoteCategory", title, id);
+    update.slug  = await generateUniqueSlug("Category", title, id);
   }
   if (order !== undefined) update.order = order;
   if (type !== undefined) update.type = type;
   if (tagline !== undefined) update.tagline = tagline;
   if (description !== undefined) update.description = description;
   if (Array.isArray(themes)) update.themes = themes;
-  const cat = await NoteCategory.findByIdAndUpdate(id, update, { new: true });
+  const cat = await Category.findByIdAndUpdate(id, update, { new: true });
   if (!cat) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(cat.toJSON());
 }
@@ -31,6 +31,6 @@ export async function DELETE(
 ) {
   await connectDB();
   const { id } = await params;
-  await NoteCategory.findByIdAndDelete(id);
+  await Category.findByIdAndDelete(id);
   return NextResponse.json({ deleted: true });
 }

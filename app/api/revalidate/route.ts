@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     heroSlide:     ["/"],
     siteConfig:    ["/"],
     faq:           ["/contact"],
-    noteCategory:  ["/writing", "/writing/[slug]", "/my-notes"],
+    category:      ["/writing", "/writing/[slug]", "/my-notes"],
   };
 
   const paths = type && pathMap[type]

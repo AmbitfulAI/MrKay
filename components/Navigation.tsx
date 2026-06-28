@@ -65,6 +65,7 @@ interface DropdownItem { label: string; href: string; }
 
 function DesktopDropdown({
   label,
+  href,
   items,
   open,
   onEnter,
@@ -74,6 +75,7 @@ function DesktopDropdown({
   onClose,
 }: {
   label: string;
+  href?: string;
   items: DropdownItem[];
   open: boolean;
   onEnter: () => void;
@@ -82,14 +84,25 @@ function DesktopDropdown({
   isItemActive: (href: string) => boolean;
   onClose: () => void;
 }) {
+  const trigger = href ? (
+    <Link href={href} className={`nav-link ${isActive ? "active" : ""}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      {label}
+      <span style={{ transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none", display: "flex" }}>
+        <ChevronDown />
+      </span>
+    </Link>
+  ) : (
+    <button className={`nav-link ${isActive ? "active" : ""}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      {label}
+      <span style={{ transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none", display: "flex" }}>
+        <ChevronDown />
+      </span>
+    </button>
+  );
+
   return (
     <li style={{ position: "relative" }} onMouseEnter={onEnter} onMouseLeave={onLeave}>
-      <button className={`nav-link ${isActive ? "active" : ""}`} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-        {label}
-        <span style={{ transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none", display: "flex" }}>
-          <ChevronDown />
-        </span>
-      </button>
+      {trigger}
       <div aria-hidden style={{ position: "absolute", top: "100%", left: "-20px", right: "-20px", height: "16px" }} />
       <div className="nav-dropdown" style={{
         visibility: open ? "visible" : "hidden",
@@ -166,6 +179,7 @@ export default function Navigation({
 
           <DesktopDropdown
             label="Writing"
+            href="/writing"
             items={writing}
             open={writingOpen}
             onEnter={() => setWritingOpen(true)}
@@ -249,12 +263,23 @@ export default function Navigation({
           ))}
 
           {/* Writing accordion */}
-          <button className="mobile-menu-item"
-            onClick={() => setMobileWritingOpen(!mobileWritingOpen)}
-            style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: isWritingActive ? "var(--gold)" : "var(--text)" }}>
-            Writing
-            <span style={{ fontSize: "0.55rem", opacity: 0.6 }}>{mobileWritingOpen ? "▲" : "▼"}</span>
-          </button>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Link
+              href="/writing"
+              className="mobile-menu-item"
+              onClick={() => setMobileOpen(false)}
+              style={{ flex: 1, color: isWritingActive ? "var(--gold)" : "var(--text)" }}
+            >
+              Writing
+            </Link>
+            <button
+              onClick={() => setMobileWritingOpen(!mobileWritingOpen)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "16px 20px", color: isWritingActive ? "var(--gold)" : "var(--text)", fontSize: "0.55rem", opacity: 0.6 }}
+              aria-label="Toggle writing sub-menu"
+            >
+              {mobileWritingOpen ? "▲" : "▼"}
+            </button>
+          </div>
           {mobileWritingOpen && writing.map((s) => (
             <Link key={s.href} href={s.href} className="mobile-menu-item mobile-menu-sub"
               onClick={() => setMobileOpen(false)}

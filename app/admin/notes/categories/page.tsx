@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Category {
   _id: string;
@@ -13,8 +14,6 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState("");
   const [adding, setAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editTitle, setEditTitle] = useState("");
 
   async function load() {
     setLoading(true);
@@ -40,22 +39,6 @@ export default function CategoriesPage() {
     load();
   }
 
-  function startEdit(cat: Category) {
-    setEditingId(cat._id);
-    setEditTitle(cat.title);
-  }
-
-  async function saveEdit(id: string) {
-    if (!editTitle.trim()) return;
-    await fetch(`/api/admin/notes/categories/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: editTitle.trim() }),
-    });
-    setEditingId(null);
-    load();
-  }
-
   async function handleDelete(id: string, title: string) {
     if (!confirm(`Delete category "${title}"? Notes using this category will keep the label but it won't appear in the filter list.`)) return;
     await fetch(`/api/admin/notes/categories/${id}`, { method: "DELETE" });
@@ -69,7 +52,7 @@ export default function CategoriesPage() {
           Note Categories
         </h1>
         <p style={{ fontSize: "0.78rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>
-          Manage the categories available when writing notes.
+          Each category becomes a page at /writing/[slug]. Edit to add a tagline, description, and themes.
         </p>
       </div>
 
@@ -87,7 +70,6 @@ export default function CategoriesPage() {
             background: "var(--surface)",
             border: "1px solid var(--surface-2)",
             color: "var(--text)",
-            borderRadius: "2px",
           }}
         />
         <button
@@ -117,62 +99,23 @@ export default function CategoriesPage() {
                 padding: "12px 16px",
                 background: "var(--surface)",
                 border: "1px solid var(--surface-2)",
-                borderRadius: "2px",
               }}
             >
-              {editingId === cat._id ? (
-                <>
-                  <input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") saveEdit(cat._id);
-                      if (e.key === "Escape") setEditingId(null);
-                    }}
-                    autoFocus
-                    style={{
-                      flex: 1,
-                      padding: "6px 10px",
-                      fontSize: "0.82rem",
-                      fontFamily: "var(--font-body)",
-                      background: "var(--bg)",
-                      border: "1px solid var(--gold)",
-                      color: "var(--text)",
-                      borderRadius: "2px",
-                    }}
-                  />
-                  <button
-                    onClick={() => saveEdit(cat._id)}
-                    style={{ fontSize: "0.75rem", color: "var(--gold)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)" }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                    style={{ fontSize: "0.75rem", color: "var(--dim)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)" }}
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span style={{ flex: 1, fontSize: "0.85rem", fontFamily: "var(--font-body)", color: "var(--text)" }}>
-                    {cat.title}
-                  </span>
-                  <button
-                    onClick={() => startEdit(cat)}
-                    style={{ fontSize: "0.72rem", color: "var(--muted)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", letterSpacing: "0.04em" }}
-                  >
-                    Rename
-                  </button>
-                  <button
-                    onClick={() => handleDelete(cat._id, cat.title)}
-                    style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", letterSpacing: "0.04em" }}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
+              <span style={{ flex: 1, fontSize: "0.85rem", fontFamily: "var(--font-body)", color: "var(--text)" }}>
+                {cat.title}
+              </span>
+              <Link
+                href={`/admin/notes/categories/${cat._id}`}
+                style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.04em", textDecoration: "none" }}
+              >
+                Edit
+              </Link>
+              <button
+                onClick={() => handleDelete(cat._id, cat.title)}
+                style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", letterSpacing: "0.04em" }}
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>

@@ -2,9 +2,12 @@ import mongoose, { Schema } from "mongoose";
 
 const NoteCategorySchema = new Schema(
   {
-    title: { type: String, required: true },
-    slug:  { type: String, required: true, unique: true },
-    order: { type: Number, default: 99 },
+    title:       { type: String, required: true },
+    slug:        { type: String, required: true, unique: true },
+    order:       { type: Number, default: 99 },
+    tagline:     { type: String, default: "" },
+    description: { type: String, default: "" },
+    themes:      { type: [String], default: [] },
   },
   { timestamps: true }
 );

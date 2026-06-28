@@ -27,8 +27,7 @@ interface DBOrg {
 
 export async function getImpactOrgs(): Promise<OrgItem[]> {
   await connectDB();
-  const results = await ImpactOrg
-    .find()
+  const results = await ImpactOrg.find()
     .sort({ order: 1 })
     .lean<DBOrg[]>()
     .catch(() => []);

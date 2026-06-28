@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Writing — TheKayodeKolade",
-  description: "Three voices. One person. GeniusMined, GraceJunkie, and RareMusingWorks — writing for the work, the faith, and the parts that don't fit either.",
+  description: "Three voices. One person. GeniusMined, GraceJunkie, and RareMusingWork — writing for the work, the faith, and the parts that don't fit either.",
 };
 
 const streams = [
@@ -20,8 +20,8 @@ const streams = [
   },
   {
     num: "03",
-    name: "RareMusingWorks",
-    href: "/writing/raremusingworks",
+    name: "RareMusingWork",
+    href: "/writing/raremusingwork",
     desc: "The unfiltered room. Poetry, songs, sparks, travel notes, and the random rants of a mind that won't stay in one lane. No rules. Sometimes a thought; sometimes a piece of art; sometimes a question I'm sitting with.",
   },
 ];

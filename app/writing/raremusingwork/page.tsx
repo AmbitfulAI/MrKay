@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "RareMusingWorks — Writing · TheKayodeKolade",
+  title: "RareMusingWork — Writing · TheKayodeKolade",
   description: "The unfiltered room. Poetry, songs, travel notes, and the random rants of a mind that won't stay in one lane.",
 };
 
@@ -13,16 +13,16 @@ const themes = [
   "Half-formed ideas, posed openly",
 ];
 
-export default function RareMusingWorks() {
+export default function RareMusingWork() {
   return (
     <>
       <section className="bg-bg border-b border-surface-2" style={{ paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 6vw, 80px)" }}>
         <div className="container">
           <span className="eyebrow block mb-3">
-            <Link href="/writing" className="hover-gold">Writing</Link> / RareMusingWorks
+            <Link href="/writing" className="hover-gold">Writing</Link> / RareMusingWork
           </span>
           <h1 className="display text-text max-w-[860px]" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
-            RareMusingWorks.
+            RareMusingWork.
           </h1>
           <span className="gold-rule" style={{ marginTop: "32px", marginBottom: "32px" }} />
           <p className="text-muted font-light max-w-[580px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
@@ -37,7 +37,7 @@ export default function RareMusingWorks() {
             This is where the rest goes. Poetry I write when a line lands and won&apos;t leave. Songs and lyrics from a quieter creative life that runs alongside the commercial one. Travel notes from places that taught me something. Half-formed essays, thought invitations, things I&apos;m sitting with but haven&apos;t fully resolved.
           </p>
           <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-            There&apos;s no editorial line here, and that&apos;s the point. RareMusingWorks is the room with the loosest dress code. If you came for frameworks, you&apos;ll find none. If you came to see how a mind that won&apos;t stay in one lane actually wanders, you&apos;ve arrived in the right place.
+            There&apos;s no editorial line here, and that&apos;s the point. RareMusingWork is the room with the loosest dress code. If you came for frameworks, you&apos;ll find none. If you came to see how a mind that won&apos;t stay in one lane actually wanders, you&apos;ve arrived in the right place.
           </p>
         </div>
       </section>

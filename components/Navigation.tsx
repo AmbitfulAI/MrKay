@@ -12,10 +12,10 @@ const myWork = [
   { label: "Retreats, Facilitation & Speaking", href: "/retreats-facilitation-speaking" },
 ];
 
-const writing = [
+const FALLBACK_WRITING = [
   { label: "GeniusMined",     href: "/writing/geniusmined" },
   { label: "GraceJunkie",     href: "/writing/gracejunkie" },
-  { label: "RareMusingWorks", href: "/writing/raremusingworks" },
+  { label: "RareMusingWork",  href: "/writing/raremusingwork" },
 ];
 
 const meetKayode = [
@@ -112,7 +112,15 @@ function DesktopDropdown({
   );
 }
 
-export default function Navigation() {
+export default function Navigation({
+  writingCategories,
+}: {
+  writingCategories?: { title: string; slug: string }[];
+}) {
+  const writing = writingCategories?.length
+    ? writingCategories.map((c) => ({ label: c.title, href: `/writing/${c.slug}` }))
+    : FALLBACK_WRITING;
+
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
 

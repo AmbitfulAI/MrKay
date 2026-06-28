@@ -6,6 +6,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
 import { getSiteConfig } from "@/lib/data/site-config";
+import { getNoteCategories } from "@/lib/data/notes";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -33,7 +34,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteConfig = await getSiteConfig();
+  const [siteConfig, writingCategories] = await Promise.all([
+    getSiteConfig(),
+    getNoteCategories(),
+  ]);
 
   return (
     <html
@@ -45,7 +49,7 @@ export default async function RootLayout({
       <body>
         <Providers>
           <SiteConfigProvider config={siteConfig}>
-            <Navigation />
+            <Navigation writingCategories={writingCategories} />
             <main>{children}</main>
             <Footer />
           </SiteConfigProvider>

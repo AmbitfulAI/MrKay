@@ -35,6 +35,18 @@ function mapDBNote(n: DBNote): Note {
   };
 }
 
+const FALLBACK_CATEGORIES = [
+  { title: "GeniusMined",    slug: "geniusmined" },
+  { title: "GraceJunkie",    slug: "gracejunkie" },
+  { title: "RareMusingWork", slug: "raremusingwork" },
+];
+
+export async function getNoteCategories(): Promise<{ title: string; slug: string }[]> {
+  await connectDB();
+  const cats = await NoteCategory.find().sort({ order: 1 }).lean<{ title: string; slug: string }[]>().catch(() => []);
+  return cats.length ? cats.map((c) => ({ title: c.title, slug: c.slug })) : FALLBACK_CATEGORIES;
+}
+
 export async function getNotes(): Promise<{ notes: Note[]; categories: string[] }> {
   await connectDB();
   const [dbNotes, dbCategories] = await Promise.all([

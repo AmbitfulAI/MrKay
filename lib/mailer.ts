@@ -84,7 +84,7 @@ export async function sendNoteNotification(note: {
   if (!subscribers.length) return;
 
   const transporter = createTransporter();
-  const noteUrl = `${siteUrl}/my-notes/${note.slug}`;
+  const noteUrl = `${siteUrl}/writing/note/${note.slug}`;
 
   await Promise.allSettled(
     subscribers.map((sub) => {

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     body:     bodyToArray(data.body ?? ""),
     featuredImage: data.featuredImage ?? "",
   });
-  revalidatePath("/my-notes");
+  revalidatePath("/writing");
   const saved = note.toJSON();
   sendNoteNotification({
     title:    saved.title,

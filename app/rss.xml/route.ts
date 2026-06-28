@@ -28,7 +28,7 @@ export async function GET() {
 
   const items = notes
     .map((note) => {
-      const url = `${siteUrl}/my-notes/${note.slug}`;
+      const url = `${siteUrl}/writing/note/${note.slug}`;
       const pubDate = note.date ? new Date(note.date).toUTCString() : "";
       return `
     <item>
@@ -46,7 +46,7 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>TheKayodeKolade — Notes</title>
-    <link>${siteUrl}/my-notes</link>
+    <link>${siteUrl}/writing</link>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml"/>
     <description>Leadership, strategy, faith, and the discipline of leading well.</description>
     <language>en</language>

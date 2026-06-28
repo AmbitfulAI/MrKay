@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const type = body?.type as string | undefined;
 
   const pathMap: Record<string, string[]> = {
-    note:          ["/my-notes", "/my-notes/[slug]", "/rss.xml"],
+    note:          ["/writing", "/writing/note/[slug]", "/rss.xml"],
     testimonial:   ["/testimonials"],
     successStory:  ["/testimonials"],
     product:       ["/marketplace"],
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     heroSlide:     ["/"],
     siteConfig:    ["/"],
     faq:           ["/contact"],
-    category:      ["/writing", "/writing/[slug]", "/my-notes"],
+    category:      ["/writing", "/writing/[slug]"],
   };
 
   const paths = type && pathMap[type]

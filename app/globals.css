@@ -1019,76 +1019,129 @@ select.form-input optgroup {
 }
 
 /* ── Gallery grid ── */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
+/* ── Visual Diary — magazine masonry ── */
+.vd-masonry {
+  column-count: 3;
+  column-gap: 2px;
+  padding: 0 0 2px;
 }
-.gallery-item {
-  position: relative;
-  overflow: hidden;
+
+.vd-tile {
+  break-inside: avoid;
+  display: block;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 0;
+  border: none;
   background: var(--surface);
   cursor: pointer;
-  border: none;
-  padding: 0;
-  aspect-ratio: 4/3;
-}
-.gallery-item.gallery-tall {
-  aspect-ratio: 3/4;
-  grid-row: span 2;
-}
-.gallery-item.gallery-wide {
-  aspect-ratio: 16/9;
-  grid-column: span 2;
+  text-align: left;
 }
 
-.gallery-overlay {
+.vd-tile-inner {
+  position: relative;
+  overflow: hidden;
+}
+
+.vd-tile-inner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.vd-tile:hover .vd-tile-inner img {
+  transform: scale(1.055);
+}
+
+/* Overlay — slides up from bottom */
+.vd-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, transparent 55%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.28) 50%,
+    transparent 100%
+  );
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 28px 28px 24px;
+  align-items: flex-end;
   opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.gallery-item:hover .gallery-overlay {
-  opacity: 1;
-}
-.gallery-item:hover img {
-  transform: scale(1.04);
-}
-.gallery-item img {
-  transition: transform 0.5s ease;
+  transition: opacity 0.35s ease;
 }
 
-.gallery-overlay-cat {
-  color: var(--gold) !important;
-  display: block;
-  margin-bottom: 6px;
+.vd-tile:hover .vd-overlay {
+  opacity: 1;
 }
-.gallery-overlay-title {
-  color: #fff;
-  font-size: clamp(1rem, 1.8vw, 1.35rem);
+
+.vd-overlay-inner {
+  padding: 24px 22px 20px;
+  transform: translateY(8px);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  width: 100%;
+}
+
+.vd-tile:hover .vd-overlay-inner {
+  transform: translateY(0);
+}
+
+.vd-overlay-cat {
   display: block;
+  color: var(--gold) !important;
+  margin-bottom: 8px;
+}
+
+.vd-overlay-rule {
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  margin-bottom: 8px;
+}
+
+.vd-overlay-title {
+  display: block;
+  color: #fff;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
   line-height: 1.2;
 }
-.gallery-overlay-caption {
-  color: rgba(255, 255, 255, 0.65);
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 300;
+
+.vd-overlay-caption {
   display: block;
   margin-top: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 300;
   line-height: 1.5;
+}
+
+/* Mobile: always show overlay for touch */
+@media (max-width: 767px) {
+  .vd-masonry {
+    column-count: 2;
+    column-gap: 2px;
+  }
+  .vd-overlay {
+    opacity: 1;
+  }
+  .vd-overlay-inner {
+    transform: none;
+    padding: 16px 14px 14px;
+  }
+}
+
+@media (max-width: 479px) {
+  .vd-masonry {
+    column-count: 1;
+  }
 }
 
 /* ── Lightbox ── */
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(0, 0, 0, 0.94);
   z-index: 200;
   display: flex;
   align-items: center;
@@ -1119,7 +1172,7 @@ select.form-input optgroup {
   top: 24px;
   right: 28px;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   font-size: 0.9rem;
   width: 40px;
@@ -1128,9 +1181,7 @@ select.form-input optgroup {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    color 0.2s;
+  transition: border-color 0.2s, color 0.2s;
   z-index: 201;
 }
 .lightbox-close:hover {
@@ -1143,7 +1194,7 @@ select.form-input optgroup {
   top: 50%;
   transform: translateY(-50%);
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
   font-size: 1rem;
   width: 44px;
@@ -1152,44 +1203,20 @@ select.form-input optgroup {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    color 0.2s;
+  transition: border-color 0.2s, color 0.2s;
   z-index: 201;
 }
-.lightbox-prev {
-  left: 20px;
-}
-.lightbox-next {
-  right: 20px;
-}
+.lightbox-prev { left: 20px; }
+.lightbox-next { right: 20px; }
 .lightbox-prev:hover,
 .lightbox-next:hover {
   border-color: var(--gold);
   color: var(--gold);
 }
 
-@media (max-width: 768px) {
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
-  .gallery-item.gallery-tall {
-    aspect-ratio: 4/3;
-    grid-row: span 1;
-  }
-  .gallery-item.gallery-wide {
-    grid-column: span 1;
-    aspect-ratio: 4/3;
-  }
-  .gallery-overlay {
-    opacity: 1;
-  }
-  .lightbox-prev {
-    left: 8px;
-  }
-  .lightbox-next {
-    right: 8px;
-  }
+@media (max-width: 640px) {
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
 }
 
 /* ── Note detail body ── */

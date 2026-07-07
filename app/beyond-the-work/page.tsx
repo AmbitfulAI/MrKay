@@ -3,7 +3,7 @@ import TwoTierCTA from "@/components/TwoTierCTA";
 
 export const metadata = {
   title: "Beyond the Work — TheKayodeKolade",
-  description: "The human behind the architecture. Photography, books, reflections, and the creative side of GeniusMinedWorks.",
+  description: "Photography, books, reflections, and the creative side of GeniusMinedWorks. The expressions of the conviction — the room for everything that doesn't fit on a services page.",
 };
 
 const readingList = [

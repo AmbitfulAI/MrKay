@@ -38,8 +38,8 @@ export async function PATCH(
     { new: true },
   );
   if (!note) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  revalidatePath("/my-notes");
-  revalidatePath(`/my-notes/${slug}`);
+  revalidatePath("/writing");
+  revalidatePath(`/writing/note/${slug}`);
   const cat = await Category.findOne({ title: data.category, type: "writing" })
     .lean<{ slug: string }>()
     .catch(() => null);
@@ -54,7 +54,7 @@ export async function DELETE(
   await connectDB();
   const { id } = await params;
   const deleted = await Note.findByIdAndDelete(id).lean<{ category: string }>();
-  revalidatePath("/my-notes");
+  revalidatePath("/writing");
   if (deleted?.category) {
     const cat = await Category.findOne({ title: deleted.category, type: "writing" })
       .lean<{ slug: string }>()

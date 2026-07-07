@@ -182,7 +182,7 @@ export default async function WritingCategoryPage({
               {notes.map((note) => (
                 <Link
                   key={note.slug}
-                  href={`/my-notes/${note.slug}`}
+                  href={`/writing/note/${note.slug}`}
                   className="blog-row"
                 >
                   <div className="blog-row-meta">

@@ -65,7 +65,7 @@ function NotesFilterInner({ posts }: Props) {
             {filtered.map((post) => (
               <Link
                 key={post.slug}
-                href={`/my-notes/${post.slug}`}
+                href={`/writing/note/${post.slug}`}
                 className="blog-row"
               >
                 <div className="blog-row-meta">

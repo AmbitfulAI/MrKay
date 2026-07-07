@@ -13,6 +13,7 @@ const services = [
 
 const company = [
   { label: "Meet Kayode",    href: "/meet-kayode" },
+  { label: "GeniusMined",    href: "/geniusmined" },
   { label: "Beyond the Work", href: "/beyond-the-work" },
   { label: "Visual Diary",   href: "/visual-diary" },
   { label: "Testimonials",   href: "/testimonials" },

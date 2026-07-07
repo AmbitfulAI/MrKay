@@ -258,37 +258,26 @@ export default function MeetKayode() {
         </div>
       </section>
 
-      {/* ── Beyond the Work handoff ── */}
+      {/* ── Beyond the Practice handoff ── */}
       <section className="bg-bg border-b border-surface-2 s-pad-sm">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
-            <div>
-              <span className="eyebrow block mb-5">Beyond the Work</span>
-              <h2 className="display text-text mb-5" style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)", lineHeight: 1.2 }}>
-                There&apos;s More to the Person Than the Practice.
-              </h2>
-              <p className="text-muted font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-                Photography I take in places I walk through. Books that have shaped how I think. The occasional video or short reflection. The creative side of GeniusMinedWorks. If you want to understand the human behind the architecture, that lives here.
-              </p>
-              <Link href="/beyond-the-work" className="btn-outline">
-                Visit Beyond the Work
-              </Link>
-            </div>
+          <span className="eyebrow block mb-5">Beyond the Practice</span>
+          <h2 className="display text-text mb-5" style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)", lineHeight: 1.2 }}>
+            There&apos;s More to the Person Than the Practice.
+          </h2>
+          <p className="text-muted font-light mb-8 max-w-[600px]" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
+            The conviction behind the work — why I do this, what roots it, how the frameworks all trace back to one idea — lives in GeniusMined. The photography, the reading, the reflections, and the creative work live in Beyond the Work. If you want to understand the human behind the architecture, those two pages are where it sits.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href="/geniusmined" className="btn-outline">Read GeniusMined</Link>
+            <Link href="/beyond-the-work" className="btn-outline">Visit Beyond the Work</Link>
           </div>
         </div>
       </section>
 
-      {/* ── Personal note + CTA ── */}
+      {/* ── Closing CTA ── */}
       <section className="bg-surface border-t border-surface-2 s-pad-sm">
         <div className="container">
-          <div className="max-w-[680px] mb-10">
-            <p className="text-muted font-light" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-              Beyond the operating rooms and the frameworks, there&apos;s a conviction that drives all of it — one I call GeniusMined: the belief that genius sits inside every person, team, and organisation, and that my work is to mine it and help it reach its full potential. It&apos;s the headwater everything else flows from, including this practice.{" "}
-              <Link href="/beyond-the-work" className="hover-gold">
-                If you want to know the person behind the work, that story lives here →
-              </Link>
-            </p>
-          </div>
           <TwoTierCTA headline="Now you know me. Tell me about you." />
         </div>
       </section>

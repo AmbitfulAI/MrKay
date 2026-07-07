@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
+import { sendNoteNotification } from "@/lib/mailer";
 
 export async function GET() {
   await connectDB();
@@ -23,6 +24,14 @@ export async function POST(req: NextRequest) {
     body:     bodyToArray(data.body ?? ""),
     featuredImage: data.featuredImage ?? "",
   });
-  revalidatePath("/my-notes");
-  return NextResponse.json(note.toJSON(), { status: 201 });
+  revalidatePath("/writing");
+  const saved = note.toJSON();
+  sendNoteNotification({
+    title:    saved.title,
+    slug:     saved.slug,
+    category: saved.category,
+    date:     saved.date,
+    excerpt:  saved.excerpt,
+  }).catch(console.error);
+  return NextResponse.json(saved, { status: 201 });
 }

@@ -20,6 +20,7 @@ const FALLBACK_WRITING = [
 
 const meetKayode = [
   { label: "Meet Kayode",      href: "/meet-kayode" },
+  { label: "GeniusMined",      href: "/geniusmined" },
   { label: "Beyond the Work",  href: "/beyond-the-work" },
   { label: "Visual Diary",     href: "/visual-diary" },
 ];

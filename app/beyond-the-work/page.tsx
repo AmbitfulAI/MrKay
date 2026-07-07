@@ -25,24 +25,16 @@ export default function BeyondTheWork() {
         <div className="container">
           <span className="eyebrow block mb-6">Beyond the Work</span>
           <h1 className="display text-text max-w-[860px]" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
-            The Human Behind the Architecture.
+            The Room for Everything Else.
           </h1>
           <span className="gold-rule" style={{ marginTop: "32px", marginBottom: "32px" }} />
           <p className="text-muted font-light max-w-[580px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
-            The frameworks, systems, and operating rhythms come from somewhere. They come from a person who reads, photographs, reflects, and pays attention. This is where that person shows up — quietly, without pretence, and without trying to perform.
+            Photography from places I&apos;ve walked through. Books that have shaped how I think. The occasional short video. The creative side of GeniusMinedWorks. The things that don&apos;t fit on a services page but matter to who I am.
           </p>
-        </div>
-      </section>
-
-      {/* ── A note from me ── */}
-      <section className="bg-surface border-b border-surface-2 s-pad-sm">
-        <div className="container max-w-[680px]">
-          <span className="eyebrow block mb-5">A Note From Me</span>
-          <p className="text-muted font-light mb-5" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-            Most consulting websites either hide the human entirely or perform a curated version of them. I&apos;ve tried to do neither. What lives here is a small set of things that don&apos;t fit the consulting frame but matter to who I am — photography from places I&apos;ve walked through, reflections that don&apos;t belong in the executive register, reading that has shaped how I think, and the occasional creative work.
-          </p>
-          <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-            I don&apos;t expect everyone who visits this page. Some clients want to know what I deliver and nothing more, and that&apos;s the right instinct. But for the ones who want to understand the person they&apos;d be working with — at the boardroom table, in the coaching chair, or in the operating partnership — this is for you.
+          <p className="text-muted font-light max-w-[580px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9, marginTop: "16px" }}>
+            If you&apos;ve read{" "}
+            <a href="/geniusmined" className="hover-gold">GeniusMined</a>
+            , you already know the conviction. This is where the expressions of it live.
           </p>
         </div>
       </section>

@@ -58,14 +58,14 @@ export default function CareerExecutiveClarity() {
         <div className="container">
           <span className="eyebrow block mb-8">Career &amp; Executive Clarity</span>
           <h1
-            className="display text-text max-w-[900px] mb-8"
+            className="display text-text mb-8"
             style={{ fontSize: "clamp(2.4rem, 6.5vw, 6rem)", lineHeight: 1.0 }}
           >
             You Know You Have More in You.{" "}
             <em style={{ color: "var(--gold)" }}>You Just Can&apos;t Name the Direction Yet.</em>
           </h1>
           <span className="gold-rule mb-8" />
-          <p className="text-muted font-light max-w-[520px] mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             You&apos;ve performed. You&apos;ve grown. But the next move isn&apos;t obvious anymore — and another job won&apos;t fix that. What you need is a clearer read on who you are, what you carry, and what comes next.
           </p>
           <TwoTierCTA lane="career" />
@@ -150,7 +150,7 @@ export default function CareerExecutiveClarity() {
             <span style={{ color: "var(--gold)", fontStyle: "italic" }}>MINED®</span>
             {" "}Framework
           </h2>
-          <p className="text-muted font-light mb-8 max-w-[560px]" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
             MINED® is a proprietary coaching framework built on one conviction: genius is not rare, it is resident. Every step is designed to excavate what you already carry and convert it into clear, executable direction.
           </p>
           <div className="flex flex-col">

@@ -98,7 +98,7 @@ export default async function WritingCategoryPage({
             / {cat.title}
           </span>
           <h1
-            className="display text-text max-w-[860px]"
+            className="display text-text"
             style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}
           >
             {cat.title}.
@@ -109,7 +109,7 @@ export default async function WritingCategoryPage({
           />
           {cat.tagline && (
             <p
-              className="text-muted font-light max-w-[580px]"
+              className="text-muted font-light"
               style={{
                 fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)",
                 lineHeight: 1.9,

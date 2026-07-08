@@ -48,14 +48,14 @@ export default function OrganisationalSystemsExecution() {
         <div className="container">
           <span className="eyebrow block mb-8">Organisational Systems &amp; Execution</span>
           <h1
-            className="display text-text max-w-[900px] mb-8"
+            className="display text-text mb-8"
             style={{ fontSize: "clamp(2.4rem, 6.5vw, 6rem)", lineHeight: 1.0 }}
           >
             You&apos;re Growing Faster{" "}
             <em style={{ color: "var(--gold)" }}>Than Your Systems Can Carry.</em>
           </h1>
           <span className="gold-rule mb-8" />
-          <p className="text-muted font-light max-w-[520px] mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             Your organisation isn&apos;t underperforming because people don&apos;t care. It&apos;s under-designed for the outcomes you want. The gap between ambition and execution is almost always an architecture problem — not a people problem.
           </p>
           <TwoTierCTA lane="org" />

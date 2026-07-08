@@ -53,14 +53,14 @@ export default function RetreatsFacilitationSpeaking() {
         <div className="container">
           <span className="eyebrow block mb-8">Retreats, Facilitation &amp; Speaking</span>
           <h1
-            className="display text-text max-w-[900px] mb-8"
+            className="display text-text mb-8"
             style={{ fontSize: "clamp(2.4rem, 6.5vw, 6rem)", lineHeight: 1.0 }}
           >
             Rooms That Produce Decisions.{" "}
             <em style={{ color: "var(--gold)" }}>Your Team Will Still Be Using This Next Quarter.</em>
           </h1>
           <span className="gold-rule mb-8" />
-          <p className="text-muted font-light max-w-[520px] mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             Most offsites feel good in the room and disappear within a week. The ones that last are built backwards from the decisions they need to produce — not forward from an agenda that fills the time. That&apos;s the difference between a retreat and a working session that actually works.
           </p>
           <TwoTierCTA lane="speaking" />

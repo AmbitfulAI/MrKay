@@ -35,14 +35,14 @@ export default function FounderBusinessArchitecture() {
         <div className="container">
           <span className="eyebrow block mb-8">Founder &amp; Business Architecture</span>
           <h1
-            className="display text-text max-w-[900px] mb-8"
+            className="display text-text mb-8"
             style={{ fontSize: "clamp(2.4rem, 6.5vw, 6rem)", lineHeight: 1.0 }}
           >
             You&apos;re Building Hard.{" "}
             <em style={{ color: "var(--gold)" }}>So Why Isn&apos;t It Compounding?</em>
           </h1>
           <span className="gold-rule mb-8" />
-          <p className="text-muted font-light max-w-[520px] mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-10" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             The effort is there. The conviction is there. But the traction isn&apos;t matching the work — and you can&apos;t quite name why. Most founders don&apos;t have an effort problem. They have an architecture problem.
           </p>
           <TwoTierCTA lane="founder" />
@@ -127,7 +127,7 @@ export default function FounderBusinessArchitecture() {
             <span style={{ color: "var(--gold)", fontStyle: "italic" }}>UTM™</span>
             {" "}Framework
           </h2>
-          <p className="text-muted font-light mb-10 max-w-[560px]" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-10" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
             Uncover → Transform → Multiply. A proprietary framework for mining genius in a business — because building a company is exactly that: uncover what&apos;s truly there, transform it into a model and a structure that fits, and multiply it into the world.
           </p>
           <div className="flex flex-col">

@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface FormData {
   eyebrow: string; line1: string; line2: string; subtitle: string;
@@ -29,25 +31,23 @@ export function HeroSlideForm({ initialData, id }: Props) {
     ...initialData,
   });
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [imageError, setImageError] = useState("");
+  const mutation = useAdminMutation(QUERY_KEYS.heroSlides, () => router.push("/admin/hero-slides"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isEdit && !imageUrl) { setError("Please upload a background image."); return; }
-    setSaving(true); setError("");
-    const res = await fetch(isEdit ? `/api/admin/hero-slides/${id}` : "/api/admin/hero-slides", {
+    if (!isEdit && !imageUrl) { setImageError("Please upload a background image."); return; }
+    setImageError("");
+    mutation.mutate({
+      url: isEdit ? `/api/admin/hero-slides/${id}` : "/api/admin/hero-slides",
       method: isEdit ? "PATCH" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, imageUrl }),
+      body: { ...form, imageUrl },
     });
-    if (res.ok) { router.push("/admin/hero-slides"); router.refresh(); }
-    else { setError("Something went wrong."); setSaving(false); }
   }
 
   return (
@@ -64,6 +64,7 @@ export function HeroSlideForm({ initialData, id }: Props) {
 
         <p style={sectionHead}>Background Image</p>
         <ImageUpload value={imageUrl} onChange={setImageUrl} label={isEdit ? "Background Image (replace to change)" : "Background Image *"} />
+        {imageError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)", marginTop: "-12px" }}>{imageError}</p>}
         <div style={{ maxWidth: "260px" }}><label style={labelStyle}>Image Position (CSS object-position)</label><input value={form.imagePos} onChange={set("imagePos")} placeholder="center top" style={input} /></div>
 
         <p style={sectionHead}>Primary CTA</p>
@@ -92,9 +93,9 @@ export function HeroSlideForm({ initialData, id }: Props) {
 
         <div style={{ maxWidth: "160px" }}><label style={labelStyle}>Display Order *</label><input type="number" value={form.order} onChange={set("order")} required placeholder="1" style={input} /></div>
 
-        {error && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>}
+        {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
-          <button type="submit" disabled={saving} className="btn-solid" style={{ opacity: saving ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{saving ? "Saving…" : isEdit ? "Save Changes" : "Add Slide"}</button>
+          <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Slide"}</button>
           <button type="button" onClick={() => router.push("/admin/hero-slides")} style={{ background: "none", border: "1px solid var(--surface-2)", color: "var(--muted)", padding: "11px 24px", fontFamily: "var(--font-body)", fontSize: "0.78rem", cursor: "pointer" }}>Cancel</button>
         </div>
       </div>

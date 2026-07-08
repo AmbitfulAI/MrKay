@@ -71,7 +71,7 @@ export default async function WritingCategoryPage({
     ? dbNotes.map((n) => ({
         slug: n.slug,
         title: n.title,
-        category: n.category,
+        category: cat.title,
         date: n.date,
         excerpt: n.excerpt,
         body: [],
@@ -221,7 +221,11 @@ export default async function WritingCategoryPage({
           ) : (
             <p
               className="text-dim font-light"
-              style={{ fontSize: "0.88rem", lineHeight: 1.9, fontStyle: "italic" }}
+              style={{
+                fontSize: "0.88rem",
+                lineHeight: 1.9,
+                fontStyle: "italic",
+              }}
             >
               First pieces coming soon.
             </p>

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface Props {
   id: string;
@@ -39,38 +41,21 @@ const labelStyle: React.CSSProperties = {
 export default function CategoryEditForm({ id, initialData }: Props) {
   const router = useRouter();
   const [form, setForm] = useState(initialData);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const mutation = useAdminMutation(QUERY_KEYS.categories, () => router.push("/admin/notes/categories"));
 
   function set(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
-    setError("");
-
-    const themes = form.themes
-      .split("\n")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
-    const res = await fetch(`/api/admin/notes/categories/${id}`, {
+    const themes = form.themes.split("\n").map((t) => t.trim()).filter(Boolean);
+    mutation.mutate({
+      url: `/api/admin/notes/categories/${id}`,
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes }),
+      body: { title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes },
     });
-
-    if (res.ok) {
-      router.push("/admin/notes/categories");
-      router.refresh();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Something went wrong.");
-      setSaving(false);
-    }
   }
 
   return (
@@ -130,18 +115,18 @@ export default function CategoryEditForm({ id, initialData }: Props) {
           </p>
         </div>
 
-        {error && (
-          <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>
+        {mutation.isError && (
+          <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>
         )}
 
         <div style={{ display: "flex", gap: "16px", paddingTop: "8px" }}>
           <button
             type="submit"
-            disabled={saving}
+            disabled={mutation.isPending}
             className="btn-solid"
-            style={{ opacity: saving ? 0.6 : 1, cursor: saving ? "not-allowed" : "pointer", fontSize: "0.78rem", padding: "11px 28px" }}
+            style={{ opacity: mutation.isPending ? 0.6 : 1, cursor: mutation.isPending ? "not-allowed" : "pointer", fontSize: "0.78rem", padding: "11px 28px" }}
           >
-            {saving ? "Saving…" : "Save Changes"}
+            {mutation.isPending ? "Saving…" : "Save Changes"}
           </button>
           <button
             type="button"

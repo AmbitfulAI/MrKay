@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface StatRow { line: string; descriptor: string; }
-
 interface Config {
   calendlyUrl:   string;
   contactEmail:  string;
@@ -20,9 +21,11 @@ const sectionHead: React.CSSProperties = { fontSize: "0.58rem", letterSpacing: "
 
 export function SiteConfigForm({ initial }: { initial: Config }) {
   const [form, setForm] = useState<Config>(initial);
-  const [saving, setSaving] = useState(false);
-  const [saved,  setSaved]  = useState(false);
-  const [error,  setError]  = useState("");
+  const [saved, setSaved] = useState(false);
+  const mutation = useAdminMutation(QUERY_KEYS.siteConfig, () => {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  });
 
   function setField(field: keyof Config) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -39,16 +42,9 @@ export function SiteConfigForm({ initial }: { initial: Config }) {
     };
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); setSaving(true); setError(""); setSaved(false);
-    const res = await fetch("/api/admin/site-config", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setSaving(false);
-    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
-    else setError("Something went wrong. Please try again.");
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    mutation.mutate({ url: "/api/admin/site-config", method: "PATCH", body: form });
   }
 
   return (
@@ -76,10 +72,10 @@ export function SiteConfigForm({ initial }: { initial: Config }) {
           </div>
         ))}
 
-        {error && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>}
+        {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         {saved && <p style={{ fontSize: "0.8rem", color: "var(--gold)", fontFamily: "var(--font-body)" }}>✓ Saved successfully</p>}
         <div>
-          <button type="submit" disabled={saving} className="btn-solid" style={{ opacity: saving ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{saving ? "Saving…" : "Save Configuration"}</button>
+          <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : "Save Configuration"}</button>
         </div>
       </div>
     </form>

@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { connectDB } from "@/lib/db";
-import { HeroSlide } from "@/lib/models/HeroSlide";
+import { useQuery } from "@tanstack/react-query";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface SlideRow { _id: string; eyebrow: string; line1: string; line2: string; imageUrl?: string; order?: number; }
-export const revalidate = 0;
 
-export default async function AdminHeroSlides() {
-  await connectDB();
-  const items = await HeroSlide.find().sort({ order: 1 }).lean<SlideRow[]>();
+export default function AdminHeroSlides() {
+  const { data: items = [], isLoading } = useQuery<SlideRow[]>({
+    queryKey: QUERY_KEYS.heroSlides,
+    queryFn: () => fetch("/api/admin/hero-slides").then((r) => r.json()),
+  });
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -23,7 +26,9 @@ export default async function AdminHeroSlides() {
         The site uses hardcoded fallback slides until at least one slide is saved here. Add all 3 slides and upload their background images to go fully dynamic.
       </p>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>Loading…</p>
+      ) : items.length === 0 ? (
         <div style={{ border: "1px dashed var(--surface-2)", padding: "64px", textAlign: "center" }}>
           <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>No slides yet — site is using hardcoded fallbacks.</p>
         </div>
@@ -33,7 +38,7 @@ export default async function AdminHeroSlides() {
             {["#", "Headline", "Eyebrow", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "56px 1fr 200px 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "56px 1fr 200px 60px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               {item.imageUrl
                 // eslint-disable-next-line @next/next/no-img-element
                 ? <img src={`${item.imageUrl}?w=48&h=48&fit=crop`} alt="" style={{ width: "40px", height: "40px", objectFit: "cover", opacity: 0.7 }} />
@@ -44,8 +49,8 @@ export default async function AdminHeroSlides() {
               <p style={{ fontSize: "0.72rem", color: "var(--dim)", fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.eyebrow}</p>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/hero-slides/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={String(item._id)} endpoint="/api/admin/hero-slides" />
+                <Link href={`/admin/hero-slides/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={item._id} endpoint="/api/admin/hero-slides" queryKey={QUERY_KEYS.heroSlides} />
               </div>
             </div>
           ))}

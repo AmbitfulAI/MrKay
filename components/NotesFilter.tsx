@@ -46,12 +46,12 @@ function NotesFilterInner({ posts }: Props) {
           >
             {categories.map((cat) => (
               <button
-                key={cat}
+                key={cat._id}
                 className="blog-cat-tab"
-                data-active={active === cat ? "true" : undefined}
-                onClick={() => setFilter(cat)}
+                data-active={active === cat.title ? "true" : undefined}
+                onClick={() => setFilter(cat.title)}
               >
-                {cat}
+                {cat.title}
               </button>
             ))}
           </div>

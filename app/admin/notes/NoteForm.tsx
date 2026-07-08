@@ -1,17 +1,23 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useCategories } from "@/components/CategoriesProvider";
 import type { CategoryOption } from "@/components/CategoriesProvider";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
-interface NoteFormData {
-  title: string;
-  category: string;
-  date: string;
-  excerpt: string;
-  body: string;
-}
+const schema = yup.object({
+  title:    yup.string().required("Title is required"),
+  category: yup.string().required("Category is required"),
+  date:     yup.string().required("Date is required"),
+  excerpt:  yup.string().required("Excerpt is required"),
+  body:     yup.string().required("Body is required"),
+}).required();
+
+type NoteFormData = yup.InferType<typeof schema>;
 
 interface Props {
   initialData?: Partial<NoteFormData>;
@@ -30,6 +36,13 @@ const inputStyle: React.CSSProperties = {
   boxSizing: "border-box",
 };
 
+const errorStyle: React.CSSProperties = {
+  fontSize: "0.68rem",
+  color: "#e05555",
+  fontFamily: "var(--font-body)",
+  marginTop: "5px",
+};
+
 const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: "0.6rem",
@@ -43,66 +56,47 @@ const labelStyle: React.CSSProperties = {
 export function NoteForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
+  const categories: CategoryOption[] = useCategories();
+  const mutation = useAdminMutation(QUERY_KEYS.notes, () => router.push("/admin/notes"));
 
-  const [form, setForm] = useState<NoteFormData>({
-    title: "",
-    category: "",
-    date: "",
-    excerpt: "",
-    body: "",
-    ...initialData,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<NoteFormData>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      title:    "",
+      category: "",
+      date:     "",
+      excerpt:  "",
+      body:     "",
+      ...initialData,
+    },
   });
 
-  const categories: CategoryOption[] = useCategories();
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
-
-  function set(field: keyof NoteFormData) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-    };
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-
-    const url = isEdit ? `/api/admin/notes/${id}` : "/api/admin/notes";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+  const onSubmit = (data: NoteFormData) => {
+    mutation.mutate({
+      url:    isEdit ? `/api/admin/notes/${id}` : "/api/admin/notes",
+      method: isEdit ? "PATCH" : "POST",
+      body:   data,
     });
-
-    if (res.ok) {
-      router.push("/admin/notes");
-      router.refresh();
-    } else {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Something went wrong. Please try again.");
-      setSaving(false);
-    }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: "760px" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "760px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
         {/* Title */}
         <div>
           <label style={labelStyle}>Title *</label>
           <input
+            {...register("title")}
             type="text"
-            value={form.title}
-            onChange={set("title")}
-            required
             placeholder="The Cost of Unclear Leadership"
             style={inputStyle}
           />
+          {errors.title && <p style={errorStyle}>{errors.title.message}</p>}
         </div>
 
         {/* Category + Date row */}
@@ -110,7 +104,7 @@ export function NoteForm({ initialData, id }: Props) {
           <div>
             <label style={labelStyle}>Category *</label>
             {categories.length > 0 ? (
-              <select value={form.category} onChange={set("category")} required style={inputStyle}>
+              <select {...register("category")} style={inputStyle}>
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>{cat.title}</option>
@@ -118,25 +112,23 @@ export function NoteForm({ initialData, id }: Props) {
               </select>
             ) : (
               <input
+                {...register("category")}
                 type="text"
-                value={form.category}
-                onChange={set("category")}
-                required
                 placeholder="e.g. GeniusMined"
                 style={inputStyle}
               />
             )}
+            {errors.category && <p style={errorStyle}>{errors.category.message}</p>}
           </div>
           <div>
             <label style={labelStyle}>Date *</label>
             <input
+              {...register("date")}
               type="text"
-              value={form.date}
-              onChange={set("date")}
-              required
               placeholder="e.g. June 2026"
               style={inputStyle}
             />
+            {errors.date && <p style={errorStyle}>{errors.date.message}</p>}
           </div>
         </div>
 
@@ -144,44 +136,42 @@ export function NoteForm({ initialData, id }: Props) {
         <div>
           <label style={labelStyle}>Excerpt *</label>
           <textarea
-            value={form.excerpt}
-            onChange={set("excerpt")}
-            required
+            {...register("excerpt")}
             rows={3}
             placeholder="A short summary shown in the notes list…"
             style={{ ...inputStyle, resize: "vertical", lineHeight: 1.7 }}
           />
+          {errors.excerpt && <p style={errorStyle}>{errors.excerpt.message}</p>}
         </div>
 
         {/* Body */}
         <div>
           <label style={labelStyle}>Body *</label>
           <textarea
-            value={form.body}
-            onChange={set("body")}
-            required
+            {...register("body")}
             rows={16}
             placeholder={"Write your note here.\n\nSeparate paragraphs with a blank line."}
             style={{ ...inputStyle, resize: "vertical", lineHeight: 1.85 }}
           />
-          <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>
-            Separate paragraphs with a blank line.
-          </p>
+          {errors.body
+            ? <p style={errorStyle}>{errors.body.message}</p>
+            : <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>Separate paragraphs with a blank line.</p>
+          }
         </div>
 
-        {error && (
-          <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>
+        {mutation.isError && (
+          <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>
         )}
 
         {/* Actions */}
         <div style={{ display: "flex", gap: "16px", paddingTop: "8px" }}>
           <button
             type="submit"
-            disabled={saving}
+            disabled={mutation.isPending}
             className="btn-solid"
-            style={{ opacity: saving ? 0.6 : 1, cursor: saving ? "not-allowed" : "pointer", fontSize: "0.78rem", padding: "11px 28px" }}
+            style={{ opacity: mutation.isPending ? 0.6 : 1, cursor: mutation.isPending ? "not-allowed" : "pointer", fontSize: "0.78rem", padding: "11px 28px" }}
           >
-            {saving ? "Saving…" : isEdit ? "Save Changes" : "Publish Note"}
+            {mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Publish Note"}
           </button>
           <button
             type="button"

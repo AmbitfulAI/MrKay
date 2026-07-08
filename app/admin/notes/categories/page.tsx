@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 type CategoryType = "writing" | "visual-diary";
 
-interface Category {
-  _id: string;
-  title: string;
-  type: CategoryType;
-  order?: number;
-}
+interface Category { _id: string; title: string; type: CategoryType; order?: number; }
 
 const TYPE_LABELS: Record<CategoryType, string> = {
   "writing":      "Writing",
@@ -22,54 +20,44 @@ const TYPE_COLORS: Record<CategoryType, string> = {
   "visual-diary": "var(--muted)",
 };
 
+const inputStyle: React.CSSProperties = {
+  padding: "10px 14px",
+  fontSize: "0.82rem",
+  fontFamily: "var(--font-body)",
+  background: "var(--surface)",
+  border: "1px solid var(--surface-2)",
+  color: "var(--text)",
+};
+
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [newTitle, setNewTitle] = useState("");
   const [newType, setNewType] = useState<CategoryType>("writing");
-  const [adding, setAdding] = useState(false);
   const [filter, setFilter] = useState<CategoryType | "all">("all");
 
-  async function load() {
-    setLoading(true);
-    const res = await fetch("/api/admin/notes/categories");
-    const data = await res.json();
-    setCategories(data.filter((c: Category) => c._id));
-    setLoading(false);
-  }
+  const { data: categories = [], isLoading } = useQuery<Category[]>({
+    queryKey: QUERY_KEYS.categories,
+    queryFn: () => fetch("/api/admin/notes/categories").then((r) => r.json()).then((d) => d.filter((c: Category) => c._id)),
+  });
 
-  useEffect(() => { load(); }, []);
+  const addMutation = useAdminMutation(QUERY_KEYS.categories, () => setNewTitle(""));
+  const deleteMutation = useAdminMutation(QUERY_KEYS.categories);
 
-  async function handleAdd(e: React.FormEvent) {
+  function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!newTitle.trim()) return;
-    setAdding(true);
-    await fetch("/api/admin/notes/categories", {
+    addMutation.mutate({
+      url: "/api/admin/notes/categories",
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: newTitle.trim(), type: newType, order: categories.length + 1 }),
+      body: { title: newTitle.trim(), type: newType, order: categories.length + 1 },
     });
-    setNewTitle("");
-    setAdding(false);
-    load();
   }
 
-  async function handleDelete(id: string, title: string) {
+  function handleDelete(id: string, title: string) {
     if (!confirm(`Delete category "${title}"?`)) return;
-    await fetch(`/api/admin/notes/categories/${id}`, { method: "DELETE" });
-    load();
+    deleteMutation.mutate({ url: `/api/admin/notes/categories/${id}`, method: "DELETE" });
   }
 
   const visible = filter === "all" ? categories : categories.filter((c) => c.type === filter);
-
-  const inputStyle: React.CSSProperties = {
-    padding: "10px 14px",
-    fontSize: "0.82rem",
-    fontFamily: "var(--font-body)",
-    background: "var(--surface)",
-    border: "1px solid var(--surface-2)",
-    color: "var(--text)",
-  };
 
   return (
     <div style={{ padding: "40px 48px", maxWidth: "680px" }}>
@@ -82,7 +70,6 @@ export default function CategoriesPage() {
         </p>
       </div>
 
-      {/* Add form */}
       <form onSubmit={handleAdd} style={{ display: "flex", gap: "10px", marginBottom: "32px" }}>
         <input
           value={newTitle}
@@ -100,15 +87,14 @@ export default function CategoriesPage() {
         </select>
         <button
           type="submit"
-          disabled={adding || !newTitle.trim()}
+          disabled={addMutation.isPending || !newTitle.trim()}
           className="btn-solid"
-          style={{ whiteSpace: "nowrap", opacity: adding ? 0.6 : 1 }}
+          style={{ whiteSpace: "nowrap", opacity: addMutation.isPending ? 0.6 : 1 }}
         >
-          {adding ? "Adding…" : "Add"}
+          {addMutation.isPending ? "Adding…" : "Add"}
         </button>
       </form>
 
-      {/* Filter tabs */}
       <div style={{ display: "flex", gap: "0", marginBottom: "20px", borderBottom: "1px solid var(--surface-2)" }}>
         {(["all", "writing", "visual-diary"] as const).map((t) => (
           <button
@@ -137,8 +123,7 @@ export default function CategoriesPage() {
         ))}
       </div>
 
-      {/* List */}
-      {loading ? (
+      {isLoading ? (
         <p style={{ fontSize: "0.8rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>Loading…</p>
       ) : visible.length === 0 ? (
         <p style={{ fontSize: "0.8rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>No categories yet.</p>
@@ -147,39 +132,21 @@ export default function CategoriesPage() {
           {visible.map((cat) => (
             <li
               key={cat._id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                padding: "12px 16px",
-                background: "var(--surface)",
-                border: "1px solid var(--surface-2)",
-              }}
+              style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 16px", background: "var(--surface)", border: "1px solid var(--surface-2)" }}
             >
-              <span
-                style={{
-                  fontSize: "0.55rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  fontFamily: "var(--font-body)",
-                  color: TYPE_COLORS[cat.type ?? "writing"],
-                  minWidth: "80px",
-                }}
-              >
+              <span style={{ fontSize: "0.55rem", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-body)", color: TYPE_COLORS[cat.type ?? "writing"], minWidth: "80px" }}>
                 {TYPE_LABELS[cat.type ?? "writing"]}
               </span>
               <span style={{ flex: 1, fontSize: "0.85rem", fontFamily: "var(--font-body)", color: "var(--text)" }}>
                 {cat.title}
               </span>
-              <Link
-                href={`/admin/notes/categories/${cat._id}`}
-                style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.04em", textDecoration: "none" }}
-              >
+              <Link href={`/admin/notes/categories/${cat._id}`} style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)", letterSpacing: "0.04em", textDecoration: "none" }}>
                 Edit
               </Link>
               <button
                 onClick={() => handleDelete(cat._id, cat.title)}
-                style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", letterSpacing: "0.04em" }}
+                disabled={deleteMutation.isPending}
+                style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: deleteMutation.isPending ? "not-allowed" : "pointer", fontFamily: "var(--font-body)", letterSpacing: "0.04em", opacity: deleteMutation.isPending ? 0.5 : 1 }}
               >
                 Delete
               </button>

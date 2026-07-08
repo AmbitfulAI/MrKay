@@ -3,11 +3,12 @@ import { connectDB } from "@/lib/db";
 import { Category } from "@/lib/models/Category";
 import { CategoriesProvider } from "@/components/CategoriesProvider";
 import { NoteForm } from "../NoteForm";
+import mongoose from "mongoose";
 
 export default async function NewNote() {
   await connectDB();
-  const cats = await Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>();
-  const categories = cats.map((c) => c.title);
+  const cats = await Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ _id: mongoose.Types.ObjectId; title: string }[]>();
+  const categories = cats.map((c) => ({ _id: String(c._id), title: c.title }));
 
   return (
     <CategoriesProvider initial={categories}>

@@ -3,12 +3,12 @@ import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { DeleteNoteButton } from "./DeleteNoteButton";
 
-interface NoteRow { _id: string; title: string; slug: string; category: string; date: string; }
+interface NoteRow { _id: string; title: string; slug: string; category: { title: string }; date: string; }
 export const revalidate = 0;
 
 export default async function AdminNotes() {
   await connectDB();
-  const notes = await Note.find().sort({ createdAt: -1 }).lean<NoteRow[]>();
+  const notes = await Note.find().populate<{ category: { title: string } }>("category", "title").sort({ createdAt: -1 }).lean<NoteRow[]>();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -44,7 +44,7 @@ export default async function AdminNotes() {
                 <p className="text-text font-light" style={{ fontSize: "0.9rem", marginBottom: "2px" }}>{note.title}</p>
                 <p className="text-dim" style={{ fontSize: "0.7rem", fontFamily: "var(--font-body)" }}>/{note.slug}</p>
               </div>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category}</span>
+              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category?.title}</span>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.date}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/notes/${String(note._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>

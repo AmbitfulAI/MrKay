@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCategories } from "@/components/CategoriesProvider";
+import type { CategoryOption } from "@/components/CategoriesProvider";
 
 interface NoteFormData {
   title: string;
@@ -52,7 +53,7 @@ export function NoteForm({ initialData, id }: Props) {
     ...initialData,
   });
 
-  const categories = useCategories();
+  const categories: CategoryOption[] = useCategories();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -111,7 +112,7 @@ export function NoteForm({ initialData, id }: Props) {
               <select value={form.category} onChange={set("category")} required style={inputStyle}>
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat._id} value={cat._id}>{cat.title}</option>
                 ))}
               </select>
             ) : (

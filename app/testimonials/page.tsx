@@ -239,7 +239,6 @@ export default async function Testimonials() {
                   style={{
                     fontSize: "0.9rem",
                     lineHeight: 1.95,
-                    maxWidth: "760px",
                   }}
                 >
                   {s.body}

@@ -8,6 +8,7 @@ import { notes as staticNotes, type Note } from "@/lib/notes";
 export const revalidate = 60;
 
 interface WritingCategory {
+  _id: unknown;
   title: string;
   slug: string;
   tagline: string;
@@ -61,7 +62,7 @@ export default async function WritingCategoryPage({
     .catch(() => null);
   if (!cat) notFound();
 
-  const dbNotes = await NoteModel.find({ category: cat.title })
+  const dbNotes = await NoteModel.find({ category: cat._id })
     .sort({ createdAt: -1 })
     .lean<DBNote[]>()
     .catch(() => []);

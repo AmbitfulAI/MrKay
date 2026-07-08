@@ -42,10 +42,10 @@ const services = [
 ];
 
 const FALLBACK_STATS = [
-  { line: "15+ Years",       descriptor: "Leadership, Transformation & Systems Building" },
-  { line: "Multi-Country",   descriptor: "Executive Leadership Across Africa" },
-  { line: "Operating Models", descriptor: "Governance & Organisational Effectiveness" },
-  { line: "ICF Member",      descriptor: "Brain-Based Coach · Organisational Development Practitioner" },
+  { line: "COO-Level Operating Leadership",        descriptor: "MULTI-COUNTRY EXECUTIVE EXPERIENCE" },
+  { line: "Multi-Country Executive Experience",    descriptor: "AFRICA · EUROPE · GLOBAL CLIENT REACH" },
+  { line: "Leadership & High-Performance Culture", descriptor: "SYSTEMS · CULTURE · EXECUTION ARCHITECTURE" },
+  { line: "Organisational Development Practitioner", descriptor: "ORGANIZATION DEVELOPMENT NETWORK · NEUROLEADERSHIP INSTITUTE · ICF" },
 ];
 
 const FALLBACK_HOME_TESTIMONIALS = [

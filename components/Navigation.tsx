@@ -13,7 +13,7 @@ const myWork = [
 ];
 
 const FALLBACK_WRITING = [
-  { label: "GeniusMined",     href: "/writing/geniusmined" },
+  { label: "GeniusMinedStirs", href: "/writing/geniusmined" },
   { label: "GraceJunkie",     href: "/writing/gracejunkie" },
   { label: "RareMusingWork",  href: "/writing/raremusingwork" },
 ];

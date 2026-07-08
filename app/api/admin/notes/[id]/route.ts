@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
 import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
+import { NoteBodySchema } from "@/lib/schemas/note";
 
 export async function GET(
   _: NextRequest,
@@ -22,7 +23,12 @@ export async function PATCH(
 ) {
   await connectDB();
   const { id } = await params;
-  const data = await req.json();
+  const raw = await req.json();
+  const parsed = NoteBodySchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+  }
+  const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title, id);
   const note = await Note.findByIdAndUpdate(
     id,
@@ -40,7 +46,7 @@ export async function PATCH(
   if (!note) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/writing");
   revalidatePath(`/writing/note/${slug}`);
-  const cat = await Category.findOne({ title: data.category, type: "writing" })
+  const cat = await Category.findById(data.category)
     .lean<{ slug: string }>()
     .catch(() => null);
   if (cat) revalidatePath(`/writing/${cat.slug}`);
@@ -53,10 +59,10 @@ export async function DELETE(
 ) {
   await connectDB();
   const { id } = await params;
-  const deleted = await Note.findByIdAndDelete(id).lean<{ category: string }>();
+  const deleted = await Note.findByIdAndDelete(id).lean<{ category: unknown }>();
   revalidatePath("/writing");
   if (deleted?.category) {
-    const cat = await Category.findOne({ title: deleted.category, type: "writing" })
+    const cat = await Category.findById(deleted.category)
       .lean<{ slug: string }>()
       .catch(() => null);
     if (cat) revalidatePath(`/writing/${cat.slug}`);

@@ -8,7 +8,7 @@ export const metadata = {
 const streams = [
   {
     num: "01",
-    name: "GeniusMined",
+    name: "GeniusMinedStirs",
     href: "/writing/geniusmined",
     desc: "Professional brilliance. Frameworks, case lessons, leadership, mentorship, organisation design, and the realities of building inside growing organisations. The voice of the work.",
   },
@@ -74,6 +74,23 @@ export default function Writing() {
                 <span className="service-card-arrow">→</span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── GeniusMinedWorks Visual Diary CTA ── */}
+      <section className="bg-surface border-t border-surface-2 s-pad-sm">
+        <div className="container">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+            <div>
+              <span className="eyebrow block mb-3" style={{ color: "var(--gold)" }}>#GeniusMinedWorks</span>
+              <h2 className="display text-text" style={{ fontSize: "clamp(1.3rem, 2.5vw, 2rem)" }}>
+                The Visual Side of the Practice.
+              </h2>
+            </div>
+            <Link href="/visual-diary" className="btn-outline" style={{ whiteSpace: "nowrap" }}>
+              Visit the Visual Diary →
+            </Link>
           </div>
         </div>
       </section>

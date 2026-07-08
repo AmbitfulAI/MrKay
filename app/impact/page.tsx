@@ -16,11 +16,11 @@ export default async function Impact() {
       <section className="bg-bg border-b border-surface-2" style={{ paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 6vw, 80px)" }}>
         <div className="container">
           <span className="eyebrow block mb-6">Impact</span>
-          <h1 className="display text-text max-w-[860px]" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
+          <h1 className="display text-text" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
             Mining the Genius. Beyond the Invoice.
           </h1>
           <span className="gold-rule" style={{ marginTop: "32px", marginBottom: "32px" }} />
-          <p className="text-muted font-light max-w-[560px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             The commercial practice is one expression of a deeper conviction. This page is where the others live — the work that has nothing to do with what someone can pay, and everything to do with what they carry.
           </p>
         </div>
@@ -33,7 +33,7 @@ export default async function Impact() {
           <h2 className="display text-text mb-8" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", color: "var(--gold)" }}>
             GeniusMined.
           </h2>
-          <div className="max-w-[680px] flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
             <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
               I believe genius is not rare. It is resident — in every individual, every team, every organisation. Most of it simply goes unmined: unseen, unnamed, unstructured, never reaching the form it was capable of. My essence — the thing I cannot not do — is to mine it. To make sure that an encounter with me leaves the genius in a person, a team, or an organisation closer to its full potential than it was before.
             </p>
@@ -51,7 +51,7 @@ export default async function Impact() {
           <h2 className="display text-text mb-8" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             One Pays. One Receives. Both Move.
           </h2>
-          <div className="max-w-[680px] flex flex-col gap-5 mb-12">
+          <div className="flex flex-col gap-5 mb-12">
             <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
               Talent is not the problem in this world. Access is. There are gifted people whose next chapter is being held back not by capability, but by the absence of someone to help them name it — and the cost of that help is out of reach.
             </p>
@@ -88,7 +88,7 @@ export default async function Impact() {
           </div>
 
           {/* Honest note on timing */}
-          <p className="text-dim font-light mt-8 max-w-[600px]" style={{ fontSize: "0.82rem", lineHeight: 1.85, fontStyle: "italic" }}>
+          <p className="text-dim font-light mt-8" style={{ fontSize: "0.82rem", lineHeight: 1.85, fontStyle: "italic" }}>
             One honest note about timing. Sessions are released at the rate paid engagements fund them. If many people join the waitlist at once, or if a season passes with fewer new engagements, the wait may run longer than expected. You&apos;re held in the queue regardless. You&apos;ll be reached in turn. There is no expiry — only honest pace.
           </p>
         </div>
@@ -101,7 +101,7 @@ export default async function Impact() {
           <h2 className="display text-text mb-8" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             The Lighthouse: A Smaller Door. A Longer Arc.
           </h2>
-          <div className="max-w-[680px] flex flex-col gap-5 mb-10">
+          <div className="flex flex-col gap-5 mb-10">
             <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
               Some conversations are not about a single Mining the Genius session — they are about being walked with over a longer arc.
             </p>
@@ -125,7 +125,7 @@ export default async function Impact() {
           <h2 className="display text-text mb-8" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             This Isn&apos;t a New Idea. It&apos;s a Continued One.
           </h2>
-          <div className="max-w-[680px] flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
             <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
               Long before TKKC existed as a formal practice, I was already doing this work — privately, quietly, and continuously. Free coaching for friends, colleagues, and strangers navigating career and life decisions. Pro bono advisory for non-profits and early-stage organisations — supporting founders and teams across Uganda, Tanzania, Rwanda, Ghana, and beyond — and unpaid mentoring of professionals across multiple sectors and several countries.
             </p>
@@ -143,7 +143,7 @@ export default async function Impact() {
           <h2 className="display text-text mb-8" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             The GeniusMined Foundation: A Longer Build.
           </h2>
-          <div className="max-w-[680px] flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
             <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
               GeniusMined as a conviction has always pointed beyond what one practice can do. There is a transition gap — between school and meaningful work, between potential and opportunity, between what young people across Africa carry and what they&apos;re able to convert it into — that no single advisor, however generous, can close.
             </p>
@@ -159,7 +159,7 @@ export default async function Impact() {
 
       {/* ── Section 6: Closing ── */}
       <section className="bg-bg s-pad-sm">
-        <div className="container max-w-[680px]">
+        <div className="container">
           <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             Genius Mined Is Genius Released.
           </h2>

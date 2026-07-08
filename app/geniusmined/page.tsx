@@ -59,7 +59,7 @@ export default function GeniusMined() {
         <div className="container">
           <span className="eyebrow block mb-6" style={{ color: "var(--gold)" }}>The Conviction</span>
           <h1
-            className="display text-text max-w-[860px]"
+            className="display text-text"
             style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}
           >
             GeniusMined: The Idea Behind Everything.

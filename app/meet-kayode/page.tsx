@@ -79,11 +79,11 @@ export default function MeetKayode() {
       <section className="bg-bg border-b border-surface-2" style={{ paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 6vw, 80px)" }}>
         <div className="container">
           <span className="eyebrow block mb-6">Meet Kayode</span>
-          <h1 className="display text-text max-w-[860px]" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
+          <h1 className="display text-text" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
             The Architect Behind the Work.
           </h1>
           <span className="gold-rule" style={{ marginTop: "32px", marginBottom: "32px" }} />
-          <p className="text-muted font-light max-w-[600px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             Before you trust someone with your next chapter, you should know how they built theirs. Mine wasn&apos;t built in a lecture hall. It was built inside growing organisations — in the operating rooms where systems either hold or fail, and where I learned, first-hand, exactly why they do.
           </p>
         </div>
@@ -266,7 +266,7 @@ export default function MeetKayode() {
           <h2 className="display text-text mb-5" style={{ fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)", lineHeight: 1.2 }}>
             There&apos;s More to the Person Than the Practice.
           </h2>
-          <p className="text-muted font-light mb-8 max-w-[600px]" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
+          <p className="text-muted font-light mb-8" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
             The conviction behind the work — why I do this, what roots it, how the frameworks all trace back to one idea — lives in GeniusMined. The photography, the reading, the reflections, and the creative work live in Beyond the Work. If you want to understand the human behind the architecture, those two pages are where it sits.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">

@@ -26,11 +26,11 @@ export default async function Writing() {
       <section className="bg-bg border-b border-surface-2" style={{ paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 6vw, 80px)" }}>
         <div className="container">
           <span className="eyebrow block mb-6">Writing</span>
-          <h1 className="display text-text max-w-[860px]" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
+          <h1 className="display text-text" style={{ fontSize: "clamp(2.8rem, 7vw, 6.5rem)", lineHeight: 0.97 }}>
             Three Voices. One Person.
           </h1>
           <span className="gold-rule" style={{ marginTop: "32px", marginBottom: "32px" }} />
-          <p className="text-muted font-light max-w-[580px]" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
+          <p className="text-muted font-light" style={{ fontSize: "clamp(0.95rem, 1.4vw, 1.05rem)", lineHeight: 1.9 }}>
             I write in three places — for the work, for the faith, and for the parts that don&apos;t fit either. They sound different on purpose. They come from the same person.
           </p>
         </div>

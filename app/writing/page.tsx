@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { getNoteCategories } from "@/lib/data/notes";
+import { getNoteCategories, getNotes } from "@/lib/data/notes";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
+import NotesFilter from "@/components/NotesFilter";
 
 export const revalidate = 60;
 
@@ -9,7 +11,15 @@ export const metadata = {
 };
 
 export default async function Writing() {
-  const categories = await getNoteCategories();
+  const [categories, { notes }] = await Promise.all([
+    getNoteCategories(),
+    getNotes(),
+  ]);
+
+  const categoryOptions = [
+    { _id: "all", title: "All" },
+    ...categories.map((c) => ({ _id: c.slug, title: c.title })),
+  ];
   return (
     <>
       {/* ── Hero ── */}
@@ -60,6 +70,11 @@ export default async function Writing() {
           </div>
         </div>
       </section>
+
+      {/* ── Notes listing ── */}
+      <CategoriesProvider initial={categoryOptions}>
+        <NotesFilter posts={notes} />
+      </CategoriesProvider>
 
       {/* ── GeniusMinedWorks Visual Diary CTA ── */}
       <section className="bg-surface border-t border-surface-2 s-pad-sm">

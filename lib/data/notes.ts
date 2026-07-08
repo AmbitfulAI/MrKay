@@ -35,16 +35,43 @@ function mapDBNote(n: DBNote): Note {
   };
 }
 
-const FALLBACK_CATEGORIES = [
-  { title: "GeniusMined",    slug: "geniusmined" },
-  { title: "GraceJunkie",    slug: "gracejunkie" },
-  { title: "RareMusingWork", slug: "raremusingwork" },
+export interface WritingCategory {
+  title: string;
+  slug: string;
+  description: string;
+  tagline: string;
+}
+
+const FALLBACK_CATEGORIES: WritingCategory[] = [
+  {
+    title: "GeniusMinedStirs",
+    slug: "geniusmined",
+    description: "Professional brilliance. Frameworks, case lessons, leadership, mentorship, organisation design, and the realities of building inside growing organisations. The voice of the work.",
+    tagline: "",
+  },
+  {
+    title: "GraceJunkie",
+    slug: "gracejunkie",
+    description: "Life journey and lessons. Faith, family, fatherhood, transitions, resilience — and a particular conviction that grace is the headwater, not the decoration.",
+    tagline: "",
+  },
+  {
+    title: "RareMusingWork",
+    slug: "raremusingwork",
+    description: "The unfiltered room. Poetry, songs, sparks, travel notes, and the random rants of a mind that won't stay in one lane. No rules.",
+    tagline: "",
+  },
 ];
 
-export async function getNoteCategories(): Promise<{ title: string; slug: string }[]> {
+export async function getNoteCategories(): Promise<WritingCategory[]> {
   await connectDB();
-  const cats = await Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string; slug: string }[]>().catch(() => []);
-  return cats.length ? cats.map((c) => ({ title: c.title, slug: c.slug })) : FALLBACK_CATEGORIES;
+  const cats = await Category.find({ type: "writing" })
+    .sort({ order: 1 })
+    .lean<{ title: string; slug: string; description: string; tagline: string }[]>()
+    .catch(() => []);
+  return cats.length
+    ? cats.map((c) => ({ title: c.title, slug: c.slug, description: c.description ?? "", tagline: c.tagline ?? "" }))
+    : FALLBACK_CATEGORIES;
 }
 
 export async function getNotes(): Promise<{ notes: Note[]; categories: string[] }> {

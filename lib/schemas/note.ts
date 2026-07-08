@@ -10,3 +10,7 @@ export const NoteBodySchema = z.object({
 });
 
 export type NoteBodyInput = z.infer<typeof NoteBodySchema>;
+
+export function formatZodError(error: z.ZodError): string {
+  return error.errors.map((e) => e.message).join(". ");
+}

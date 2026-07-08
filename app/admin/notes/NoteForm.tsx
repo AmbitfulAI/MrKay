@@ -56,6 +56,7 @@ export function NoteForm({ initialData, id }: Props) {
   const categories: CategoryOption[] = useCategories();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
   function set(field: keyof NoteFormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

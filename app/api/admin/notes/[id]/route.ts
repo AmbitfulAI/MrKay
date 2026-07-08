@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
 import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
-import { NoteBodySchema } from "@/lib/schemas/note";
+import { NoteBodySchema, formatZodError } from "@/lib/schemas/note";
 
 export async function GET(
   _: NextRequest,
@@ -26,7 +26,7 @@ export async function PATCH(
   const raw = await req.json();
   const parsed = NoteBodySchema.safeParse(raw);
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 400 });
+    return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
   }
   const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title, id);

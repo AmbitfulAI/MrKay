@@ -12,7 +12,7 @@ interface DBNote {
   _id: string;
   slug: string;
   title: string;
-  category: string;
+  category: { title: string } | null;
   date: string;
   excerpt: string;
   featuredImage?: string;
@@ -24,7 +24,7 @@ function mapDBNote(n: DBNote): Note {
   return {
     slug: n.slug,
     title: n.title,
-    category: n.category,
+    category: n.category?.title ?? "",
     date: n.date,
     excerpt: n.excerpt,
     body: n.body?.length
@@ -50,7 +50,7 @@ export async function getNoteCategories(): Promise<{ title: string; slug: string
 export async function getNotes(): Promise<{ notes: Note[]; categories: string[] }> {
   await connectDB();
   const [dbNotes, dbCategories] = await Promise.all([
-    NoteModel.find().sort({ createdAt: -1 }).lean<DBNote[]>(),
+    NoteModel.find().populate<{ category: { title: string } | null }>("category", "title").sort({ createdAt: -1 }).lean<DBNote[]>(),
     Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
 
@@ -58,7 +58,7 @@ export async function getNotes(): Promise<{ notes: Note[]; categories: string[] 
   const categories = dbCategories.length
     ? ["All", ...dbCategories.map((c) => c.title)]
     : dbNotes.length
-    ? ["All", ...Array.from(new Set(dbNotes.map((n) => n.category)))]
+    ? ["All", ...Array.from(new Set(dbNotes.map((n) => n.category?.title ?? "").filter(Boolean)))]
     : staticCategories;
 
   return { notes, categories };
@@ -84,12 +84,12 @@ export interface DBNoteDetail {
 
 export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | Note | null> {
   await connectDB();
-  const fromDB = await NoteModel.findOne({ slug }).lean<DBNote>().catch(() => null);
+  const fromDB = await NoteModel.findOne({ slug }).populate<{ category: { title: string } | null }>("category", "title").lean<DBNote>().catch(() => null);
   if (fromDB) {
     return {
       slug: fromDB.slug,
       title: fromDB.title,
-      category: fromDB.category,
+      category: fromDB.category?.title ?? "",
       date: fromDB.date,
       excerpt: fromDB.excerpt,
       featuredImage: fromDB.featuredImage,

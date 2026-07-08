@@ -1,32 +1,25 @@
 import Link from "next/link";
+import { getNoteCategories, getNotes } from "@/lib/data/notes";
+import { CategoriesProvider } from "@/components/CategoriesProvider";
+import NotesFilter from "@/components/NotesFilter";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Writing — TheKayodeKolade",
   description: "Three voices. One person. GeniusMined, GraceJunkie, and RareMusingWork — writing for the work, the faith, and the parts that don't fit either.",
 };
 
-const streams = [
-  {
-    num: "01",
-    name: "GeniusMined",
-    href: "/writing/geniusmined",
-    desc: "Professional brilliance. Frameworks, case lessons, leadership, mentorship, organisation design, and the realities of building inside growing organisations. The voice of the work.",
-  },
-  {
-    num: "02",
-    name: "GraceJunkie",
-    href: "/writing/gracejunkie",
-    desc: "Life journey and lessons. Faith, family, fatherhood, transitions, resilience — and a particular conviction that grace is the headwater, not the decoration. Reflections from a life held together by mercy.",
-  },
-  {
-    num: "03",
-    name: "RareMusingWork",
-    href: "/writing/raremusingwork",
-    desc: "The unfiltered room. Poetry, songs, sparks, travel notes, and the random rants of a mind that won't stay in one lane. No rules. Sometimes a thought; sometimes a piece of art; sometimes a question I'm sitting with.",
-  },
-];
+export default async function Writing() {
+  const [categories, { notes }] = await Promise.all([
+    getNoteCategories(),
+    getNotes(),
+  ]);
 
-export default function Writing() {
+  const categoryOptions = [
+    { _id: "all", title: "All" },
+    ...categories.map((c) => ({ _id: c.slug, title: c.title })),
+  ];
   return (
     <>
       {/* ── Hero ── */}
@@ -62,18 +55,40 @@ export default function Writing() {
       <section className="bg-bg s-pad">
         <div className="container">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2px] bg-surface-2">
-            {streams.map((s) => (
-              <Link key={s.href} href={s.href} className="service-card">
-                <span className="service-card-num display">{s.num}</span>
+            {categories.map((cat, i) => (
+              <Link key={cat.slug} href={`/writing/${cat.slug}`} className="service-card">
+                <span className="service-card-num display">{String(i + 1).padStart(2, "0")}</span>
                 <h2 className="display text-text mb-3" style={{ fontSize: "clamp(1.3rem, 2vw, 1.8rem)" }}>
-                  {s.name}
+                  {cat.title}
                 </h2>
                 <p className="text-dim font-light" style={{ fontSize: "0.82rem", lineHeight: 1.8 }}>
-                  {s.desc}
+                  {cat.tagline || cat.description}
                 </p>
                 <span className="service-card-arrow">→</span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Notes listing ── */}
+      <CategoriesProvider initial={categoryOptions}>
+        <NotesFilter posts={notes} />
+      </CategoriesProvider>
+
+      {/* ── GeniusMinedWorks Visual Diary CTA ── */}
+      <section className="bg-surface border-t border-surface-2 s-pad-sm">
+        <div className="container">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+            <div>
+              <span className="eyebrow block mb-3" style={{ color: "var(--gold)" }}>#GeniusMinedWorks</span>
+              <h2 className="display text-text" style={{ fontSize: "clamp(1.3rem, 2.5vw, 2rem)" }}>
+                The Visual Side of the Practice.
+              </h2>
+            </div>
+            <Link href="/visual-diary" className="btn-outline" style={{ whiteSpace: "nowrap" }}>
+              Visit the Visual Diary →
+            </Link>
           </div>
         </div>
       </section>

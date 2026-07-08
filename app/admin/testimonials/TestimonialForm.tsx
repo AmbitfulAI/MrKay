@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 const PAGE_OPTIONS = [
   { value: "home",                   label: "Homepage" },
@@ -24,8 +26,7 @@ export function TestimonialForm({ initialData, id }: Props) {
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ quote: "", clientName: "", clientContext: "", order: "", ...initialData });
   const [pages, setPages] = useState<string[]>(initialData?.pages ?? []);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const mutation = useAdminMutation(QUERY_KEYS.testimonials, () => router.push("/admin/testimonials"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -36,15 +37,13 @@ export function TestimonialForm({ initialData, id }: Props) {
     setPages((prev) => prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); setSaving(true); setError("");
-    const res = await fetch(isEdit ? `/api/admin/testimonials/${id}` : "/api/admin/testimonials", {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    mutation.mutate({
+      url: isEdit ? `/api/admin/testimonials/${id}` : "/api/admin/testimonials",
       method: isEdit ? "PATCH" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, pages }),
+      body: { ...form, pages },
     });
-    if (res.ok) { router.push("/admin/testimonials"); router.refresh(); }
-    else { setError("Something went wrong."); setSaving(false); }
   }
 
   return (
@@ -67,9 +66,9 @@ export function TestimonialForm({ initialData, id }: Props) {
           </div>
         </div>
         <div style={{ maxWidth: "160px" }}><label style={labelStyle}>Display Order</label><input type="number" value={form.order} onChange={set("order")} placeholder="1" style={input} /></div>
-        {error && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>}
+        {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
-          <button type="submit" disabled={saving} className="btn-solid" style={{ opacity: saving ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{saving ? "Saving…" : isEdit ? "Save Changes" : "Add Testimonial"}</button>
+          <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Testimonial"}</button>
           <button type="button" onClick={() => router.push("/admin/testimonials")} style={{ background: "none", border: "1px solid var(--surface-2)", color: "var(--muted)", padding: "11px 24px", fontFamily: "var(--font-body)", fontSize: "0.78rem", cursor: "pointer" }}>Cancel</button>
         </div>
       </div>

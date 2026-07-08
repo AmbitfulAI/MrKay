@@ -8,6 +8,7 @@ import { notes as staticNotes, type Note } from "@/lib/notes";
 export const revalidate = 60;
 
 interface WritingCategory {
+  _id: unknown;
   title: string;
   slug: string;
   tagline: string;
@@ -18,7 +19,6 @@ interface WritingCategory {
 interface DBNote {
   slug: string;
   title: string;
-  category: string;
   date: string;
   excerpt: string;
 }
@@ -61,7 +61,7 @@ export default async function WritingCategoryPage({
     .catch(() => null);
   if (!cat) notFound();
 
-  const dbNotes = await NoteModel.find({ category: cat.title })
+  const dbNotes = await NoteModel.find({ category: cat._id })
     .sort({ createdAt: -1 })
     .lean<DBNote[]>()
     .catch(() => []);
@@ -70,7 +70,7 @@ export default async function WritingCategoryPage({
     ? dbNotes.map((n) => ({
         slug: n.slug,
         title: n.title,
-        category: n.category,
+        category: cat.title,
         date: n.date,
         excerpt: n.excerpt,
         body: [],
@@ -220,7 +220,11 @@ export default async function WritingCategoryPage({
           ) : (
             <p
               className="text-dim font-light"
-              style={{ fontSize: "0.88rem", lineHeight: 1.9, fontStyle: "italic" }}
+              style={{
+                fontSize: "0.88rem",
+                lineHeight: 1.9,
+                fontStyle: "italic",
+              }}
             >
               First pieces coming soon.
             </p>

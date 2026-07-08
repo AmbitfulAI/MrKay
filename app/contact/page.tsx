@@ -64,17 +64,18 @@ export default async function Contact() {
           <h2 className="display text-text mb-10 md:mb-14" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             Common Questions
           </h2>
-          <div className="flex flex-col">
-            {faqs.map((faq, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
+            {faqs.map((faq) => (
               <div
                 key={faq.question}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-20 items-start"
-                style={{ padding: "clamp(28px, 4vw, 40px) 0", borderBottom: i < faqs.length - 1 ? "1px solid var(--surface-2)" : "none" }}
+                className="bg-surface"
+                style={{ padding: "clamp(28px, 4vw, 40px)" }}
               >
-                <h3 className="display text-text" style={{ fontSize: "clamp(1rem, 1.6vw, 1.4rem)", lineHeight: 1.3 }}>
+                <h3 className="display text-text mb-4" style={{ fontSize: "clamp(1rem, 1.6vw, 1.2rem)", lineHeight: 1.3 }}>
                   {faq.question}
                 </h3>
-                <p className="text-muted font-light" style={{ fontSize: "0.88rem", lineHeight: 1.9 }}>
+                <span className="gold-rule" style={{ marginBottom: "16px" }} />
+                <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.9 }}>
                   {faq.answer}
                 </p>
               </div>

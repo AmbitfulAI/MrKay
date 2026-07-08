@@ -92,44 +92,32 @@ export default function MeetKayode() {
       {/* ── In Brief ── */}
       <section className="bg-surface border-b border-surface-2 s-pad">
         <div className="container">
-          <span className="eyebrow block mb-6">In Brief</span>
+          <span className="eyebrow block mb-6" style={{ fontSize: "0.7rem" }}>In Brief</span>
           <h2 className="display text-text mb-6" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)", lineHeight: 1.15 }}>
             I work at the intersection of people, systems, and execution.
           </h2>
           <span className="gold-rule mb-7" />
 
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-10 md:gap-20 items-start">
-            <div className="flex flex-col gap-5">
-              <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                I am an operations leader, executive systems thinker, consultant, and coach. Everything I do circles one question: how do people and organisations move from intention to structured, sustained execution?
-              </p>
-              <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                I have operated at COO level across a multi-country operation, led enterprise transformation from inside the COO&apos;s office, designed the governance and performance systems that let organisations scale, stood up new operations from nothing, led the kind of change that decides whether an organisation survives its next stage — and coached professionals and founders through their most consequential transitions. I&apos;ve done this across construction, e-commerce, business process outsourcing, education, and impact, which means I&apos;ve watched the same execution problem wear very different clothes.
-              </p>
-              <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                What all of it taught me is simple, and slightly unfashionable: most people and organisations don&apos;t fail for lack of talent, effort, or ambition. They struggle because of unclear identity, weak architecture, broken rhythms, and misaligned execution.
-              </p>
-              <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
-                Everything I build — through The Kayode Kolade Consulting and beyond it — exists to fix that.
-              </p>
-            </div>
+          <div className="flex flex-col gap-5">
+            <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
+              I am an operations leader, executive systems thinker, consultant, and coach. Everything I do circles one question: how do people and organisations move from intention to structured, sustained execution?
+            </p>
+            <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
+              I have operated at COO level across a multi-country operation, led enterprise transformation from inside the COO&apos;s office, designed the governance and performance systems that let organisations scale, stood up new operations from nothing, led the kind of change that decides whether an organisation survives its next stage — and coached professionals and founders through their most consequential transitions. I&apos;ve done this across construction, e-commerce, business process outsourcing, education, and impact, which means I&apos;ve watched the same execution problem wear very different clothes.
+            </p>
+            <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
+              What all of it taught me is simple, and slightly unfashionable: most people and organisations don&apos;t fail for lack of talent, effort, or ambition. They struggle because of unclear identity, weak architecture, broken rhythms, and misaligned execution.
+            </p>
+            <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
+              Everything I build — through The Kayode Kolade Consulting and beyond it — exists to fix that.
+            </p>
+          </div>
 
-            {/* Stat line */}
-            <div className="shrink-0">
-              <div className="flex flex-col gap-[2px] bg-surface-2" style={{ minWidth: "240px" }}>
-                {[
-                  "COO-Level Operating Leadership",
-                  "Multi-Country",
-                  "Five Sectors",
-                  "Founder-Led Practice",
-                  "Full Confidentiality",
-                ].map((s) => (
-                  <div key={s} className="bg-surface" style={{ padding: "16px 20px" }}>
-                    <span className="eyebrow" style={{ color: "var(--gold)", fontSize: "0.58rem" }}>{s}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* Stat line — single horizontal row */}
+          <div style={{ marginTop: "40px", paddingTop: "32px", borderTop: "1px solid var(--surface-2)" }}>
+            <p className="eyebrow" style={{ color: "var(--gold)", fontSize: "0.58rem", lineHeight: 2 }}>
+              COO-LEVEL OPERATING LEADERSHIP · MULTI-COUNTRY · FIVE SECTORS · FOUNDER-LED PRACTICE · FULL CONFIDENTIALITY
+            </p>
           </div>
         </div>
       </section>
@@ -137,7 +125,7 @@ export default function MeetKayode() {
       {/* ── The Journey ── */}
       <section className="bg-bg border-b border-surface-2 s-pad">
         <div className="container">
-          <span className="eyebrow block mb-4">The Journey</span>
+          <span className="eyebrow block mb-4" style={{ fontSize: "0.7rem" }}>The Journey</span>
           <h2 className="display text-text mb-12 md:mb-16" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
             I Didn&apos;t Start at the Top. I Climbed There.
           </h2>
@@ -170,8 +158,8 @@ export default function MeetKayode() {
             ].map((item, i, arr) => (
               <div
                 key={item.label}
-                className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 md:gap-12 items-start"
-                style={{ padding: "clamp(32px, 5vw, 52px) 0", borderBottom: i < arr.length - 1 ? "1px solid var(--surface-2)" : "none" }}
+                className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-3 md:gap-10 items-start"
+                style={{ padding: "clamp(20px, 3vw, 32px) 0", borderBottom: i < arr.length - 1 ? "1px solid var(--surface-2)" : "none" }}
               >
                 <div>
                   <span className="eyebrow block mb-2">{item.label}</span>
@@ -243,9 +231,9 @@ export default function MeetKayode() {
       <section className="bg-surface border-b border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-12">In Their Words</span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
+          <div className="flex flex-col gap-[2px] bg-surface-2">
             {testimonials.map((q) => (
-              <div key={q.name} className="bg-surface" style={{ padding: "48px 44px" }}>
+              <div key={q.name} className="bg-surface" style={{ padding: "48px 44px", maxWidth: "760px" }}>
                 <span className="display" style={{ fontSize: "3.5rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "24px", opacity: 0.4 }}>&ldquo;</span>
                 <blockquote className="display text-text" style={{ fontSize: "clamp(1rem, 1.6vw, 1.2rem)", fontStyle: "italic", lineHeight: 1.55, marginBottom: "32px" }}>
                   {q.quote}
@@ -255,6 +243,19 @@ export default function MeetKayode() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── A Personal Note ── */}
+      <section className="bg-surface border-b border-surface-2 s-pad-sm">
+        <div className="container" style={{ maxWidth: "680px" }}>
+          <span className="eyebrow block mb-5">A Personal Note</span>
+          <p className="text-muted font-light" style={{ fontSize: "0.95rem", lineHeight: 1.9 }}>
+            Beyond the operating rooms and the frameworks, there&apos;s a conviction that drives all of it — one I call GeniusMined: the belief that genius sits inside every person, team, and organisation, and that my work is to mine it and help it reach its full potential. It&apos;s the headwater everything else flows from, including this practice.{" "}
+            <Link href="/geniusmined" className="hover-gold">
+              If you want to know the person behind the work, that story lives here →
+            </Link>
+          </p>
         </div>
       </section>
 

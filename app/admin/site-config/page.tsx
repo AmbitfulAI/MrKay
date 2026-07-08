@@ -11,7 +11,8 @@ export default async function AdminSiteConfig() {
   const config: SiteConfigShape = {
     ...SITE_CONFIG_DEFAULTS,
     ...raw,
-    statsBar: raw?.statsBar?.length ? raw.statsBar : SITE_CONFIG_DEFAULTS.statsBar,
+    statsBar: (raw?.statsBar?.length ? raw.statsBar : SITE_CONFIG_DEFAULTS.statsBar)
+      .map(({ line, descriptor }) => ({ line, descriptor })),
   };
 
   return (

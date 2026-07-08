@@ -1,15 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 
-export function DeleteButton({ id, endpoint }: { id: string; endpoint: string }) {
-  const router = useRouter();
+interface Props {
+  id: string;
+  endpoint: string;
+  queryKey: readonly string[];
+}
+
+export function DeleteButton({ id, endpoint, queryKey }: Props) {
   const [confirming, setConfirming] = useState(false);
+  const mutation = useAdminMutation(queryKey);
 
-  async function handleDelete() {
-    await fetch(`${endpoint}/${id}`, { method: "DELETE" });
-    router.refresh();
+  function handleDelete() {
+    mutation.mutate({ url: `${endpoint}/${id}`, method: "DELETE" });
+    setConfirming(false);
   }
 
   if (confirming) {
@@ -26,8 +32,12 @@ export function DeleteButton({ id, endpoint }: { id: string; endpoint: string })
   }
 
   return (
-    <button onClick={() => setConfirming(true)} style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-body)", padding: 0 }}>
-      Delete
+    <button
+      onClick={() => setConfirming(true)}
+      disabled={mutation.isPending}
+      style={{ fontSize: "0.72rem", color: "var(--dim)", background: "none", border: "none", cursor: mutation.isPending ? "not-allowed" : "pointer", fontFamily: "var(--font-body)", padding: 0, opacity: mutation.isPending ? 0.5 : 1 }}
+    >
+      {mutation.isPending ? "Deleting…" : "Delete"}
     </button>
   );
 }

@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { connectDB } from "@/lib/db";
-import { Testimonial } from "@/lib/models/Testimonial";
+import { useQuery } from "@tanstack/react-query";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface TestimonialRow { _id: string; quote: string; clientName: string; clientContext: string; order?: number; pages?: string[]; }
-export const revalidate = 0;
 
-export default async function AdminTestimonials() {
-  await connectDB();
-  const items = await Testimonial.find().sort({ order: 1 }).lean<TestimonialRow[]>();
+export default function AdminTestimonials() {
+  const { data: items = [], isLoading } = useQuery<TestimonialRow[]>({
+    queryKey: QUERY_KEYS.testimonials,
+    queryFn: () => fetch("/api/admin/testimonials").then((r) => r.json()),
+  });
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -20,7 +23,9 @@ export default async function AdminTestimonials() {
         <Link href="/admin/testimonials/new" className="btn-solid" style={{ fontSize: "0.78rem", padding: "10px 24px" }}>+ Add Testimonial</Link>
       </div>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>Loading…</p>
+      ) : items.length === 0 ? (
         <div style={{ border: "1px dashed var(--surface-2)", padding: "64px", textAlign: "center" }}>
           <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>No testimonials yet.</p>
         </div>
@@ -30,7 +35,7 @@ export default async function AdminTestimonials() {
             {["Quote", "Client", "Pages", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={String(item._id)} style={{ display: "grid", gridTemplateColumns: "1fr 180px 1fr 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "1fr 180px 1fr 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <p className="text-text font-light" style={{ fontSize: "0.88rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingRight: "16px" }}>{item.quote}</p>
               <div>
                 <p style={{ fontSize: "0.78rem", color: "var(--text)", fontFamily: "var(--font-body)" }}>{item.clientName}</p>
@@ -41,8 +46,8 @@ export default async function AdminTestimonials() {
               </div>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/testimonials/${String(item._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={String(item._id)} endpoint="/api/admin/testimonials" />
+                <Link href={`/admin/testimonials/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteButton id={item._id} endpoint="/api/admin/testimonials" queryKey={QUERY_KEYS.testimonials} />
               </div>
             </div>
           ))}

@@ -93,8 +93,8 @@ export default function ContactSection() {
 
   return (
     <form id="form" onSubmit={handleSubmit} className="flex flex-col gap-8">
-      {/* Row 1: Name + Email */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* Row 1: Name + Email + Phone */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="form-group">
           <label className="form-label" htmlFor="name">Full Name</label>
           <input
@@ -117,23 +117,19 @@ export default function ContactSection() {
             required
           />
         </div>
-      </div>
-
-      {/* Row 2: Phone */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="form-group">
           <label className="form-label" htmlFor="phone">Phone <span style={{ opacity: 0.5, fontWeight: 300 }}>(optional)</span></label>
           <input
             id="phone" name="phone" type="tel"
             className="form-input"
-            placeholder="Include country code"
+            placeholder="Country code"
             value={form.phone}
             onChange={handleChange}
           />
         </div>
       </div>
 
-      {/* Row 3: Dropdown */}
+      {/* Row 2: Dropdown */}
       <div className="form-group">
         <label className="form-label" htmlFor="dropdown">What best describes you?</label>
         <select

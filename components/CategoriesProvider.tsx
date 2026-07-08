@@ -2,14 +2,16 @@
 
 import { createContext, useContext, useState } from "react";
 
-const CategoriesContext = createContext<string[]>([]);
+export interface CategoryOption { _id: string; title: string; }
+
+const CategoriesContext = createContext<CategoryOption[]>([]);
 
 export function CategoriesProvider({
   children,
   initial = [],
 }: {
   children: React.ReactNode;
-  initial?: string[];
+  initial?: CategoryOption[];
 }) {
   const [categories] = useState(initial);
   return (

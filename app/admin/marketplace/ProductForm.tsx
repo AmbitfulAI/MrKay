@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminMutation } from "@/lib/queries/useAdminMutation";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
 interface FormData { title: string; subtitle: string; type: string; description: string; price: string; priceNote: string; tag: string; selarUrl: string; available: boolean; coverAccent: string; order: string; }
 interface Props { initialData?: Partial<FormData>; id?: string; }
@@ -13,23 +15,20 @@ export function ProductForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ title: "", subtitle: "", type: "", description: "", price: "", priceNote: "", tag: "", selarUrl: "", available: true, coverAccent: "", order: "", ...initialData });
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const mutation = useAdminMutation(QUERY_KEYS.marketplace, () => router.push("/admin/marketplace"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); setSaving(true); setError("");
-    const res = await fetch(isEdit ? `/api/admin/marketplace/${id}` : "/api/admin/marketplace", {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    mutation.mutate({
+      url: isEdit ? `/api/admin/marketplace/${id}` : "/api/admin/marketplace",
       method: isEdit ? "PATCH" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: form,
     });
-    if (res.ok) { router.push("/admin/marketplace"); router.refresh(); }
-    else { setError("Something went wrong."); setSaving(false); }
   }
 
   return (
@@ -61,9 +60,9 @@ export function ProductForm({ initialData, id }: Props) {
             Available for purchase
           </label>
         </div>
-        {error && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{error}</p>}
+        {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
-          <button type="submit" disabled={saving} className="btn-solid" style={{ opacity: saving ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{saving ? "Saving…" : isEdit ? "Save Changes" : "Add Product"}</button>
+          <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Product"}</button>
           <button type="button" onClick={() => router.push("/admin/marketplace")} style={{ background: "none", border: "1px solid var(--surface-2)", color: "var(--muted)", padding: "11px 24px", fontFamily: "var(--font-body)", fontSize: "0.78rem", cursor: "pointer" }}>Cancel</button>
         </div>
       </div>

@@ -1,5 +1,8 @@
 import Link from "next/link";
 import TwoTierCTA from "@/components/TwoTierCTA";
+import { getNotesByCategory } from "@/lib/data/notes";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Beyond the Work — TheKayodeKolade",
@@ -17,7 +20,8 @@ const readingList = [
   { title: "Mere Christianity", author: "C.S. Lewis", note: "A book I keep returning to." },
 ];
 
-export default function BeyondTheWork() {
+export default async function BeyondTheWork() {
+  const reflections = await getNotesByCategory("gracejunkie", 2);
   return (
     <>
       {/* ── Hero ── */}
@@ -53,8 +57,36 @@ export default function BeyondTheWork() {
         </div>
       </section>
 
-      {/* ── Block 2: Reading List ── */}
+      {/* ── Block 2: Reflections ── */}
       <section className="bg-surface border-b border-surface-2 s-pad">
+        <div className="container">
+          <span className="eyebrow block mb-4">Reflections</span>
+          <h2 className="display text-text mb-10" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
+            Things I&apos;ve Been Thinking About
+          </h2>
+          <div className="flex flex-col">
+            {reflections.map((note) => (
+              <Link key={note.slug} href={`/writing/note/${note.slug}`} className="blog-row">
+                <div className="blog-row-meta">
+                  <span className="eyebrow">{note.category}</span>
+                  <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>{note.date}</span>
+                </div>
+                <div className="blog-row-body">
+                  <h3 className="display text-text mb-3" style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}>{note.title}</h3>
+                  <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.85 }}>{note.excerpt}</p>
+                </div>
+                <span className="blog-row-arrow">→</span>
+              </Link>
+            ))}
+          </div>
+          <div style={{ marginTop: "40px" }}>
+            <Link href="/writing/gracejunkie" className="btn-outline">More from GraceJunkie</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Block 3: Reading List ── */}
+      <section className="bg-bg border-b border-surface-2 s-pad">
         <div className="container">
           <span className="eyebrow block mb-4">What I&apos;m Reading</span>
           <h2 className="display text-text mb-10" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
@@ -76,20 +108,6 @@ export default function BeyondTheWork() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── Block 3: Reflections ── */}
-      <section className="bg-bg border-b border-surface-2 s-pad">
-        <div className="container">
-          <span className="eyebrow block mb-4">Reflections</span>
-          <h2 className="display text-text mb-5" style={{ fontSize: "clamp(1.8rem, 3vw, 2.8rem)" }}>
-            Things I&apos;ve Been Thinking About
-          </h2>
-          <p className="text-muted font-light mb-8 max-w-[560px]" style={{ fontSize: "0.9rem", lineHeight: 1.9 }}>
-            Short pieces that didn&apos;t fit neatly into the executive frame — reflections on grace, growth, faith, and the texture of daily life. These live more fully in the Writing hub, but a few of them belong here too.
-          </p>
-          <Link href="/writing" className="btn-outline">More in the Writing Hub</Link>
         </div>
       </section>
 

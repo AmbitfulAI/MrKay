@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
-import { connectDB } from "@/lib/db";
-import { Note } from "@/lib/models/Note";
+import { useQuery } from "@tanstack/react-query";
 import { DeleteNoteButton } from "./DeleteNoteButton";
+import { QUERY_KEYS } from "@/lib/queries/keys";
 
-interface NoteRow { _id: string; title: string; slug: string; category: string; date: string; }
-export const revalidate = 0;
+interface NoteRow { _id: string; title: string; slug: string; category: { title: string }; date: string; }
 
-export default async function AdminNotes() {
-  await connectDB();
-  const notes = await Note.find().sort({ createdAt: -1 }).lean<NoteRow[]>();
+export default function AdminNotes() {
+  const { data: notes = [], isLoading } = useQuery<NoteRow[]>({
+    queryKey: QUERY_KEYS.notes,
+    queryFn: () => fetch("/api/admin/notes").then((r) => r.json()),
+  });
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -24,7 +27,9 @@ export default async function AdminNotes() {
         </Link>
       </div>
 
-      {notes.length === 0 ? (
+      {isLoading ? (
+        <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>Loading…</p>
+      ) : notes.length === 0 ? (
         <div style={{ border: "1px dashed var(--surface-2)", padding: "64px", textAlign: "center" }}>
           <p className="text-dim font-light" style={{ fontSize: "0.88rem" }}>No notes yet.</p>
           <Link href="/admin/notes/new" style={{ color: "var(--gold)", fontSize: "0.82rem", marginTop: "12px", display: "inline-block" }}>
@@ -39,16 +44,16 @@ export default async function AdminNotes() {
             ))}
           </div>
           {notes.map((note) => (
-            <div key={String(note._id)} style={{ display: "grid", gridTemplateColumns: "1fr 140px 120px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={note._id} style={{ display: "grid", gridTemplateColumns: "1fr 140px 120px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
               <div>
                 <p className="text-text font-light" style={{ fontSize: "0.9rem", marginBottom: "2px" }}>{note.title}</p>
                 <p className="text-dim" style={{ fontSize: "0.7rem", fontFamily: "var(--font-body)" }}>/{note.slug}</p>
               </div>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category}</span>
+              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category?.title}</span>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.date}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
-                <Link href={`/admin/notes/${String(note._id)}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteNoteButton id={String(note._id)} />
+                <Link href={`/admin/notes/${note._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
+                <DeleteNoteButton id={note._id} />
               </div>
             </div>
           ))}

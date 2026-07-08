@@ -12,7 +12,7 @@ interface DBNote {
   _id: string;
   slug: string;
   title: string;
-  category: string;
+  category: { title: string } | null;
   date: string;
   excerpt: string;
   featuredImage?: string;
@@ -24,7 +24,7 @@ function mapDBNote(n: DBNote): Note {
   return {
     slug: n.slug,
     title: n.title,
-    category: n.category,
+    category: n.category?.title ?? "",
     date: n.date,
     excerpt: n.excerpt,
     body: n.body?.length
@@ -35,22 +35,49 @@ function mapDBNote(n: DBNote): Note {
   };
 }
 
-const FALLBACK_CATEGORIES = [
-  { title: "GeniusMined",    slug: "geniusmined" },
-  { title: "GraceJunkie",    slug: "gracejunkie" },
-  { title: "RareMusingWork", slug: "raremusingwork" },
+export interface WritingCategory {
+  title: string;
+  slug: string;
+  description: string;
+  tagline: string;
+}
+
+const FALLBACK_CATEGORIES: WritingCategory[] = [
+  {
+    title: "GeniusMinedStirs",
+    slug: "geniusmined",
+    description: "Professional brilliance. Frameworks, case lessons, leadership, mentorship, organisation design, and the realities of building inside growing organisations. The voice of the work.",
+    tagline: "",
+  },
+  {
+    title: "GraceJunkie",
+    slug: "gracejunkie",
+    description: "Life journey and lessons. Faith, family, fatherhood, transitions, resilience — and a particular conviction that grace is the headwater, not the decoration.",
+    tagline: "",
+  },
+  {
+    title: "RareMusingWork",
+    slug: "raremusingwork",
+    description: "The unfiltered room. Poetry, songs, sparks, travel notes, and the random rants of a mind that won't stay in one lane. No rules.",
+    tagline: "",
+  },
 ];
 
-export async function getNoteCategories(): Promise<{ title: string; slug: string }[]> {
+export async function getNoteCategories(): Promise<WritingCategory[]> {
   await connectDB();
-  const cats = await Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string; slug: string }[]>().catch(() => []);
-  return cats.length ? cats.map((c) => ({ title: c.title, slug: c.slug })) : FALLBACK_CATEGORIES;
+  const cats = await Category.find({ type: "writing" })
+    .sort({ order: 1 })
+    .lean<{ title: string; slug: string; description: string; tagline: string }[]>()
+    .catch(() => []);
+  return cats.length
+    ? cats.map((c) => ({ title: c.title, slug: c.slug, description: c.description ?? "", tagline: c.tagline ?? "" }))
+    : FALLBACK_CATEGORIES;
 }
 
 export async function getNotes(): Promise<{ notes: Note[]; categories: string[] }> {
   await connectDB();
   const [dbNotes, dbCategories] = await Promise.all([
-    NoteModel.find().sort({ createdAt: -1 }).lean<DBNote[]>(),
+    NoteModel.find().populate<{ category: { title: string } | null }>("category", "title").sort({ createdAt: -1 }).lean<DBNote[]>(),
     Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
 
@@ -58,10 +85,46 @@ export async function getNotes(): Promise<{ notes: Note[]; categories: string[] 
   const categories = dbCategories.length
     ? ["All", ...dbCategories.map((c) => c.title)]
     : dbNotes.length
-    ? ["All", ...Array.from(new Set(dbNotes.map((n) => n.category)))]
+    ? ["All", ...Array.from(new Set(dbNotes.map((n) => n.category?.title ?? "").filter(Boolean)))]
     : staticCategories;
 
   return { notes, categories };
+}
+
+interface NoteRow {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+}
+
+export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[]> {
+  await connectDB();
+  const cat = await Category.findOne({ slug })
+    .select("_id title")
+    .lean<{ _id: unknown; title: string }>()
+    .catch(() => null);
+  if (!cat) return [];
+
+  const dbNotes = await NoteModel.find({ category: cat._id })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean<NoteRow[]>()
+    .catch(() => []);
+
+  if (dbNotes.length) {
+    return dbNotes.map((n) => ({
+      slug: n.slug,
+      title: n.title,
+      category: cat.title,
+      date: n.date,
+      excerpt: n.excerpt,
+      body: [],
+    }));
+  }
+
+  const fallback = staticNotes.filter((n) => n.category === cat.title);
+  return limit ? fallback.slice(0, limit) : fallback;
 }
 
 export async function getNoteSlugs(): Promise<Array<{ slug: string }>> {
@@ -84,12 +147,12 @@ export interface DBNoteDetail {
 
 export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | Note | null> {
   await connectDB();
-  const fromDB = await NoteModel.findOne({ slug }).lean<DBNote>().catch(() => null);
+  const fromDB = await NoteModel.findOne({ slug }).populate<{ category: { title: string } | null }>("category", "title").lean<DBNote>().catch(() => null);
   if (fromDB) {
     return {
       slug: fromDB.slug,
       title: fromDB.title,
-      category: fromDB.category,
+      category: fromDB.category?.title ?? "",
       date: fromDB.date,
       excerpt: fromDB.excerpt,
       featuredImage: fromDB.featuredImage,

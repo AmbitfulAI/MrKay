@@ -91,6 +91,42 @@ export async function getNotes(): Promise<{ notes: Note[]; categories: string[] 
   return { notes, categories };
 }
 
+interface NoteRow {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+}
+
+export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[]> {
+  await connectDB();
+  const cat = await Category.findOne({ slug })
+    .select("_id title")
+    .lean<{ _id: unknown; title: string }>()
+    .catch(() => null);
+  if (!cat) return [];
+
+  const dbNotes = await NoteModel.find({ category: cat._id })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean<NoteRow[]>()
+    .catch(() => []);
+
+  if (dbNotes.length) {
+    return dbNotes.map((n) => ({
+      slug: n.slug,
+      title: n.title,
+      category: cat.title,
+      date: n.date,
+      excerpt: n.excerpt,
+      body: [],
+    }));
+  }
+
+  const fallback = staticNotes.filter((n) => n.category === cat.title);
+  return limit ? fallback.slice(0, limit) : fallback;
+}
+
 export async function getNoteSlugs(): Promise<Array<{ slug: string }>> {
   await connectDB();
   const fromDB = await NoteModel.find().select("slug").lean<{ slug: string }[]>().catch(() => []);

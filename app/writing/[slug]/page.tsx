@@ -19,7 +19,6 @@ interface WritingCategory {
 interface DBNote {
   slug: string;
   title: string;
-  category: string;
   date: string;
   excerpt: string;
 }

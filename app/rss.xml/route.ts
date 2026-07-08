@@ -7,7 +7,7 @@ interface NoteDoc {
   _id: unknown;
   title: string;
   slug: string;
-  category: string;
+  category: { title: string } | null;
   date: string;
   excerpt: string;
 }
@@ -24,7 +24,7 @@ function escapeXml(str: string) {
 export async function GET() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://thekayodekolade.com";
   await connectDB();
-  const notes = await Note.find().sort({ createdAt: -1 }).lean<NoteDoc[]>();
+  const notes = await Note.find().populate<{ category: { title: string } | null }>("category", "title").sort({ createdAt: -1 }).lean<NoteDoc[]>();
 
   const items = notes
     .map((note) => {
@@ -36,7 +36,7 @@ export async function GET() {
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
       <description>${escapeXml(note.excerpt ?? "")}</description>
-      <category>${escapeXml(note.category ?? "")}</category>
+      <category>${escapeXml(note.category?.title ?? "")}</category>
       ${pubDate ? `<pubDate>${pubDate}</pubDate>` : ""}
     </item>`;
     })

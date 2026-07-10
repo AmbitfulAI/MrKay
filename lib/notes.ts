@@ -6,6 +6,7 @@ export interface Note {
   excerpt: string;
   image?: "headshot" | "exec" | "facecard" | "upperbody";
   body: string[];
+  featuredImages?: string[];
 }
 
 export const notes: Note[] = [
@@ -158,4 +159,17 @@ export function getRelatedNotes(slug: string, count = 3): Note[] {
   const same = notes.filter((n) => n.slug !== slug && n.category === current.category);
   const others = notes.filter((n) => n.slug !== slug && n.category !== current.category);
   return [...same, ...others].slice(0, count);
+}
+
+export function formatNoteDate(date: Date | string): string {
+  if (!date) return "";
+  if (date instanceof Date) {
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(date)) {
+    const d = new Date(date.length === 10 ? date + "T12:00:00Z" : date);
+    if (!isNaN(d.getTime())) return d.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  }
+  return date;
 }

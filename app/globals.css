@@ -1246,14 +1246,32 @@ select.form-input optgroup {
 /* ── Blog rows ── */
 .blog-row {
   display: grid;
-  grid-template-columns: 160px 1fr auto;
-  align-items: start;
+  grid-template-columns: 160px 1fr auto auto;
+  align-items: center;
   gap: 40px;
   padding: 44px 0;
   border-bottom: 1px solid var(--surface-2);
   text-decoration: none;
   transition: background 0.3s;
   cursor: pointer;
+}
+.blog-row-cover {
+  width: 160px;
+  height: 106px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.blog-row-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.blog-row:hover .blog-row-cover img {
+  transform: scale(1.04);
 }
 .blog-row:hover {
   background: var(--gold-glow);
@@ -1738,6 +1756,9 @@ select.form-input optgroup {
   .blog-row-body {
     grid-column: 1;
     grid-row: 2;
+  }
+  .blog-row-cover {
+    display: none;
   }
   .blog-row-arrow {
     grid-column: 2;

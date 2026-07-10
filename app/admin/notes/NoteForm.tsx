@@ -14,7 +14,7 @@ import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 const schema = yup.object({
   title:    yup.string().required("Title is required"),
   category: yup.string().required("Category is required"),
-  date:     yup.string().required("Date is required"),
+  date:     yup.string().required("Published date is required"),
   excerpt:  yup.string().required("Excerpt is required"),
   body:     yup.string().required("Body is required"),
 }).required();
@@ -81,7 +81,7 @@ export function NoteForm({ initialData, id }: Props) {
     defaultValues: {
       title:    "",
       category: "",
-      date:     "",
+      date:     new Date().toISOString().slice(0, 10),
       excerpt:  "",
       body:     "",
       ...initialData,
@@ -134,11 +134,10 @@ export function NoteForm({ initialData, id }: Props) {
             {errors.category && <p style={errorStyle}>{errors.category.message}</p>}
           </div>
           <div>
-            <label style={labelStyle}>Date *</label>
+            <label style={labelStyle}>Published Date *</label>
             <input
               {...register("date")}
-              type="text"
-              placeholder="e.g. June 2026"
+              type="date"
               style={inputStyle}
             />
             {errors.date && <p style={errorStyle}>{errors.date.message}</p>}

@@ -5,6 +5,7 @@ import {
   notes as staticNotes,
   categories as staticCategories,
   getNoteBySlug as getStaticNoteBySlug,
+  formatNoteDate,
   type Note,
 } from "@/lib/notes";
 
@@ -13,7 +14,7 @@ interface DBNote {
   slug: string;
   title: string;
   category: { title: string } | null;
-  date: string;
+  date: Date;
   excerpt: string;
   featuredImages?: string[];
   body: string[];
@@ -25,8 +26,9 @@ function mapDBNote(n: DBNote): Note {
     slug: n.slug,
     title: n.title,
     category: n.category?.title ?? "",
-    date: n.date,
+    date: formatNoteDate(n.date),
     excerpt: n.excerpt,
+    featuredImages: n.featuredImages ?? [],
     body: n.body?.length
       ? n.body
       : (n.blocks ?? [])
@@ -92,7 +94,7 @@ export async function getNotes(): Promise<{
   const [dbNotes, dbCategories] = await Promise.all([
     NoteModel.find()
       .populate<{ category: { title: string } | null }>("category", "title")
-      .sort({ createdAt: -1 })
+      .sort({ date: -1 })
       .lean<DBNote[]>(),
     Category.find({ type: "writing" })
       .sort({ order: 1 })
@@ -119,8 +121,9 @@ export async function getNotes(): Promise<{
 interface NoteRow {
   slug: string;
   title: string;
-  date: string;
+  date: Date;
   excerpt: string;
+  featuredImages?: string[];
 }
 
 export async function getNotesByCategory(
@@ -135,7 +138,7 @@ export async function getNotesByCategory(
   if (!cat) return [];
 
   const dbNotes = await NoteModel.find({ category: cat._id })
-    .sort({ createdAt: -1 })
+    .sort({ date: -1 })
     .limit(limit)
     .lean<NoteRow[]>()
     .catch(() => []);
@@ -145,8 +148,9 @@ export async function getNotesByCategory(
       slug: n.slug,
       title: n.title,
       category: cat.title,
-      date: n.date,
+      date: formatNoteDate(n.date),
       excerpt: n.excerpt,
+      featuredImages: n.featuredImages ?? [],
       body: [],
     }));
   }
@@ -189,7 +193,7 @@ export async function getNoteBySlug(
       slug: fromDB.slug,
       title: fromDB.title,
       category: fromDB.category?.title ?? "",
-      date: fromDB.date,
+      date: formatNoteDate(fromDB.date),
       excerpt: fromDB.excerpt,
       featuredImages: fromDB.featuredImages ?? [],
       body: mapDBNote(fromDB).body,

@@ -36,7 +36,7 @@ export async function PATCH(
       title:    data.title,
       slug,
       category: data.category,
-      date:     data.date,
+      date:     new Date(data.date),
       excerpt:  data.excerpt,
       body:     bodyToArray(data.body ?? ""),
       ...(data.featuredImages !== undefined && { featuredImages: data.featuredImages }),

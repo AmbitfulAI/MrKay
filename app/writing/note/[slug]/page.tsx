@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes } from "@/lib/notes";
 import { getNoteSlugs, getNoteBySlug } from "@/lib/data/notes";
+import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
 import execImg      from "@/assets/KK_Exec_bg.jpg";
@@ -40,8 +41,9 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
 
   const related = getRelatedNotes(slug);
 
-  const n = note as { featuredImage?: string; image?: "headshot" | "exec" | "facecard" | "upperbody" };
-  const heroSrc = n.featuredImage ?? (n.image ? imageMap[n.image] : undefined);
+  const n = note as { featuredImages?: string[]; image?: "headshot" | "exec" | "facecard" | "upperbody" };
+  const images = (n.featuredImages ?? []).filter(Boolean);
+  const staticSrc = images.length === 0 && n.image ? imageMap[n.image] : undefined;
 
   return (
     <NoteDetail
@@ -50,7 +52,8 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
       date={note.date}
       excerpt={note.excerpt}
       body={note.body}
-      heroSrc={heroSrc}
+      images={images}
+      staticSrc={staticSrc}
       heroAlt={note.title}
       related={related}
     />
@@ -63,13 +66,14 @@ interface NoteDetailProps {
   date: string;
   excerpt: string;
   body: string[];
+  images: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  heroSrc?: any;
+  staticSrc?: any;
   heroAlt: string;
   related: ReturnType<typeof getRelatedNotes>;
 }
 
-function NoteDetail({ title, category, date, excerpt, body, heroSrc, heroAlt, related }: NoteDetailProps) {
+function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, heroAlt, related }: NoteDetailProps) {
   return (
     <>
       {/* ── Header ── */}
@@ -99,24 +103,32 @@ function NoteDetail({ title, category, date, excerpt, body, heroSrc, heroAlt, re
         </div>
       </section>
 
-      {/* ── Featured image ── */}
-      {heroSrc && (
+      {/* ── Featured image(s) ── */}
+      {images.length > 1 && <FeaturedImageCarousel images={images} />}
+      {images.length === 1 && (
         <div style={{ width: "100%", aspectRatio: "21/8", position: "relative", overflow: "hidden", background: "var(--surface)" }}>
           <Image
-            src={heroSrc}
+            src={images[0]}
             alt={heroAlt}
             fill
             priority
             style={{ objectFit: "cover", objectPosition: "center 20%", opacity: 0.75 }}
             sizes="100vw"
           />
-          <div
-            aria-hidden
-            style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to bottom, transparent 60%, var(--bg) 100%)",
-            }}
+          <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 60%, var(--bg) 100%)" }} />
+        </div>
+      )}
+      {images.length === 0 && staticSrc && (
+        <div style={{ width: "100%", aspectRatio: "21/8", position: "relative", overflow: "hidden", background: "var(--surface)" }}>
+          <Image
+            src={staticSrc}
+            alt={heroAlt}
+            fill
+            priority
+            style={{ objectFit: "cover", objectPosition: "center 20%", opacity: 0.75 }}
+            sizes="100vw"
           />
+          <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 60%, var(--bg) 100%)" }} />
         </div>
       )}
 

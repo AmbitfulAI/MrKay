@@ -39,7 +39,7 @@ export async function PATCH(
       date:     data.date,
       excerpt:  data.excerpt,
       body:     bodyToArray(data.body ?? ""),
-      ...(data.featuredImage !== undefined && { featuredImage: data.featuredImage }),
+      ...(data.featuredImages !== undefined && { featuredImages: data.featuredImages }),
     },
     { new: true },
   );

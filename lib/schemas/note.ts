@@ -6,7 +6,7 @@ export const NoteBodySchema = z.object({
   date: z.string().min(1, "Date is required"),
   excerpt: z.string().min(1, "Excerpt is required"),
   body: z.string().min(1, "Body is required"),
-  featuredImage: z.string().optional(),
+  featuredImages: z.array(z.string()).optional(),
 });
 
 export type NoteBodyInput = z.infer<typeof NoteBodySchema>;

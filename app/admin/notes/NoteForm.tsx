@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +9,7 @@ import { useCategories } from "@/components/CategoriesProvider";
 import type { CategoryOption } from "@/components/CategoriesProvider";
 import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 import { QUERY_KEYS } from "@/lib/queries/keys";
+import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 
 const schema = yup.object({
   title:    yup.string().required("Title is required"),
@@ -20,7 +22,7 @@ const schema = yup.object({
 type NoteFormData = yup.InferType<typeof schema>;
 
 interface Props {
-  initialData?: Partial<NoteFormData>;
+  initialData?: Partial<NoteFormData> & { featuredImages?: string[] };
   id?: string;
 }
 
@@ -58,6 +60,17 @@ export function NoteForm({ initialData, id }: Props) {
   const isEdit = !!id;
   const categories: CategoryOption[] = useCategories();
   const mutation = useAdminMutation(QUERY_KEYS.notes, () => router.push("/admin/notes"));
+  const [featuredImages, setFeaturedImages] = useState<string[]>(initialData?.featuredImages ?? []);
+
+  function addImage(url: string) {
+    setFeaturedImages((prev) => [...prev, url]);
+  }
+  function replaceImage(index: number, url: string) {
+    setFeaturedImages((prev) => prev.map((v, i) => (i === index ? url : v)));
+  }
+  function removeImage(index: number) {
+    setFeaturedImages((prev) => prev.filter((_, i) => i !== index));
+  }
 
   const {
     register,
@@ -79,7 +92,7 @@ export function NoteForm({ initialData, id }: Props) {
     mutation.mutate({
       url:    isEdit ? `/api/admin/notes/${id}` : "/api/admin/notes",
       method: isEdit ? "PATCH" : "POST",
-      body:   data,
+      body:   { ...data, featuredImages },
     });
   };
 
@@ -157,6 +170,36 @@ export function NoteForm({ initialData, id }: Props) {
             ? <p style={errorStyle}>{errors.body.message}</p>
             : <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>Separate paragraphs with a blank line.</p>
           }
+        </div>
+
+        {/* Featured Images */}
+        <div>
+          <p style={labelStyle}>Featured Images</p>
+          {featuredImages.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "12px" }}>
+              {featuredImages.map((url, i) => (
+                <div key={i} style={{ padding: "12px 14px", background: "var(--surface)", border: "1px solid var(--surface-2)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
+                    <span style={{ flex: 1, fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)" }}>
+                      ✓ Image {i + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      style={{ background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontFamily: "var(--font-body)", fontSize: "0.72rem", padding: "2px 6px" }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <ImageUpload value={url} onChange={(newUrl) => replaceImage(i, newUrl)} label={`Replace Image ${i + 1}`} />
+                </div>
+              ))}
+            </div>
+          )}
+          <ImageUpload value="" onChange={addImage} label={featuredImages.length === 0 ? "Add Image" : "Add Another Image"} />
+          <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>
+            One image uses the hero layout. Multiple images become a carousel.
+          </p>
         </div>
 
         {mutation.isError && (

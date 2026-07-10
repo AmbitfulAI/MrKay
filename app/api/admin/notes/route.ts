@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     date: data.date,
     excerpt: data.excerpt,
     body: bodyToArray(data.body ?? ""),
-    featuredImage: data.featuredImage ?? "",
+    featuredImages: data.featuredImages ?? [],
   });
   revalidatePath("/writing");
   const cat = await Category.findById(data.category)

@@ -7,7 +7,7 @@ const NoteSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     date: { type: String, required: true },
     excerpt: { type: String, required: true },
-    featuredImage: { type: String, default: "" },
+    featuredImages: { type: [String], default: [] },
     body: { type: [String], default: [] },
   },
   { timestamps: true },

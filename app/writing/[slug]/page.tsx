@@ -1,9 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Category } from "@/lib/models/Category";
 import { Note as NoteModel } from "@/lib/models/Note";
-import { notes as staticNotes, type Note } from "@/lib/notes";
+import { notes as staticNotes, type Note, formatNoteDate } from "@/lib/notes";
 
 export const revalidate = 60;
 
@@ -21,6 +22,7 @@ interface DBNote {
   title: string;
   date: string;
   excerpt: string;
+  featuredImages?: string[];
 }
 
 export async function generateStaticParams() {
@@ -62,7 +64,7 @@ export default async function WritingCategoryPage({
   if (!cat) notFound();
 
   const dbNotes = await NoteModel.find({ category: cat._id })
-    .sort({ createdAt: -1 })
+    .sort({ date: -1 })
     .lean<DBNote[]>()
     .catch(() => []);
 
@@ -73,6 +75,7 @@ export default async function WritingCategoryPage({
         category: cat.title,
         date: n.date,
         excerpt: n.excerpt,
+        featuredImages: n.featuredImages ?? [],
         body: [],
       }))
     : staticNotes.filter((n) => n.category === cat.title);
@@ -196,7 +199,7 @@ export default async function WritingCategoryPage({
                         display: "block",
                       }}
                     >
-                      {note.date}
+                      {formatNoteDate(note.date)}
                     </span>
                   </div>
                   <div className="blog-row-body">
@@ -213,6 +216,13 @@ export default async function WritingCategoryPage({
                       {note.excerpt}
                     </p>
                   </div>
+                  {note.featuredImages?.[0] ? (
+                    <div className="blog-row-cover">
+                      <Image src={note.featuredImages[0]} alt={note.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                    </div>
+                  ) : (
+                    <div className="blog-row-cover" style={{ background: "var(--surface)" }} />
+                  )}
                   <span className="blog-row-arrow">→</span>
                 </Link>
               ))}

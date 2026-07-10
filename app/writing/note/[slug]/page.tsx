@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes } from "@/lib/notes";
+import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes, formatNoteDate } from "@/lib/notes";
 import { getNoteSlugs, getNoteBySlug } from "@/lib/data/notes";
 import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
 
@@ -49,7 +49,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
     <NoteDetail
       title={note.title}
       category={note.category}
-      date={note.date}
+      date={formatNoteDate(note.date)}
       excerpt={note.excerpt}
       body={note.body}
       images={images}
@@ -172,7 +172,7 @@ function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, h
                   <div className="blog-row-meta">
                     <span className="eyebrow">{r.category}</span>
                     <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>
-                      {r.date}
+                      {formatNoteDate(r.date)}
                     </span>
                   </div>
                   <div className="blog-row-body">
@@ -183,6 +183,13 @@ function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, h
                       {r.excerpt}
                     </p>
                   </div>
+                  {r.featuredImages?.[0] ? (
+                    <div className="blog-row-cover">
+                      <Image src={r.featuredImages[0]} alt={r.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                    </div>
+                  ) : (
+                    <div className="blog-row-cover" style={{ background: "var(--surface)" }} />
+                  )}
                   <span className="blog-row-arrow">→</span>
                 </Link>
               ))}

@@ -3,7 +3,8 @@
 import { Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import type { Note } from "@/lib/notes";
+import Image from "next/image";
+import { type Note, formatNoteDate } from "@/lib/notes";
 import { useCategories } from "@/components/CategoriesProvider";
 
 interface Props {
@@ -79,7 +80,7 @@ function NotesFilterInner({ posts }: Props) {
                       display: "block",
                     }}
                   >
-                    {post.date}
+                    {formatNoteDate(post.date)}
                   </span>
                 </div>
                 <div className="blog-row-body">
@@ -96,6 +97,13 @@ function NotesFilterInner({ posts }: Props) {
                     {post.excerpt}
                   </p>
                 </div>
+                {post.featuredImages?.[0] ? (
+                  <div className="blog-row-cover">
+                    <Image src={post.featuredImages[0]} alt={post.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                  </div>
+                ) : (
+                  <div className="blog-row-cover" style={{ background: "var(--surface)" }} />
+                )}
                 <span className="blog-row-arrow">→</span>
               </Link>
             ))}

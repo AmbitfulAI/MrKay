@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import TwoTierCTA from "@/components/TwoTierCTA";
 import { getNotesByCategory } from "@/lib/data/notes";
+import { formatNoteDate } from "@/lib/notes";
 
 export const revalidate = 60;
 
@@ -69,12 +71,19 @@ export default async function BeyondTheWork() {
               <Link key={note.slug} href={`/writing/note/${note.slug}`} className="blog-row">
                 <div className="blog-row-meta">
                   <span className="eyebrow">{note.category}</span>
-                  <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>{note.date}</span>
+                  <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>{formatNoteDate(note.date)}</span>
                 </div>
                 <div className="blog-row-body">
                   <h3 className="display text-text mb-3" style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}>{note.title}</h3>
                   <p className="text-muted font-light" style={{ fontSize: "0.85rem", lineHeight: 1.85 }}>{note.excerpt}</p>
                 </div>
+                {note.featuredImages?.[0] ? (
+                  <div className="blog-row-cover">
+                    <Image src={note.featuredImages[0]} alt={note.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                  </div>
+                ) : (
+                  <div className="blog-row-cover" style={{ background: "var(--surface)" }} />
+                )}
                 <span className="blog-row-arrow">→</span>
               </Link>
             ))}

@@ -6,12 +6,13 @@ import { Category } from "@/lib/models/Category";
 import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
 import { sendNoteNotification } from "@/lib/mailer";
 import { NoteBodySchema, formatZodError } from "@/lib/schemas/note";
+import { formatNoteDate } from "@/lib/notes";
 
 export async function GET() {
   await connectDB();
   const notes = await Note.find()
     .populate("category", "title")
-    .sort({ createdAt: -1 })
+    .sort({ date: -1 })
     .lean();
   return NextResponse.json(notes);
 }
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     title: data.title,
     slug,
     category: data.category,
-    date: data.date,
+    date: new Date(data.date),
     excerpt: data.excerpt,
     body: bodyToArray(data.body ?? ""),
     featuredImages: data.featuredImages ?? [],
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
     title: saved.title,
     slug: saved.slug,
     category: cat?.title ?? "",
-    date: saved.date,
+    date: formatNoteDate(new Date(saved.date)),
     excerpt: saved.excerpt,
   }).catch(console.error);
   return NextResponse.json(saved, { status: 201 });

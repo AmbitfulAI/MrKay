@@ -5,7 +5,7 @@ const NoteSchema = new Schema(
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
-    date: { type: String, required: true },
+    date: { type: Date, required: true },
     excerpt: { type: String, required: true },
     featuredImages: { type: [String], default: [] },
     body: { type: [String], default: [] },

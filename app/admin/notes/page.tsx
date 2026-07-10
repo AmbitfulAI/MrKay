@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { DeleteNoteButton } from "./DeleteNoteButton";
 import { QUERY_KEYS } from "@/lib/queries/keys";
 
+import { formatNoteDate } from "@/lib/notes";
+
 interface NoteRow { _id: string; title: string; slug: string; category: { title: string }; date: string; }
 
 export default function AdminNotes() {
@@ -50,7 +52,7 @@ export default function AdminNotes() {
                 <p className="text-dim" style={{ fontSize: "0.7rem", fontFamily: "var(--font-body)" }}>/{note.slug}</p>
               </div>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.category?.title}</span>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{note.date}</span>
+              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{formatNoteDate(note.date)}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/notes/${note._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
                 <DeleteNoteButton id={note._id} />

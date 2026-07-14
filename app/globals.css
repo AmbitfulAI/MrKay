@@ -1238,6 +1238,8 @@ select.form-input optgroup {
   line-height: 1.95;
   color: var(--muted);
   margin-top: 28px;
+  text-align: justify;
+  hyphens: auto;
 }
 .note-para:first-of-type {
   margin-top: 0;

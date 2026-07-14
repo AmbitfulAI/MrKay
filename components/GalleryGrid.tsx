@@ -75,6 +75,7 @@ export default function GalleryGrid({ images, categories }: Props) {
                       alt={img.alt}
                       width={width}
                       height={height}
+                      unoptimized
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       style={{ width: "100%", height: "auto", display: "block" }}
                       priority={i === 0}

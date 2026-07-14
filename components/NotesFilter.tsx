@@ -99,7 +99,7 @@ function NotesFilterInner({ posts }: Props) {
                 </div>
                 {post.featuredImages?.[0] ? (
                   <div className="blog-row-cover">
-                    <Image src={post.featuredImages[0]} alt={post.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                    <Image src={post.featuredImages[0]} alt={post.title} fill unoptimized sizes="160px" style={{ objectFit: "cover" }} />
                   </div>
                 ) : (
                   <div className="blog-row-cover" style={{ background: "var(--surface)" }} />

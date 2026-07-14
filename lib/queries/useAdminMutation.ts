@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, type QueryKey } from "@tanstack/react-query";
 
 type MutationArgs = {
   url: string;
@@ -9,7 +9,7 @@ type MutationArgs = {
 };
 
 export function useAdminMutation(
-  queryKey: readonly string[],
+  queryKey: QueryKey,
   onSuccess?: () => void,
 ) {
   const queryClient = useQueryClient();

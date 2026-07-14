@@ -1,13 +1,7 @@
 import { connectDB } from "@/lib/db";
 import { Note as NoteModel } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
-import {
-  notes as staticNotes,
-  categories as staticCategories,
-  getNoteBySlug as getStaticNoteBySlug,
-  formatNoteDate,
-  type Note,
-} from "@/lib/notes";
+import { formatNoteDate, type Note, type ContentBlock } from "@/lib/notes";
 
 interface DBNote {
   _id: string;
@@ -17,8 +11,11 @@ interface DBNote {
   date: Date;
   excerpt: string;
   featuredImages?: string[];
-  body: string[];
-  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
+  contentBlocks?: ContentBlock[];
+}
+
+function resolveContentBlocks(n: DBNote): ContentBlock[] {
+  return n.contentBlocks ?? [];
 }
 
 function mapDBNote(n: DBNote): Note {
@@ -29,11 +26,7 @@ function mapDBNote(n: DBNote): Note {
     date: formatNoteDate(n.date),
     excerpt: n.excerpt,
     featuredImages: n.featuredImages ?? [],
-    body: n.body?.length
-      ? n.body
-      : (n.blocks ?? [])
-          .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
-          .filter(Boolean),
+    contentBlocks: resolveContentBlocks(n),
   };
 }
 
@@ -72,9 +65,7 @@ export async function getNoteCategories(): Promise<WritingCategory[]> {
   await connectDB();
   const cats = await Category.find({ type: "writing" })
     .sort({ order: 1 })
-    .lean<
-      { title: string; slug: string; description: string; tagline: string }[]
-    >()
+    .lean<{ title: string; slug: string; description: string; tagline: string }[]>()
     .catch(() => []);
   return cats.length
     ? cats.map((c) => ({
@@ -86,34 +77,22 @@ export async function getNoteCategories(): Promise<WritingCategory[]> {
     : FALLBACK_CATEGORIES;
 }
 
-export async function getNotes(): Promise<{
-  notes: Note[];
-  categories: string[];
-}> {
+export async function getNotes(): Promise<{ notes: Note[]; categories: string[] }> {
   await connectDB();
   const [dbNotes, dbCategories] = await Promise.all([
     NoteModel.find()
       .populate<{ category: { title: string } | null }>("category", "title")
       .sort({ date: -1 })
       .lean<DBNote[]>(),
-    Category.find({ type: "writing" })
-      .sort({ order: 1 })
-      .lean<{ title: string }[]>(),
+    Category.find({ type: "writing" }).sort({ order: 1 }).lean<{ title: string }[]>(),
   ]);
 
-  const notes = dbNotes.length ? dbNotes.map(mapDBNote) : staticNotes;
+  const notes = dbNotes.map(mapDBNote);
   const categories = dbCategories.length
     ? ["All", ...dbCategories.map((c) => c.title)]
     : dbNotes.length
-      ? [
-          "All",
-          ...Array.from(
-            new Set(
-              dbNotes.map((n) => n.category?.title ?? "").filter(Boolean),
-            ),
-          ),
-        ]
-      : staticCategories;
+      ? ["All", ...Array.from(new Set(dbNotes.map((n) => n.category?.title ?? "").filter(Boolean)))]
+      : ["All"];
 
   return { notes, categories };
 }
@@ -126,10 +105,7 @@ interface NoteRow {
   featuredImages?: string[];
 }
 
-export async function getNotesByCategory(
-  slug: string,
-  limit = 0,
-): Promise<Note[]> {
+export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[]> {
   await connectDB();
   const cat = await Category.findOne({ slug })
     .select("_id title")
@@ -143,31 +119,22 @@ export async function getNotesByCategory(
     .lean<NoteRow[]>()
     .catch(() => []);
 
-  if (dbNotes.length) {
-    return dbNotes.map((n) => ({
-      slug: n.slug,
-      title: n.title,
-      category: cat.title,
-      date: formatNoteDate(n.date),
-      excerpt: n.excerpt,
-      featuredImages: n.featuredImages ?? [],
-      body: [],
-    }));
-  }
-
-  const fallback = staticNotes.filter((n) => n.category === cat.title);
-  return limit ? fallback.slice(0, limit) : fallback;
+  return dbNotes.map((n) => ({
+    slug: n.slug,
+    title: n.title,
+    category: cat.title,
+    date: formatNoteDate(n.date),
+    excerpt: n.excerpt,
+    featuredImages: n.featuredImages ?? [],
+  }));
 }
 
 export async function getNoteSlugs(): Promise<Array<{ slug: string }>> {
   await connectDB();
-  const fromDB = await NoteModel.find()
+  return NoteModel.find()
     .select("slug")
     .lean<{ slug: string }[]>()
     .catch(() => []);
-  const fromStatic = staticNotes.map((n) => ({ slug: n.slug }));
-  const all = [...fromStatic, ...fromDB];
-  return [...new Map(all.map((s) => [s.slug, s])).values()];
 }
 
 export interface DBNoteDetail {
@@ -177,27 +144,50 @@ export interface DBNoteDetail {
   date: string;
   excerpt: string;
   featuredImages?: string[];
-  body: string[];
+  contentBlocks?: ContentBlock[];
 }
 
-export async function getNoteBySlug(
-  slug: string,
-): Promise<DBNoteDetail | Note | null> {
+export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | null> {
   await connectDB();
   const fromDB = await NoteModel.findOne({ slug })
     .populate<{ category: { title: string } | null }>("category", "title")
     .lean<DBNote>()
     .catch(() => null);
-  if (fromDB) {
-    return {
-      slug: fromDB.slug,
-      title: fromDB.title,
-      category: fromDB.category?.title ?? "",
-      date: formatNoteDate(fromDB.date),
-      excerpt: fromDB.excerpt,
-      featuredImages: fromDB.featuredImages ?? [],
-      body: mapDBNote(fromDB).body,
-    };
-  }
-  return getStaticNoteBySlug(slug) ?? null;
+  if (!fromDB) return null;
+  return {
+    slug: fromDB.slug,
+    title: fromDB.title,
+    category: fromDB.category?.title ?? "",
+    date: formatNoteDate(fromDB.date),
+    excerpt: fromDB.excerpt,
+    featuredImages: fromDB.featuredImages ?? [],
+    contentBlocks: resolveContentBlocks(fromDB),
+  };
+}
+
+export async function getRelatedNotes(slug: string, count = 3): Promise<Note[]> {
+  await connectDB();
+  const current = await NoteModel.findOne({ slug })
+    .populate<{ category: { _id: unknown; title: string } | null }>("category", "_id title")
+    .lean<DBNote & { category: { _id: unknown; title: string } | null }>()
+    .catch(() => null);
+  if (!current) return [];
+
+  const catId = current.category?._id;
+  const [sameCategory, others] = await Promise.all([
+    catId
+      ? NoteModel.find({ slug: { $ne: slug }, category: catId })
+          .populate<{ category: { title: string } | null }>("category", "title")
+          .sort({ date: -1 })
+          .limit(count)
+          .lean<DBNote[]>()
+      : Promise.resolve([]),
+    NoteModel.find({ slug: { $ne: slug }, ...(catId ? { category: { $ne: catId } } : {}) })
+      .populate<{ category: { title: string } | null }>("category", "title")
+      .sort({ date: -1 })
+      .limit(count)
+      .lean<DBNote[]>(),
+  ]);
+
+  return [...sameCategory, ...others].slice(0, count).map(mapDBNote);
 }

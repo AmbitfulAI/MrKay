@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "migrate:content-blocks": "tsx scripts/migrate-content-blocks.ts"
   },
   "dependencies": {
+    "@editorjs/editorjs": "^2.31.6",
+    "@editorjs/image": "^2.10.3",
     "@hookform/resolvers": "^5.4.0",
     "@sanity/client": "^7.22.1",
     "@sanity/image-url": "^2.1.1",

@@ -1,5 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 
+const ContentBlockSchema = new Schema(
+  {
+    type:    { type: String, enum: ["text", "image"], required: true },
+    content: { type: String, required: true },
+    caption: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
 const NoteSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -8,7 +17,7 @@ const NoteSchema = new Schema(
     date: { type: Date, required: true },
     excerpt: { type: String, required: true },
     featuredImages: { type: [String], default: [] },
-    body: { type: [String], default: [] },
+    contentBlocks: { type: [ContentBlockSchema], default: [] },
   },
   { timestamps: true },
 );

@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
-import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
+import { generateUniqueSlug } from "@/lib/admin-utils";
 import { sendNoteNotification } from "@/lib/mailer";
 import { NoteBodySchema, formatZodError } from "@/lib/schemas/note";
 import { formatNoteDate } from "@/lib/notes";
@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
     category: data.category,
     date: new Date(data.date),
     excerpt: data.excerpt,
-    body: bodyToArray(data.body ?? ""),
     featuredImages: data.featuredImages ?? [],
+    contentBlocks: data.contentBlocks ?? [],
   });
   revalidatePath("/writing");
   const cat = await Category.findById(data.category)

@@ -11,7 +11,6 @@ export const NoteBodySchema = z.object({
   category:      z.string().min(1, "Category is required"),
   date:          z.string().min(1, "Date is required"),
   excerpt:       z.string().min(1, "Excerpt is required"),
-  body:          z.string().optional(),
   featuredImages: z.array(z.string()).optional(),
   contentBlocks: z.array(ContentBlockSchema).optional(),
 });

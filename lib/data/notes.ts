@@ -11,22 +11,11 @@ interface DBNote {
   date: Date;
   excerpt: string;
   featuredImages?: string[];
-  body: string[];
   contentBlocks?: ContentBlock[];
-  blocks?: Array<{ children: Array<{ text: string }>; style: string }>;
-}
-
-function resolveBody(n: DBNote): string[] {
-  if (n.body?.length) return n.body;
-  return (n.blocks ?? [])
-    .map((b) => (b.children ?? []).map((c) => c.text ?? "").join(""))
-    .filter(Boolean);
 }
 
 function resolveContentBlocks(n: DBNote): ContentBlock[] {
-  if (n.contentBlocks?.length) return n.contentBlocks;
-  const body = resolveBody(n);
-  return body.map((para) => ({ type: "text" as const, content: para, caption: "" }));
+  return n.contentBlocks ?? [];
 }
 
 function mapDBNote(n: DBNote): Note {
@@ -38,7 +27,6 @@ function mapDBNote(n: DBNote): Note {
     excerpt: n.excerpt,
     featuredImages: n.featuredImages ?? [],
     contentBlocks: resolveContentBlocks(n),
-    body: resolveBody(n),
   };
 }
 
@@ -138,7 +126,6 @@ export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[
     date: formatNoteDate(n.date),
     excerpt: n.excerpt,
     featuredImages: n.featuredImages ?? [],
-    body: [],
   }));
 }
 
@@ -158,7 +145,6 @@ export interface DBNoteDetail {
   excerpt: string;
   featuredImages?: string[];
   contentBlocks?: ContentBlock[];
-  body: string[];
 }
 
 export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | null> {
@@ -176,7 +162,6 @@ export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | null> 
     excerpt: fromDB.excerpt,
     featuredImages: fromDB.featuredImages ?? [],
     contentBlocks: resolveContentBlocks(fromDB),
-    body: resolveBody(fromDB),
   };
 }
 

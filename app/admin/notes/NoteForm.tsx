@@ -24,7 +24,6 @@ type NoteFormData = yup.InferType<typeof schema>;
 
 interface Props {
   initialData?: Partial<NoteFormData> & {
-    body?: string;
     featuredImages?: string[];
     contentBlocks?: ContentBlock[];
   };
@@ -69,14 +68,7 @@ const ghostBtn: React.CSSProperties = {
 };
 
 function initBlocks(initialData: Props["initialData"]): ContentBlock[] {
-  if (initialData?.contentBlocks?.length) return initialData.contentBlocks;
-  if (initialData?.body) {
-    return initialData.body
-      .split(/\n\n+/)
-      .filter(Boolean)
-      .map((p) => ({ type: "text" as const, content: p.trim(), caption: "" }));
-  }
-  return [];
+  return initialData?.contentBlocks ?? [];
 }
 
 export function NoteForm({ initialData, id }: Props) {

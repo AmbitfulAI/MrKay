@@ -17,7 +17,6 @@ const NoteSchema = new Schema(
     date: { type: Date, required: true },
     excerpt: { type: String, required: true },
     featuredImages: { type: [String], default: [] },
-    body: { type: [String], default: [] },
     contentBlocks: { type: [ContentBlockSchema], default: [] },
   },
   { timestamps: true },

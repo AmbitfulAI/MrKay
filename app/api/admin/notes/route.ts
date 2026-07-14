@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
-import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
+import { generateUniqueSlug } from "@/lib/admin-utils";
 import { sendNoteNotification } from "@/lib/mailer";
 import { NoteBodySchema, formatZodError } from "@/lib/schemas/note";
 import { formatNoteDate } from "@/lib/notes";
@@ -29,17 +29,12 @@ export async function POST(req: NextRequest) {
   }
   const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title);
-  const bodyText = (data.contentBlocks ?? [])
-    .filter((b) => b.type === "text")
-    .map((b) => b.content)
-    .join("\n\n");
   const note = await Note.create({
     title: data.title,
     slug,
     category: data.category,
     date: new Date(data.date),
     excerpt: data.excerpt,
-    body: bodyToArray(bodyText || data.body || ""),
     featuredImages: data.featuredImages ?? [],
     contentBlocks: data.contentBlocks ?? [],
   });

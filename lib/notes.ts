@@ -11,7 +11,6 @@ export interface Note {
   title: string;
   excerpt: string;
   image?: "headshot" | "exec" | "facecard" | "upperbody";
-  body: string[];
   featuredImages?: string[];
   contentBlocks?: ContentBlock[];
 }

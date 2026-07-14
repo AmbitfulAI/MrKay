@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { connectDB } from "@/lib/db";
 import { Note } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
-import { generateUniqueSlug, bodyToArray } from "@/lib/admin-utils";
+import { generateUniqueSlug } from "@/lib/admin-utils";
 import { NoteBodySchema, formatZodError } from "@/lib/schemas/note";
 
 export async function GET(
@@ -30,10 +30,6 @@ export async function PATCH(
   }
   const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title, id);
-  const bodyText = (data.contentBlocks ?? [])
-    .filter((b) => b.type === "text")
-    .map((b) => b.content)
-    .join("\n\n");
   const note = await Note.findByIdAndUpdate(
     id,
     {
@@ -42,7 +38,6 @@ export async function PATCH(
       category: data.category,
       date:     new Date(data.date),
       excerpt:  data.excerpt,
-      body:     bodyToArray(bodyText || data.body || ""),
       ...(data.featuredImages !== undefined && { featuredImages: data.featuredImages }),
       ...(data.contentBlocks !== undefined && { contentBlocks: data.contentBlocks }),
     },

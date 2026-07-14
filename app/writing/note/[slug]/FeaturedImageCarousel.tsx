@@ -15,6 +15,7 @@ export function FeaturedImageCarousel({ images }: { images: string[] }) {
         src={images[index]}
         alt=""
         fill
+        unoptimized
         priority={index === 0}
         style={{ objectFit: "cover", objectPosition: "center 20%", opacity: 0.75, transition: "opacity 0.4s ease" }}
         sizes="100vw"

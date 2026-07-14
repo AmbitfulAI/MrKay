@@ -6,9 +6,10 @@ import { Category } from "@/lib/models/Category";
 import { CategoriesProvider } from "@/components/CategoriesProvider";
 import { NoteForm } from "../NoteForm";
 import mongoose from "mongoose";
+import type { ContentBlock } from "@/lib/notes";
 
 interface PopulatedCategory { _id: mongoose.Types.ObjectId; title: string; }
-interface NoteDoc { title: string; category: PopulatedCategory; date: Date; excerpt: string; body: string[]; featuredImages?: string[]; }
+interface NoteDoc { title: string; category: PopulatedCategory; date: Date; excerpt: string; body: string[]; featuredImages?: string[]; contentBlocks?: ContentBlock[]; }
 
 export default async function EditNote({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,7 +29,7 @@ export default async function EditNote({ params }: { params: Promise<{ id: strin
           <h1 className="display text-text" style={{ fontSize: "1.8rem", marginTop: "16px" }}>Edit Note</h1>
           <p className="text-dim font-light" style={{ fontSize: "0.75rem", marginTop: "4px", fontFamily: "var(--font-body)" }}>{note.title}</p>
         </div>
-        <NoteForm initialData={{ title: note.title, category: String(note.category._id), date: new Date(note.date).toISOString().slice(0, 10), excerpt: note.excerpt, body: note.body.join("\n\n"), featuredImages: note.featuredImages ?? [] }} id={id} />
+        <NoteForm initialData={{ title: note.title, category: String(note.category._id), date: new Date(note.date).toISOString().slice(0, 10), excerpt: note.excerpt, body: note.body.join("\n\n"), featuredImages: note.featuredImages ?? [], contentBlocks: note.contentBlocks ?? [] }} id={id} />
       </div>
     </CategoriesProvider>
   );

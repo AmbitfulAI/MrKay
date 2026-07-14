@@ -148,6 +148,7 @@ export default function HeroSlider({ slides: externalSlides }: { slides?: Sanity
           alt=""
           aria-hidden
           fill
+          unoptimized
           priority={i === 0}
           sizes="100vw"
           style={{

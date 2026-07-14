@@ -30,6 +30,10 @@ export async function PATCH(
   }
   const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title, id);
+  const bodyText = (data.contentBlocks ?? [])
+    .filter((b) => b.type === "text")
+    .map((b) => b.content)
+    .join("\n\n");
   const note = await Note.findByIdAndUpdate(
     id,
     {
@@ -38,8 +42,9 @@ export async function PATCH(
       category: data.category,
       date:     new Date(data.date),
       excerpt:  data.excerpt,
-      body:     bodyToArray(data.body ?? ""),
+      body:     bodyToArray(bodyText || data.body || ""),
       ...(data.featuredImages !== undefined && { featuredImages: data.featuredImages }),
+      ...(data.contentBlocks !== undefined && { contentBlocks: data.contentBlocks }),
     },
     { new: true },
   );

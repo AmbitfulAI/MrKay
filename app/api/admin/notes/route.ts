@@ -29,14 +29,19 @@ export async function POST(req: NextRequest) {
   }
   const data = parsed.data;
   const slug = await generateUniqueSlug("Note", data.title);
+  const bodyText = (data.contentBlocks ?? [])
+    .filter((b) => b.type === "text")
+    .map((b) => b.content)
+    .join("\n\n");
   const note = await Note.create({
     title: data.title,
     slug,
     category: data.category,
     date: new Date(data.date),
     excerpt: data.excerpt,
-    body: bodyToArray(data.body ?? ""),
+    body: bodyToArray(bodyText || data.body || ""),
     featuredImages: data.featuredImages ?? [],
+    contentBlocks: data.contentBlocks ?? [],
   });
   revalidatePath("/writing");
   const cat = await Category.findById(data.category)

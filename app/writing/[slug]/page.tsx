@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Category } from "@/lib/models/Category";
 import { Note as NoteModel } from "@/lib/models/Note";
-import { notes as staticNotes, type Note, formatNoteDate } from "@/lib/notes";
+import { type Note, formatNoteDate } from "@/lib/notes";
 
 export const revalidate = 60;
 
@@ -68,17 +68,15 @@ export default async function WritingCategoryPage({
     .lean<DBNote[]>()
     .catch(() => []);
 
-  const notes: Note[] = dbNotes.length
-    ? dbNotes.map((n) => ({
-        slug: n.slug,
-        title: n.title,
-        category: cat.title,
-        date: n.date,
-        excerpt: n.excerpt,
-        featuredImages: n.featuredImages ?? [],
-        body: [],
-      }))
-    : staticNotes.filter((n) => n.category === cat.title);
+  const notes: Note[] = dbNotes.map((n) => ({
+    slug: n.slug,
+    title: n.title,
+    category: cat.title,
+    date: n.date,
+    excerpt: n.excerpt,
+    featuredImages: n.featuredImages ?? [],
+    body: [],
+  }));
 
   const paragraphs = cat.description
     ? cat.description.split("\n\n").filter(Boolean)
@@ -218,7 +216,7 @@ export default async function WritingCategoryPage({
                   </div>
                   {note.featuredImages?.[0] ? (
                     <div className="blog-row-cover">
-                      <Image src={note.featuredImages[0]} alt={note.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                      <Image src={note.featuredImages[0]} alt={note.title} fill unoptimized sizes="160px" style={{ objectFit: "cover" }} />
                     </div>
                   ) : (
                     <div className="blog-row-cover" style={{ background: "var(--surface)" }} />

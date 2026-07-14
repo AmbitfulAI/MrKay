@@ -10,19 +10,24 @@ import type { CategoryOption } from "@/components/CategoriesProvider";
 import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 import { QUERY_KEYS } from "@/lib/queries/keys";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
+import { NoteEditor } from "@/app/admin/_components/NoteEditor";
+import type { ContentBlock } from "@/lib/notes";
 
 const schema = yup.object({
   title:    yup.string().required("Title is required"),
   category: yup.string().required("Category is required"),
   date:     yup.string().required("Published date is required"),
   excerpt:  yup.string().required("Excerpt is required"),
-  body:     yup.string().required("Body is required"),
 }).required();
 
 type NoteFormData = yup.InferType<typeof schema>;
 
 interface Props {
-  initialData?: Partial<NoteFormData> & { featuredImages?: string[] };
+  initialData?: Partial<NoteFormData> & {
+    body?: string;
+    featuredImages?: string[];
+    contentBlocks?: ContentBlock[];
+  };
   id?: string;
 }
 
@@ -55,44 +60,61 @@ const labelStyle: React.CSSProperties = {
   marginBottom: "8px",
 };
 
+const ghostBtn: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  fontFamily: "var(--font-body)",
+  padding: "0",
+};
+
+function initBlocks(initialData: Props["initialData"]): ContentBlock[] {
+  if (initialData?.contentBlocks?.length) return initialData.contentBlocks;
+  if (initialData?.body) {
+    return initialData.body
+      .split(/\n\n+/)
+      .filter(Boolean)
+      .map((p) => ({ type: "text" as const, content: p.trim(), caption: "" }));
+  }
+  return [];
+}
+
 export function NoteForm({ initialData, id }: Props) {
-  const router = useRouter();
-  const isEdit = !!id;
+  const router     = useRouter();
+  const isEdit     = !!id;
   const categories: CategoryOption[] = useCategories();
-  const mutation = useAdminMutation(QUERY_KEYS.notes, () => router.push("/admin/notes"));
+  const mutation   = useAdminMutation(QUERY_KEYS.notes, () => router.push("/admin/notes"));
+
   const [featuredImages, setFeaturedImages] = useState<string[]>(initialData?.featuredImages ?? []);
+  const [contentBlocks, setContentBlocks]   = useState<ContentBlock[]>(() => initBlocks(initialData));
+  const [blocksError, setBlocksError]       = useState("");
 
-  function addImage(url: string) {
-    setFeaturedImages((prev) => [...prev, url]);
-  }
-  function replaceImage(index: number, url: string) {
-    setFeaturedImages((prev) => prev.map((v, i) => (i === index ? url : v)));
-  }
-  function removeImage(index: number) {
-    setFeaturedImages((prev) => prev.filter((_, i) => i !== index));
-  }
+  function addFeaturedImage(url: string)               { setFeaturedImages((p) => [...p, url]); }
+  function replaceFeaturedImage(i: number, url: string) { setFeaturedImages((p) => p.map((v, j) => j === i ? url : v)); }
+  function removeFeaturedImage(i: number)              { setFeaturedImages((p) => p.filter((_, j) => j !== i)); }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<NoteFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<NoteFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       title:    "",
       category: "",
       date:     new Date().toISOString().slice(0, 10),
       excerpt:  "",
-      body:     "",
       ...initialData,
     },
   });
 
   const onSubmit = (data: NoteFormData) => {
+    const hasContent = contentBlocks.some((b) => b.content.trim());
+    if (!hasContent) {
+      setBlocksError("Add at least one paragraph.");
+      return;
+    }
+    setBlocksError("");
     mutation.mutate({
       url:    isEdit ? `/api/admin/notes/${id}` : "/api/admin/notes",
       method: isEdit ? "PATCH" : "POST",
-      body:   { ...data, featuredImages },
+      body:   { ...data, featuredImages, contentBlocks },
     });
   };
 
@@ -103,16 +125,11 @@ export function NoteForm({ initialData, id }: Props) {
         {/* Title */}
         <div>
           <label style={labelStyle}>Title *</label>
-          <input
-            {...register("title")}
-            type="text"
-            placeholder="The Cost of Unclear Leadership"
-            style={inputStyle}
-          />
+          <input {...register("title")} type="text" placeholder="The Cost of Unclear Leadership" style={inputStyle} />
           {errors.title && <p style={errorStyle}>{errors.title.message}</p>}
         </div>
 
-        {/* Category + Date row */}
+        {/* Category + Date */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
           <div>
             <label style={labelStyle}>Category *</label>
@@ -124,22 +141,13 @@ export function NoteForm({ initialData, id }: Props) {
                 ))}
               </select>
             ) : (
-              <input
-                {...register("category")}
-                type="text"
-                placeholder="e.g. GeniusMined"
-                style={inputStyle}
-              />
+              <input {...register("category")} type="text" placeholder="e.g. GeniusMined" style={inputStyle} />
             )}
             {errors.category && <p style={errorStyle}>{errors.category.message}</p>}
           </div>
           <div>
             <label style={labelStyle}>Published Date *</label>
-            <input
-              {...register("date")}
-              type="date"
-              style={inputStyle}
-            />
+            <input {...register("date")} type="date" style={inputStyle} />
             {errors.date && <p style={errorStyle}>{errors.date.message}</p>}
           </div>
         </div>
@@ -156,19 +164,14 @@ export function NoteForm({ initialData, id }: Props) {
           {errors.excerpt && <p style={errorStyle}>{errors.excerpt.message}</p>}
         </div>
 
-        {/* Body */}
+        {/* Body — Editor.js */}
         <div>
           <label style={labelStyle}>Body *</label>
-          <textarea
-            {...register("body")}
-            rows={16}
-            placeholder={"Write your note here.\n\nSeparate paragraphs with a blank line."}
-            style={{ ...inputStyle, resize: "vertical", lineHeight: 1.85 }}
+          <NoteEditor
+            initialBlocks={initBlocks(initialData)}
+            onChange={setContentBlocks}
           />
-          {errors.body
-            ? <p style={errorStyle}>{errors.body.message}</p>
-            : <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>Separate paragraphs with a blank line.</p>
-          }
+          {blocksError && <p style={errorStyle}>{blocksError}</p>}
         </div>
 
         {/* Featured Images */}
@@ -179,23 +182,15 @@ export function NoteForm({ initialData, id }: Props) {
               {featuredImages.map((url, i) => (
                 <div key={i} style={{ padding: "12px 14px", background: "var(--surface)", border: "1px solid var(--surface-2)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-                    <span style={{ flex: 1, fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)" }}>
-                      ✓ Image {i + 1}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeImage(i)}
-                      style={{ background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontFamily: "var(--font-body)", fontSize: "0.72rem", padding: "2px 6px" }}
-                    >
-                      Remove
-                    </button>
+                    <span style={{ flex: 1, fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)" }}>✓ Image {i + 1}</span>
+                    <button type="button" onClick={() => removeFeaturedImage(i)} style={{ ...ghostBtn, color: "var(--muted)", fontSize: "0.72rem" }}>Remove</button>
                   </div>
-                  <ImageUpload value={url} onChange={(newUrl) => replaceImage(i, newUrl)} label={`Replace Image ${i + 1}`} />
+                  <ImageUpload value={url} onChange={(newUrl) => replaceFeaturedImage(i, newUrl)} label={`Replace Image ${i + 1}`} />
                 </div>
               ))}
             </div>
           )}
-          <ImageUpload value="" onChange={addImage} label={featuredImages.length === 0 ? "Add Image" : "Add Another Image"} />
+          <ImageUpload value="" onChange={addFeaturedImage} label={featuredImages.length === 0 ? "Add Image" : "Add Another Image"} />
           <p style={{ fontSize: "0.68rem", color: "var(--dim)", marginTop: "6px", fontFamily: "var(--font-body)" }}>
             One image uses the hero layout. Multiple images become a carousel.
           </p>
@@ -218,15 +213,7 @@ export function NoteForm({ initialData, id }: Props) {
           <button
             type="button"
             onClick={() => router.push("/admin/notes")}
-            style={{
-              background: "none",
-              border: "1px solid var(--surface-2)",
-              color: "var(--muted)",
-              padding: "11px 24px",
-              fontFamily: "var(--font-body)",
-              fontSize: "0.78rem",
-              cursor: "pointer",
-            }}
+            style={{ background: "none", border: "1px solid var(--surface-2)", color: "var(--muted)", padding: "11px 24px", fontFamily: "var(--font-body)", fontSize: "0.78rem", cursor: "pointer" }}
           >
             Cancel
           </button>

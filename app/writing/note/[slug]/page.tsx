@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { getNoteBySlug as getStaticNoteBySlug, getRelatedNotes, formatNoteDate } from "@/lib/notes";
-import { getNoteSlugs, getNoteBySlug } from "@/lib/data/notes";
+import { formatNoteDate, type ContentBlock } from "@/lib/notes";
+import { getNoteSlugs, getNoteBySlug, getRelatedNotes } from "@/lib/data/notes";
 import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
 
 import headshotImg  from "@/assets/KK Headshot_BW.jpg";
@@ -21,7 +21,7 @@ const imageMap = {
 };
 
 export async function generateStaticParams() {
-  return getNoteSlugs();
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -39,9 +39,9 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
   const note = await getNoteBySlug(slug);
   if (!note) notFound();
 
-  const related = getRelatedNotes(slug);
+  const related = await getRelatedNotes(slug);
 
-  const n = note as { featuredImages?: string[]; image?: "headshot" | "exec" | "facecard" | "upperbody" };
+  const n = note as { featuredImages?: string[]; image?: "headshot" | "exec" | "facecard" | "upperbody"; contentBlocks?: ContentBlock[] };
   const images = (n.featuredImages ?? []).filter(Boolean);
   const staticSrc = images.length === 0 && n.image ? imageMap[n.image] : undefined;
 
@@ -51,7 +51,7 @@ export default async function NotePage({ params }: { params: Promise<{ slug: str
       category={note.category}
       date={formatNoteDate(note.date)}
       excerpt={note.excerpt}
-      body={note.body}
+      contentBlocks={n.contentBlocks ?? []}
       images={images}
       staticSrc={staticSrc}
       heroAlt={note.title}
@@ -65,15 +65,15 @@ interface NoteDetailProps {
   category: string;
   date: string;
   excerpt: string;
-  body: string[];
+  contentBlocks: ContentBlock[];
   images: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   staticSrc?: any;
   heroAlt: string;
-  related: ReturnType<typeof getRelatedNotes>;
+  related: Awaited<ReturnType<typeof getRelatedNotes>>;
 }
 
-function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, heroAlt, related }: NoteDetailProps) {
+function NoteDetail({ title, category, date, excerpt, contentBlocks, images, staticSrc, heroAlt, related }: NoteDetailProps) {
   return (
     <>
       {/* ── Header ── */}
@@ -111,6 +111,7 @@ function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, h
             src={images[0]}
             alt={heroAlt}
             fill
+            unoptimized
             priority
             style={{ objectFit: "cover", objectPosition: "center 20%", opacity: 0.75 }}
             sizes="100vw"
@@ -138,9 +139,24 @@ function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, h
           <div className="note-body">
             {excerpt && <p className="note-lead">{excerpt}</p>}
             <span className="gold-rule" style={{ margin: "40px 0" }} />
-            {body.map((para, i) => (
-              <p key={i} className="note-para">{para}</p>
-            ))}
+            {contentBlocks.map((block, bi) =>
+              block.type === "image" ? (
+                <div key={bi} className="note-inline-image">
+                  <Image
+                    src={block.content}
+                    alt={block.caption || title}
+                    width={680}
+                    height={460}
+                    unoptimized
+                    style={{ width: "100%", height: "auto", display: "block" }}
+                    sizes="(max-width: 768px) 100vw, 680px"
+                  />
+                  {block.caption && <p className="note-inline-caption">{block.caption}</p>}
+                </div>
+              ) : (
+                <p key={bi} className="note-para">{block.content}</p>
+              )
+            )}
           </div>
         </div>
       </section>
@@ -185,7 +201,7 @@ function NoteDetail({ title, category, date, excerpt, body, images, staticSrc, h
                   </div>
                   {r.featuredImages?.[0] ? (
                     <div className="blog-row-cover">
-                      <Image src={r.featuredImages[0]} alt={r.title} fill sizes="160px" style={{ objectFit: "cover" }} />
+                      <Image src={r.featuredImages[0]} alt={r.title} fill unoptimized sizes="160px" style={{ objectFit: "cover" }} />
                     </div>
                   ) : (
                     <div className="blog-row-cover" style={{ background: "var(--surface)" }} />

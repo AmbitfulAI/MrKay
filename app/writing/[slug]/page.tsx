@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Category } from "@/lib/models/Category";
 import { Note as NoteModel } from "@/lib/models/Note";
-import { type Note, formatNoteDate } from "@/lib/notes";
+import { type Note, type ContentBlock, formatNoteDate, estimateReadTime } from "@/lib/notes";
 
 export const revalidate = 60;
 
@@ -23,6 +23,7 @@ interface DBNote {
   date: string;
   excerpt: string;
   featuredImages?: string[];
+  contentBlocks?: ContentBlock[];
 }
 
 export async function generateStaticParams() {
@@ -74,8 +75,8 @@ export default async function WritingCategoryPage({
     category: cat.title,
     date: n.date,
     excerpt: n.excerpt,
+    readTime: estimateReadTime(n.contentBlocks ?? []),
     featuredImages: n.featuredImages ?? [],
-    body: [],
   }));
 
   const paragraphs = cat.description
@@ -199,6 +200,19 @@ export default async function WritingCategoryPage({
                     >
                       {formatNoteDate(note.date)}
                     </span>
+                    {note.readTime && (
+                      <span
+                        className="text-dim font-light"
+                        style={{
+                          fontSize: "0.6rem",
+                          letterSpacing: "0.18em",
+                          marginTop: "4px",
+                          display: "block",
+                        }}
+                      >
+                        {note.readTime} min read
+                      </span>
+                    )}
                   </div>
                   <div className="blog-row-body">
                     <h2

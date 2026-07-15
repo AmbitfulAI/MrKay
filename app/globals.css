@@ -1291,6 +1291,11 @@ select.form-input optgroup {
 .note-para:first-of-type {
   margin-top: 0;
 }
+.note-para b,
+.note-para strong {
+  font-weight: 700;
+  color: var(--text);
+}
 .note-inline-image {
   margin-top: 36px;
   margin-bottom: 36px;

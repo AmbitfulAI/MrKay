@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { connectDB } from "@/lib/db";
 import { Note as NoteModel } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
@@ -145,13 +146,16 @@ export interface DBNoteDetail {
   excerpt: string;
   featuredImages?: string[];
   contentBlocks?: ContentBlock[];
+  _categoryId?: unknown;
 }
 
-export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | null> {
+export const getNoteBySlug = cache(async function getNoteBySlug(
+  slug: string,
+): Promise<DBNoteDetail | null> {
   await connectDB();
   const fromDB = await NoteModel.findOne({ slug })
-    .populate<{ category: { title: string } | null }>("category", "title")
-    .lean<DBNote>()
+    .populate<{ category: { _id: unknown; title: string } | null }>("category", "_id title")
+    .lean<DBNote & { category: { _id: unknown; title: string } | null }>()
     .catch(() => null);
   if (!fromDB) return null;
   return {
@@ -162,27 +166,39 @@ export async function getNoteBySlug(slug: string): Promise<DBNoteDetail | null> 
     excerpt: fromDB.excerpt,
     featuredImages: fromDB.featuredImages ?? [],
     contentBlocks: resolveContentBlocks(fromDB),
+    _categoryId: fromDB.category?._id,
   };
-}
+});
 
-export async function getRelatedNotes(slug: string, count = 3): Promise<Note[]> {
+export async function getRelatedNotes(
+  slug: string,
+  count = 3,
+  catId?: unknown,
+): Promise<Note[]> {
   await connectDB();
-  const current = await NoteModel.findOne({ slug })
-    .populate<{ category: { _id: unknown; title: string } | null }>("category", "_id title")
-    .lean<DBNote & { category: { _id: unknown; title: string } | null }>()
-    .catch(() => null);
-  if (!current) return [];
 
-  const catId = current.category?._id;
+  let resolvedCatId = catId;
+  if (!resolvedCatId) {
+    const current = await NoteModel.findOne({ slug })
+      .populate<{ category: { _id: unknown; title: string } | null }>("category", "_id title")
+      .lean<DBNote & { category: { _id: unknown; title: string } | null }>()
+      .catch(() => null);
+    if (!current) return [];
+    resolvedCatId = current.category?._id;
+  }
+
   const [sameCategory, others] = await Promise.all([
-    catId
-      ? NoteModel.find({ slug: { $ne: slug }, category: catId })
+    resolvedCatId
+      ? NoteModel.find({ slug: { $ne: slug }, category: resolvedCatId })
           .populate<{ category: { title: string } | null }>("category", "title")
           .sort({ date: -1 })
           .limit(count)
           .lean<DBNote[]>()
       : Promise.resolve([]),
-    NoteModel.find({ slug: { $ne: slug }, ...(catId ? { category: { $ne: catId } } : {}) })
+    NoteModel.find({
+      slug: { $ne: slug },
+      ...(resolvedCatId ? { category: { $ne: resolvedCatId } } : {}),
+    })
       .populate<{ category: { title: string } | null }>("category", "title")
       .sort({ date: -1 })
       .limit(count)

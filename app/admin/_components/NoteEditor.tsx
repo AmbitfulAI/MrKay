@@ -8,24 +8,95 @@ interface Props {
   onChange: (blocks: ContentBlock[]) => void;
 }
 
-function toEditorBlocks(blocks: ContentBlock[]) {
-  return blocks.map((b) =>
-    b.type === "image"
-      ? { type: "image",     data: { file: { url: b.content }, caption: b.caption ?? "", stretched: false, withBorder: false, withBackground: false } }
-      : { type: "paragraph", data: { text: b.content } },
-  );
+type RawBlock = { type: string; data: Record<string, unknown> };
+
+function normalizeListItems(raw: unknown[]): string[] {
+  return raw
+    .map((i) => (typeof i === "string" ? i : (i as { content?: string }).content ?? ""))
+    .filter(Boolean);
 }
 
-function fromEditorBlocks(blocks: { type: string; data: Record<string, unknown> }[]): ContentBlock[] {
+function toEditorBlocks(blocks: ContentBlock[]) {
+  return blocks.map((b) => {
+    switch (b.type) {
+      case "image":
+        return {
+          type: "image",
+          data: {
+            file: { url: b.content },
+            caption: b.caption ?? "",
+            stretched: false,
+            withBorder: false,
+            withBackground: false,
+          },
+        };
+      case "heading":
+        return { type: "header", data: { text: b.content, level: b.level ?? 2 } };
+      case "quote":
+        return {
+          type: "quote",
+          data: { text: b.content, caption: b.caption ?? "", alignment: "left" },
+        };
+      case "list":
+        return {
+          type: "list",
+          data: {
+            style: b.style ?? "unordered",
+            items: (b.items ?? []).map((text) => ({ content: text, meta: {}, items: [] })),
+          },
+        };
+      case "delimiter":
+        return { type: "delimiter", data: {} };
+      default:
+        return { type: "paragraph", data: { text: b.content } };
+    }
+  });
+}
+
+function fromEditorBlocks(blocks: RawBlock[]): ContentBlock[] {
   return blocks
-    .map((b) => {
-      if (b.type === "image") {
-        const file = b.data.file as { url?: string } | undefined;
-        return { type: "image" as const, content: file?.url ?? String(b.data.url ?? ""), caption: String(b.data.caption ?? "") };
+    .map((b): ContentBlock | null => {
+      switch (b.type) {
+        case "image": {
+          const file = b.data.file as { url?: string } | undefined;
+          const url = file?.url ?? String(b.data.url ?? "");
+          if (!url.trim()) return null;
+          return { type: "image", content: url, caption: String(b.data.caption ?? "") };
+        }
+        case "header":
+          if (!String(b.data.text ?? "").trim()) return null;
+          return {
+            type: "heading",
+            content: String(b.data.text ?? ""),
+            level: Number(b.data.level ?? 2),
+          };
+        case "quote":
+          if (!String(b.data.text ?? "").trim()) return null;
+          return {
+            type: "quote",
+            content: String(b.data.text ?? ""),
+            caption: String(b.data.caption ?? ""),
+          };
+        case "list": {
+          const items = normalizeListItems((b.data.items as unknown[]) ?? []);
+          if (!items.length) return null;
+          return {
+            type: "list",
+            content: "",
+            style: (b.data.style as "ordered" | "unordered") ?? "unordered",
+            items,
+          };
+        }
+        case "delimiter":
+          return { type: "delimiter", content: "" };
+        default: {
+          const text = String(b.data.text ?? "");
+          if (!text.trim()) return null;
+          return { type: "text", content: text };
+        }
       }
-      return { type: "text" as const, content: String(b.data.text ?? ""), caption: "" };
     })
-    .filter((b) => b.content.trim());
+    .filter((b): b is ContentBlock => b !== null);
 }
 
 export function NoteEditor({ initialBlocks, onChange }: Props) {
@@ -36,13 +107,27 @@ export function NoteEditor({ initialBlocks, onChange }: Props) {
 
   useEffect(() => {
     if (!holderRef.current || editorRef.current) return;
-
     let destroyed = false;
 
     (async () => {
-      const [{ default: EditorJS }, { default: ImageTool }] = await Promise.all([
+      const [
+        { default: EditorJS },
+        { default: ImageTool },
+        { default: Header },
+        { default: List },
+        { default: Quote },
+        { default: Delimiter },
+        { default: Marker },
+        { default: Underline },
+      ] = await Promise.all([
         import("@editorjs/editorjs"),
         import("@editorjs/image"),
+        import("@editorjs/header"),
+        import("@editorjs/list"),
+        import("@editorjs/quote"),
+        import("@editorjs/delimiter"),
+        import("@editorjs/marker"),
+        import("@editorjs/underline"),
       ]);
 
       if (destroyed || !holderRef.current) return;
@@ -58,7 +143,20 @@ export function NoteEditor({ initialBlocks, onChange }: Props) {
             class: ImageTool as any,
             config: { endpoints: { byFile: "/api/admin/upload-editorjs" } },
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          header:    { class: Header    as any, config: { levels: [2, 3, 4], defaultLevel: 2 } },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          list:      { class: List      as any, inlineToolbar: true },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          quote:     { class: Quote     as any, inlineToolbar: true },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          delimiter: { class: Delimiter as any },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          marker:    { class: Marker    as any, shortcut: "CMD+SHIFT+M" },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          underline: { class: Underline as any, shortcut: "CMD+U" },
         },
+        inlineToolbar: ["bold", "italic", "underline", "marker", "link"],
         data: editorBlocks.length ? { blocks: editorBlocks } : undefined,
         placeholder: "Write your note here…",
         onChange: async () => {

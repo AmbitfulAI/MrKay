@@ -47,6 +47,10 @@ a {
   color: inherit;
   text-decoration: none;
 }
+p {
+  text-align: justify;
+  hyphens: auto;
+}
 img,
 video {
   max-width: 100%;
@@ -130,6 +134,14 @@ video {
 }
 .inset-0 {
   inset: 0;
+}
+
+/* ── Z-index ── */
+.z-0 {
+  z-index: 0;
+}
+.z-10 {
+  z-index: 10;
 }
 
 /* ── Overflow ── */
@@ -302,6 +314,9 @@ video {
 }
 .pt-20 {
   padding-top: 80px;
+}
+.pt-32 {
+  padding-top: 128px;
 }
 .pb-16 {
   padding-bottom: 64px;
@@ -1220,8 +1235,36 @@ select.form-input optgroup {
 }
 
 /* ── Note detail body ── */
+.note-hero-gradient {
+  /* layer 1 (top): thin bg-colour fade at very bottom — seamless page transition */
+  /* layer 2 (below): fixed dark image overlay — works in both light and dark themes */
+  background:
+    linear-gradient(to bottom, transparent 85%, var(--bg) 100%),
+    linear-gradient(to bottom, transparent 0%, transparent 38%, rgba(0,0,0,0.55) 68%, rgba(0,0,0,0.9) 92%);
+}
+.note-hero-content {
+  text-shadow: 0 2px 20px rgba(0,0,0,0.55), 0 1px 6px rgba(0,0,0,0.35);
+}
+/* Hero text always light — hero sits over a dark image gradient in both themes */
+.note-hero-content .text-text { color: rgba(237,232,223,0.92); }
+.note-hero-content .text-dim  { color: rgba(237,232,223,0.55); }
+.note-hero-content .hover-gold { color: rgba(237,232,223,0.7); }
+.note-hero-content .hover-gold:hover { color: var(--gold); }
+.note-hero-content .eyebrow   { color: var(--gold); }
+.note-related-card {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 32px;
+  background: var(--bg);
+  transition: background 0.3s;
+  text-decoration: none;
+}
+.note-related-card:hover {
+  background: var(--gold-glow);
+}
 .note-body {
   max-width: 680px;
+  margin: 0 auto;
 }
 .note-lead {
   font-family: var(--font-display);
@@ -1238,11 +1281,105 @@ select.form-input optgroup {
   line-height: 1.95;
   color: var(--muted);
   margin-top: 28px;
-  text-align: justify;
-  hyphens: auto;
+}
+@media (min-width: 768px) {
+  .note-para {
+    font-size: 1.1rem;
+    line-height: 1.9;
+  }
 }
 .note-para:first-of-type {
   margin-top: 0;
+}
+.note-para b,
+.note-para strong {
+  font-weight: 700;
+  color: var(--text);
+}
+.note-para mark {
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  color: var(--text);
+  padding: 0 3px;
+  border-radius: 2px;
+}
+.note-para u {
+  text-decoration-color: var(--gold);
+  text-underline-offset: 3px;
+}
+
+/* ── Note headings ── */
+.note-heading {
+  font-family: var(--font-display);
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin-top: 52px;
+  margin-bottom: 14px;
+  text-align: left;
+}
+h2.note-heading { font-size: clamp(1.45rem, 2.4vw, 1.95rem); }
+h3.note-heading { font-size: clamp(1.2rem, 1.9vw, 1.55rem); }
+h4.note-heading { font-size: clamp(1.05rem, 1.5vw, 1.25rem); }
+
+/* ── Note blockquote ── */
+.note-quote {
+  border-left: 2px solid var(--gold);
+  padding: 4px 0 4px 28px;
+  margin: 40px 0;
+}
+.note-quote p {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.9vw, 1.35rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--text);
+  text-align: left;
+  hyphens: auto;
+}
+.note-quote cite {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 14px;
+  font-style: normal;
+}
+
+/* ── Note list ── */
+.note-list {
+  padding-left: 24px;
+  margin-top: 24px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--muted);
+}
+.note-list li {
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.note-list li b,
+.note-list li strong { font-weight: 700; color: var(--text); }
+@media (min-width: 768px) {
+  .note-list { font-size: 1.1rem; }
+}
+
+/* ── Note delimiter ── */
+.note-delimiter {
+  margin: 52px auto;
+  text-align: center;
+  color: var(--gold);
+  letter-spacing: 0.4em;
+  opacity: 0.6;
+}
+.note-delimiter::before {
+  content: "· · ·";
+  font-size: 0.9rem;
 }
 .note-inline-image {
   margin-top: 36px;
@@ -1294,6 +1431,15 @@ select.form-input optgroup {
 }
 .blog-row-meta {
   padding-top: 4px;
+}
+.blog-row-body {
+  min-width: 0;
+}
+.blog-row-body h2,
+.blog-row-body h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .blog-row-arrow {
   font-size: 1.4rem;

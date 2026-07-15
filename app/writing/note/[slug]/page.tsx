@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { formatNoteDate, type ContentBlock } from "@/lib/notes";
+import Image, { type StaticImageData } from "next/image";
+import { formatNoteDate, estimateReadTime, type ContentBlock, type Note } from "@/lib/notes";
 import { getNoteBySlug, getRelatedNotes } from "@/lib/data/notes";
 import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
 
@@ -48,7 +48,7 @@ export default async function NotePage({
 
   if (!note) notFound();
 
-  const related = await getRelatedNotes(slug);
+  const related = await getRelatedNotes(slug, 3, note._categoryId);
 
   const n = note as {
     featuredImages?: string[];
@@ -64,6 +64,7 @@ export default async function NotePage({
       title={note.title}
       category={note.category}
       date={formatNoteDate(note.date)}
+      readTime={estimateReadTime(n.contentBlocks ?? [])}
       excerpt={note.excerpt}
       contentBlocks={n.contentBlocks ?? []}
       images={images}
@@ -78,19 +79,20 @@ interface NoteDetailProps {
   title: string;
   category: string;
   date: string;
+  readTime: number;
   excerpt: string;
   contentBlocks: ContentBlock[];
   images: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  staticSrc?: any;
+  staticSrc?: StaticImageData;
   heroAlt: string;
-  related: Awaited<ReturnType<typeof getRelatedNotes>>;
+  related: Note[];
 }
 
 function NoteDetail({
   title,
   category,
   date,
+  readTime,
   excerpt,
   contentBlocks,
   images,
@@ -100,9 +102,42 @@ function NoteDetail({
 }: NoteDetailProps) {
   return (
     <>
-      {/* ── Header ── */}
-      <section className="bg-bg border-b border-surface-2 s-pad-hero">
-        <div className="container">
+      {/* ── Hero Section ── */}
+      <section
+        className="relative flex flex-col justify-end"
+        style={{ minHeight: "100vh", paddingBottom: "5rem" }}
+      >
+        {/* Background Image(s) */}
+        <div className="absolute inset-0 z-0 bg-surface">
+          {images.length > 1 ? (
+            <FeaturedImageCarousel images={images} />
+          ) : images.length === 1 ? (
+            <Image
+              src={images[0]}
+              alt={heroAlt}
+              fill
+              unoptimized
+              priority
+              style={{ objectFit: "cover", objectPosition: "center 20%" }}
+              sizes="100vw"
+            />
+          ) : staticSrc ? (
+            <Image
+              src={staticSrc}
+              alt={heroAlt}
+              fill
+              priority
+              style={{ objectFit: "cover", objectPosition: "center 20%" }}
+              sizes="100vw"
+            />
+          ) : null}
+
+          {/* Gradient Overlay */}
+          <div className="note-hero-gradient absolute inset-0 pointer-events-none" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="note-hero-content container relative z-10 pt-32">
           <Link
             href="/writing"
             className="hover-gold"
@@ -118,225 +153,150 @@ function NoteDetail({
           >
             ← Writing
           </Link>
+
           <span className="eyebrow anim-fade-up block mb-6">{category}</span>
+
           <h1
             className="display text-text anim-fade-up anim-delay-1"
             style={{
               fontSize: "clamp(2rem, 5vw, 4.5rem)",
-              lineHeight: 1.05,
-              maxWidth: "820px",
-              marginBottom: "28px",
+              lineHeight: 1.1,
+              marginBottom: "24px",
             }}
           >
             {title}
           </h1>
-          <span
-            className="gold-rule anim-fade-up anim-delay-2"
-            style={{ marginBottom: "24px" }}
-          />
+
           <p
-            className="text-dim font-light anim-fade-up anim-delay-3"
+            className="text-dim font-light anim-fade-up anim-delay-2"
             style={{
-              fontSize: "0.72rem",
-              letterSpacing: "0.2em",
+              fontSize: "0.75rem",
+              letterSpacing: "0.15em",
               textTransform: "uppercase",
             }}
           >
-            {date} &nbsp;·&nbsp; TheKayodeKolade
+            {date} &nbsp;·&nbsp; {readTime} min read &nbsp;·&nbsp; TheKayodeKolade
           </p>
         </div>
       </section>
 
-      {/* ── Featured image(s) ── */}
-      {images.length > 1 && <FeaturedImageCarousel images={images} />}
-      {images.length === 1 && (
-        <div
-          style={{
-            width: "100%",
-            aspectRatio: "21/8",
-            position: "relative",
-            overflow: "hidden",
-            background: "var(--surface)",
-          }}
-        >
-          <Image
-            src={images[0]}
-            alt={heroAlt}
-            fill
-            unoptimized
-            priority
-            style={{
-              objectFit: "cover",
-              objectPosition: "center 20%",
-              opacity: 0.75,
-            }}
-            sizes="100vw"
-          />
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom, transparent 60%, var(--bg) 100%)",
-            }}
-          />
-        </div>
-      )}
-      {images.length === 0 && staticSrc && (
-        <div
-          style={{
-            width: "100%",
-            aspectRatio: "21/8",
-            position: "relative",
-            overflow: "hidden",
-            background: "var(--surface)",
-          }}
-        >
-          <Image
-            src={staticSrc}
-            alt={heroAlt}
-            fill
-            priority
-            style={{
-              objectFit: "cover",
-              objectPosition: "center 20%",
-              opacity: 0.75,
-            }}
-            sizes="100vw"
-          />
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(to bottom, transparent 60%, var(--bg) 100%)",
-            }}
-          />
-        </div>
-      )}
-
       {/* ── Body ── */}
-      <section className="bg-bg s-pad">
+      <section className="bg-bg s-pad-md">
         <div className="container">
           <div className="note-body">
             {excerpt && <p className="note-lead">{excerpt}</p>}
             <span className="gold-rule" style={{ margin: "40px 0" }} />
-            {contentBlocks.map((block, bi) =>
-              block.type === "image" ? (
-                <div key={bi} className="note-inline-image">
-                  <Image
-                    src={block.content}
-                    alt={block.caption || title}
-                    width={680}
-                    height={460}
-                    unoptimized
-                    style={{ width: "100%", height: "auto", display: "block" }}
-                    sizes="(max-width: 768px) 100vw, 680px"
+            {contentBlocks.map((block, bi) => {
+              if (block.type === "image") {
+                return (
+                  <div key={bi} className="note-inline-image">
+                    <Image
+                      src={block.content}
+                      alt={block.caption || title}
+                      width={0}
+                      height={0}
+                      unoptimized
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                    />
+                    {block.caption && (
+                      <p className="note-inline-caption">{block.caption}</p>
+                    )}
+                  </div>
+                );
+              }
+              if (block.type === "heading") {
+                const Tag = `h${block.level ?? 2}` as "h2" | "h3" | "h4";
+                return (
+                  <Tag
+                    key={bi}
+                    className="note-heading"
+                    dangerouslySetInnerHTML={{ __html: block.content }}
                   />
-                  {block.caption && (
-                    <p className="note-inline-caption">{block.caption}</p>
-                  )}
-                </div>
-              ) : (
+                );
+              }
+              if (block.type === "quote") {
+                return (
+                  <blockquote key={bi} className="note-quote">
+                    <p dangerouslySetInnerHTML={{ __html: block.content }} />
+                    {block.caption && <cite>{block.caption}</cite>}
+                  </blockquote>
+                );
+              }
+              if (block.type === "list") {
+                const List = block.style === "ordered" ? "ol" : "ul";
+                return (
+                  <List key={bi} className="note-list">
+                    {(block.items ?? []).map((item, ii) => (
+                      <li key={ii} dangerouslySetInnerHTML={{ __html: item }} />
+                    ))}
+                  </List>
+                );
+              }
+              if (block.type === "delimiter") {
+                return <div key={bi} className="note-delimiter" />;
+              }
+              return (
                 <p
                   key={bi}
                   className="note-para"
                   dangerouslySetInnerHTML={{ __html: block.content }}
                 />
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── Signature ── */}
-      <section className="bg-surface border-t border-surface-2 s-pad-sm">
-        <div className="container">
-          <div style={{ maxWidth: "640px" }}>
-            <span className="gold-rule" style={{ marginBottom: "28px" }} />
-            <p
-              className="text-dim font-light"
-              style={{
-                fontSize: "0.82rem",
-                lineHeight: 1.8,
-                marginBottom: "8px",
-              }}
-            >
-              Written by
-            </p>
-            <p className="display text-text" style={{ fontSize: "1.4rem" }}>
-              TheKayodeKolade
-            </p>
-            <p
-              className="text-dim font-light"
-              style={{ fontSize: "0.78rem", marginTop: "6px", lineHeight: 1.7 }}
-            >
-              Advisor · Coach · Confidant
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Related notes ── */}
+      {/* ── Related Notes ── */}
       {related.length > 0 && (
-        <section className="bg-bg border-t border-surface-2 s-pad-sm">
+        <section className="bg-surface border-t border-surface-2 s-pad-sm">
           <div className="container">
-            <span className="eyebrow block mb-8">More Writing</span>
-            <div className="flex flex-col">
+            <span className="eyebrow block mb-10">Continue Reading</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[2px]">
               {related.map((r) => (
                 <Link
                   key={r.slug}
                   href={`/writing/note/${r.slug}`}
-                  className="blog-row"
+                  className="note-related-card"
                 >
-                  <div className="blog-row-meta">
-                    <span className="eyebrow">{r.category}</span>
-                    <span
-                      className="text-dim font-light"
-                      style={{
-                        fontSize: "0.6rem",
-                        letterSpacing: "0.18em",
-                        marginTop: "6px",
-                        display: "block",
-                      }}
-                    >
-                      {formatNoteDate(r.date)}
-                    </span>
-                  </div>
-                  <div className="blog-row-body">
-                    <h3
-                      className="display text-text mb-3"
-                      style={{ fontSize: "clamp(1.05rem, 2vw, 1.6rem)" }}
-                    >
-                      {r.title}
-                    </h3>
-                    <p
-                      className="text-muted font-light"
-                      style={{ fontSize: "0.85rem", lineHeight: 1.85 }}
-                    >
-                      {r.excerpt}
-                    </p>
-                  </div>
-                  {r.featuredImages?.[0] ? (
-                    <div className="blog-row-cover">
-                      <Image
-                        src={r.featuredImages[0]}
-                        alt={r.title}
-                        fill
-                        unoptimized
-                        sizes="160px"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className="blog-row-cover"
-                      style={{ background: "var(--surface)" }}
-                    />
-                  )}
-                  <span className="blog-row-arrow">→</span>
+                  <span className="gold-rule" style={{ marginBottom: "24px" }} />
+                  <span className="eyebrow" style={{ marginBottom: "14px" }}>{r.category}</span>
+                  <h3
+                    className="display text-text"
+                    style={{
+                      fontSize: "clamp(1rem, 1.6vw, 1.4rem)",
+                      lineHeight: 1.15,
+                      marginBottom: "12px",
+                    }}
+                  >
+                    {r.title}
+                  </h3>
+                  <p
+                    className="text-dim font-light"
+                    style={{
+                      fontSize: "0.8rem",
+                      lineHeight: 1.75,
+                      flex: 1,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {r.excerpt}
+                  </p>
+                  <p
+                    className="text-dim"
+                    style={{
+                      fontSize: "0.58rem",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      marginTop: "24px",
+                    }}
+                  >
+                    {formatNoteDate(r.date)}
+                  </p>
                 </Link>
               ))}
             </div>

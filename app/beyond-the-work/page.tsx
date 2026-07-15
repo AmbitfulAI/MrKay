@@ -72,6 +72,9 @@ export default async function BeyondTheWork() {
                 <div className="blog-row-meta">
                   <span className="eyebrow">{note.category}</span>
                   <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "6px", display: "block" }}>{formatNoteDate(note.date)}</span>
+                  {note.readTime && (
+                    <span className="text-dim font-light" style={{ fontSize: "0.6rem", letterSpacing: "0.18em", marginTop: "4px", display: "block" }}>{note.readTime} min read</span>
+                  )}
                 </div>
                 <div className="blog-row-body">
                   <h3 className="display text-text mb-3" style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.75rem)" }}>{note.title}</h3>

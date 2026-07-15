@@ -106,6 +106,7 @@ interface NoteRow {
   date: Date;
   excerpt: string;
   featuredImages?: string[];
+  contentBlocks?: ContentBlock[];
 }
 
 export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[]> {
@@ -128,6 +129,7 @@ export async function getNotesByCategory(slug: string, limit = 0): Promise<Note[
     category: cat.title,
     date: formatNoteDate(n.date),
     excerpt: n.excerpt,
+    readTime: estimateReadTime(n.contentBlocks ?? []),
     featuredImages: n.featuredImages ?? [],
   }));
 }

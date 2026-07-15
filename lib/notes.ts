@@ -1,7 +1,10 @@
 export interface ContentBlock {
-  type: "text" | "image";
+  type: "text" | "image" | "heading" | "quote" | "list" | "delimiter";
   content: string;
   caption?: string;
+  level?: number;
+  style?: "ordered" | "unordered";
+  items?: string[];
 }
 
 export interface Note {

@@ -183,30 +183,64 @@ function NoteDetail({
           <div className="note-body">
             {excerpt && <p className="note-lead">{excerpt}</p>}
             <span className="gold-rule" style={{ margin: "40px 0" }} />
-            {contentBlocks.map((block, bi) =>
-              block.type === "image" ? (
-                <div key={bi} className="note-inline-image">
-                  <Image
-                    src={block.content}
-                    alt={block.caption || title}
-                    width={0}
-                    height={0}
-                    unoptimized
-                    sizes="(max-width: 768px) 100vw, 680px"
-                    style={{ width: "100%", height: "auto", display: "block" }}
+            {contentBlocks.map((block, bi) => {
+              if (block.type === "image") {
+                return (
+                  <div key={bi} className="note-inline-image">
+                    <Image
+                      src={block.content}
+                      alt={block.caption || title}
+                      width={0}
+                      height={0}
+                      unoptimized
+                      sizes="(max-width: 768px) 100vw, 680px"
+                      style={{ width: "100%", height: "auto", display: "block" }}
+                    />
+                    {block.caption && (
+                      <p className="note-inline-caption">{block.caption}</p>
+                    )}
+                  </div>
+                );
+              }
+              if (block.type === "heading") {
+                const Tag = `h${block.level ?? 2}` as "h2" | "h3" | "h4";
+                return (
+                  <Tag
+                    key={bi}
+                    className="note-heading"
+                    dangerouslySetInnerHTML={{ __html: block.content }}
                   />
-                  {block.caption && (
-                    <p className="note-inline-caption">{block.caption}</p>
-                  )}
-                </div>
-              ) : (
+                );
+              }
+              if (block.type === "quote") {
+                return (
+                  <blockquote key={bi} className="note-quote">
+                    <p dangerouslySetInnerHTML={{ __html: block.content }} />
+                    {block.caption && <cite>{block.caption}</cite>}
+                  </blockquote>
+                );
+              }
+              if (block.type === "list") {
+                const List = block.style === "ordered" ? "ol" : "ul";
+                return (
+                  <List key={bi} className="note-list">
+                    {(block.items ?? []).map((item, ii) => (
+                      <li key={ii} dangerouslySetInnerHTML={{ __html: item }} />
+                    ))}
+                  </List>
+                );
+              }
+              if (block.type === "delimiter") {
+                return <div key={bi} className="note-delimiter" />;
+              }
+              return (
                 <p
                   key={bi}
                   className="note-para"
                   dangerouslySetInnerHTML={{ __html: block.content }}
                 />
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       </section>

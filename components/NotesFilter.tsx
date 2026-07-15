@@ -82,6 +82,19 @@ function NotesFilterInner({ posts }: Props) {
                   >
                     {formatNoteDate(post.date)}
                   </span>
+                  {post.readTime && (
+                    <span
+                      className="text-dim font-light"
+                      style={{
+                        fontSize: "0.6rem",
+                        letterSpacing: "0.18em",
+                        marginTop: "4px",
+                        display: "block",
+                      }}
+                    >
+                      {post.readTime} min read
+                    </span>
+                  )}
                 </div>
                 <div className="blog-row-body">
                   <h2

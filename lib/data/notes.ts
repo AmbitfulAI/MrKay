@@ -2,7 +2,7 @@ import { cache } from "react";
 import { connectDB } from "@/lib/db";
 import { Note as NoteModel } from "@/lib/models/Note";
 import { Category } from "@/lib/models/Category";
-import { formatNoteDate, type Note, type ContentBlock } from "@/lib/notes";
+import { formatNoteDate, estimateReadTime, type Note, type ContentBlock } from "@/lib/notes";
 
 interface DBNote {
   _id: string;
@@ -20,14 +20,16 @@ function resolveContentBlocks(n: DBNote): ContentBlock[] {
 }
 
 function mapDBNote(n: DBNote): Note {
+  const contentBlocks = resolveContentBlocks(n);
   return {
     slug: n.slug,
     title: n.title,
     category: n.category?.title ?? "",
     date: formatNoteDate(n.date),
     excerpt: n.excerpt,
+    readTime: estimateReadTime(contentBlocks),
     featuredImages: n.featuredImages ?? [],
-    contentBlocks: resolveContentBlocks(n),
+    contentBlocks,
   };
 }
 

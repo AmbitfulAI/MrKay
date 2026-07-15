@@ -13,9 +13,23 @@ export interface Note {
   category: string;
   title: string;
   excerpt: string;
+  readTime?: number;
   image?: "headshot" | "exec" | "facecard" | "upperbody";
   featuredImages?: string[];
   contentBlocks?: ContentBlock[];
+}
+
+export function estimateReadTime(blocks: ContentBlock[]): number {
+  const text = blocks
+    .flatMap((b) => {
+      if (b.type === "image" || b.type === "delimiter") return [];
+      if (b.type === "list") return b.items ?? [];
+      return [b.content, b.caption ?? ""];
+    })
+    .join(" ")
+    .replace(/<[^>]+>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
 export function formatNoteDate(date: Date | string): string {

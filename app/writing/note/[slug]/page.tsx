@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image, { type StaticImageData } from "next/image";
-import { formatNoteDate, type ContentBlock, type Note } from "@/lib/notes";
+import { formatNoteDate, estimateReadTime, type ContentBlock, type Note } from "@/lib/notes";
 import { getNoteBySlug, getRelatedNotes } from "@/lib/data/notes";
 import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
 
@@ -64,6 +64,7 @@ export default async function NotePage({
       title={note.title}
       category={note.category}
       date={formatNoteDate(note.date)}
+      readTime={estimateReadTime(n.contentBlocks ?? [])}
       excerpt={note.excerpt}
       contentBlocks={n.contentBlocks ?? []}
       images={images}
@@ -78,6 +79,7 @@ interface NoteDetailProps {
   title: string;
   category: string;
   date: string;
+  readTime: number;
   excerpt: string;
   contentBlocks: ContentBlock[];
   images: string[];
@@ -90,6 +92,7 @@ function NoteDetail({
   title,
   category,
   date,
+  readTime,
   excerpt,
   contentBlocks,
   images,
@@ -172,7 +175,7 @@ function NoteDetail({
               textTransform: "uppercase",
             }}
           >
-            {date} &nbsp;·&nbsp; TheKayodeKolade
+            {date} &nbsp;·&nbsp; {readTime} min read &nbsp;·&nbsp; TheKayodeKolade
           </p>
         </div>
       </section>

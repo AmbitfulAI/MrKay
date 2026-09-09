@@ -7,7 +7,13 @@ const ContentBlockSchema = new Schema(
       enum: ["text", "image", "heading", "quote", "list", "delimiter"],
       required: true,
     },
-    content: { type: String, required: true },
+    content: {
+      type: String,
+      required: function (this: { type: string }) {
+        return this.type !== "delimiter";
+      },
+      default: "",
+    },
     caption: { type: String, default: "" },
     level: { type: Number },
     style: { type: String, enum: ["ordered", "unordered"] },

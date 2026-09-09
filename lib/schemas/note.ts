@@ -1,16 +1,19 @@
 import { z } from "zod";
 
 const ContentBlockSchema = z.object({
-  type:    z.enum(["text", "image"]),
+  type: z.enum(["text", "image", "heading", "quote", "list", "delimiter"]),
   content: z.string(),
   caption: z.string().optional(),
+  level: z.number().optional(),
+  style: z.enum(["ordered", "unordered"]).optional(),
+  items: z.array(z.string()).optional(),
 });
 
 export const NoteBodySchema = z.object({
-  title:         z.string().min(1, "Title is required"),
-  category:      z.string().min(1, "Category is required"),
-  date:          z.string().min(1, "Date is required"),
-  excerpt:       z.string().min(1, "Excerpt is required"),
+  title: z.string().min(1, "Title is required"),
+  category: z.string().min(1, "Category is required"),
+  date: z.string().min(1, "Date is required"),
+  excerpt: z.string().min(1, "Excerpt is required"),
   featuredImages: z.array(z.string()).optional(),
   contentBlocks: z.array(ContentBlockSchema).optional(),
 });

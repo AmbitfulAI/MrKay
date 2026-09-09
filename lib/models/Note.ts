@@ -2,9 +2,16 @@ import mongoose, { Schema } from "mongoose";
 
 const ContentBlockSchema = new Schema(
   {
-    type:    { type: String, enum: ["text", "image"], required: true },
+    type: {
+      type: String,
+      enum: ["text", "image", "heading", "quote", "list", "delimiter"],
+      required: true,
+    },
     content: { type: String, required: true },
     caption: { type: String, default: "" },
+    level: { type: Number },
+    style: { type: String, enum: ["ordered", "unordered"] },
+    items: { type: [String], default: undefined },
   },
   { _id: false },
 );
@@ -23,6 +30,12 @@ const NoteSchema = new Schema(
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-NoteSchema.set("toJSON", { transform: (_: unknown, ret: any) => { ret._id = String(ret._id); delete ret.__v; return ret; } });
+NoteSchema.set("toJSON", {
+  transform: (_: unknown, ret: any) => {
+    ret._id = String(ret._id);
+    delete ret.__v;
+    return ret;
+  },
+});
 
 export const Note = mongoose.models.Note ?? mongoose.model("Note", NoteSchema);

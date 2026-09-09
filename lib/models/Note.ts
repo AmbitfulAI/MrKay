@@ -10,7 +10,7 @@ const ContentBlockSchema = new Schema(
     content: {
       type: String,
       required: function (this: { type: string }) {
-        return this.type !== "delimiter";
+        return this.type !== "delimiter" && this.type !== "list";
       },
       default: "",
     },

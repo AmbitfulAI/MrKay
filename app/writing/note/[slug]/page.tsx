@@ -4,6 +4,7 @@ import Image, { type StaticImageData } from "next/image";
 import { formatNoteDate, estimateReadTime, type ContentBlock, type Note } from "@/lib/notes";
 import { getNoteBySlug, getRelatedNotes } from "@/lib/data/notes";
 import { FeaturedImageCarousel } from "./FeaturedImageCarousel";
+import CommentSection from "@/components/CommentSection";
 
 import headshotImg from "@/assets/KK Headshot_BW.jpg";
 import execImg from "@/assets/KK_Exec_bg.jpg";
@@ -61,6 +62,7 @@ export default async function NotePage({
 
   return (
     <NoteDetail
+      noteId={note._id}
       title={note.title}
       category={note.category}
       date={formatNoteDate(note.date)}
@@ -76,6 +78,7 @@ export default async function NotePage({
 }
 
 interface NoteDetailProps {
+  noteId: string;
   title: string;
   category: string;
   date: string;
@@ -89,6 +92,7 @@ interface NoteDetailProps {
 }
 
 function NoteDetail({
+  noteId,
   title,
   category,
   date,
@@ -303,6 +307,13 @@ function NoteDetail({
           </div>
         </section>
       )}
+
+      {/* ── Comments ── */}
+      <section className="bg-bg border-t border-surface-2 s-pad-md">
+        <div className="container">
+          <CommentSection noteId={noteId} />
+        </div>
+      </section>
     </>
   );
 }

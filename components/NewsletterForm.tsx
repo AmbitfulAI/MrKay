@@ -4,9 +4,10 @@ import { useState } from "react";
 
 interface Props {
   variant?: "compact" | "full";
+  onSuccess?: () => void;
 }
 
-export default function NewsletterForm({ variant = "full" }: Props) {
+export default function NewsletterForm({ variant = "full", onSuccess }: Props) {
   const [email,   setEmail]   = useState("");
   const [status,  setStatus]  = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -30,6 +31,7 @@ export default function NewsletterForm({ variant = "full" }: Props) {
       setStatus("success");
       setMessage("You're in. Expect notes worth reading.");
       setEmail("");
+      onSuccess?.();
     } catch (err) {
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");

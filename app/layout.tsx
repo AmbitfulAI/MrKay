@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import NewsletterModal from "@/components/NewsletterModal";
 import { SiteConfigProvider } from "@/components/SiteConfigProvider";
 import { getSiteConfig } from "@/lib/data/site-config";
 import { getNoteCategories } from "@/lib/data/notes";
@@ -52,6 +53,7 @@ export default async function RootLayout({
             <Navigation writingCategories={writingCategories} />
             <main>{children}</main>
             <Footer />
+            <NewsletterModal />
           </SiteConfigProvider>
         </Providers>
       </body>

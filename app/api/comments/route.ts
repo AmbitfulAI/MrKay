@@ -5,6 +5,8 @@ import { Note } from "@/lib/models/Note";
 import { sendCommentNotification } from "@/lib/mailer";
 
 const MAX_URLS_ALLOWED = 2;
+const MAX_CONTENT_LENGTH = 3000;
+const RATE_LIMIT_MS = 30_000;
 
 export async function GET(req: NextRequest) {
   const noteId = req.nextUrl.searchParams.get("noteId");
@@ -36,12 +38,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
 
+  if (String(content).length > MAX_CONTENT_LENGTH) {
+    return NextResponse.json({ error: "Comment is too long." }, { status: 400 });
+  }
+
   const urlCount = (String(content).match(/https?:\/\//g) ?? []).length;
   if (urlCount > MAX_URLS_ALLOWED) {
     return NextResponse.json({ error: "Comment rejected." }, { status: 400 });
   }
 
   await connectDB();
+
+  const recentByEmail = await Comment.findOne({
+    authorEmail,
+    createdAt: { $gte: new Date(Date.now() - RATE_LIMIT_MS) },
+  }).select("_id");
+  if (recentByEmail) {
+    return NextResponse.json({ error: "Please wait a moment before commenting again." }, { status: 429 });
+  }
 
   const note = await Note.findById(noteId).select("title slug").lean<{ title: string; slug: string }>();
   if (!note) {

@@ -15,7 +15,7 @@ export default function AdminGallery() {
   const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderGallery);
 
   return (
-    <div style={{ padding: "40px 48px" }}>
+    <div style={{ padding: "40px 48px", maxWidth: "900px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "40px" }}>
         <div>
           <h1 className="display text-text" style={{ fontSize: "1.8rem" }}>Gallery</h1>

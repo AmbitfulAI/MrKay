@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useImpactQuery, useDeleteImpactOrg, useReorderImpact } from "@/queries/impact";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface OrgRow { _id: string; name: string; category: string; role?: string; active?: boolean; order?: number; imageUrl?: string; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 56px 1fr 160px 160px 80px 100px";
 
 export default function AdminImpact() {
-  const { data: fetched = [], isLoading } = useQuery<OrgRow[]>({
-    queryKey: QUERY_KEYS.impact,
-    queryFn: () => fetch("/api/admin/impact").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/impact/reorder", QUERY_KEYS.impact);
+  const { data: fetched = [], isLoading } = useImpactQuery();
+  const deleteImpactOrg = useDeleteImpactOrg();
+  const reorderImpact = useReorderImpact();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderImpact);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -71,7 +66,7 @@ export default function AdminImpact() {
               <span style={{ fontSize: "0.68rem", fontFamily: "var(--font-body)", color: item.active ? "var(--gold)" : "var(--dim)" }}>{item.active ? "Yes" : "No"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/impact/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/impact" queryKey={QUERY_KEYS.impact} />
+                <DeleteButton onDelete={() => deleteImpactOrg.deleteImpactOrg(item._id)} isPending={deleteImpactOrg.isPending} />
               </div>
             </div>
           ))}

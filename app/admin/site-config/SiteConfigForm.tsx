@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveSiteConfig } from "@/queries/site-config";
 import { Toast } from "@/app/admin/_components/Toast";
 
 interface StatRow { line: string; descriptor: string; }
@@ -23,7 +22,7 @@ const sectionHead: React.CSSProperties = { fontSize: "0.58rem", letterSpacing: "
 export function SiteConfigForm({ initial }: { initial: Config }) {
   const [form, setForm] = useState<Config>(initial);
   const [saved, setSaved] = useState(false);
-  const mutation = useAdminMutation(QUERY_KEYS.siteConfig, () => {
+  const mutation = useSaveSiteConfig(() => {
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   });
@@ -45,7 +44,7 @@ export function SiteConfigForm({ initial }: { initial: Config }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({ url: "/api/admin/site-config", method: "PATCH", body: form });
+    mutation.save(form);
   }
 
   return (

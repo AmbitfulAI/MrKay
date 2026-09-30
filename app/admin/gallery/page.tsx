@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useGalleryQuery, useDeleteGalleryItem, useReorderGallery } from "@/queries/gallery";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface GalleryRow { _id: string; title: string; category?: string; span?: string; order?: number; imageUrl?: string; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 56px 1fr 160px 120px 100px";
 
 export default function AdminGallery() {
-  const { data: fetched = [], isLoading } = useQuery<GalleryRow[]>({
-    queryKey: QUERY_KEYS.gallery,
-    queryFn: () => fetch("/api/admin/gallery").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/gallery/reorder", QUERY_KEYS.gallery);
+  const { data: fetched = [], isLoading } = useGalleryQuery();
+  const deleteGalleryItem = useDeleteGalleryItem();
+  const reorderGallery = useReorderGallery();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderGallery);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -70,7 +65,7 @@ export default function AdminGallery() {
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.span || "normal"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/gallery/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/gallery" queryKey={QUERY_KEYS.gallery} />
+                <DeleteButton onDelete={() => deleteGalleryItem.deleteGalleryItem(item._id)} isPending={deleteGalleryItem.isPending} />
               </div>
             </div>
           ))}

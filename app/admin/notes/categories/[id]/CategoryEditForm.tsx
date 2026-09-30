@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveCategory } from "@/queries/categories";
 
 interface Props {
   id: string;
@@ -41,7 +40,7 @@ const labelStyle: React.CSSProperties = {
 export default function CategoryEditForm({ id, initialData }: Props) {
   const router = useRouter();
   const [form, setForm] = useState(initialData);
-  const mutation = useAdminMutation(QUERY_KEYS.categories, () => router.push("/admin/notes/categories"));
+  const mutation = useSaveCategory(id, () => router.push("/admin/notes/categories"));
 
   function set(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -51,11 +50,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const themes = form.themes.split("\n").map((t) => t.trim()).filter(Boolean);
-    mutation.mutate({
-      url: `/api/admin/notes/categories/${id}`,
-      method: "PATCH",
-      body: { title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes },
-    });
+    mutation.save({ title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes });
   }
 
   return (

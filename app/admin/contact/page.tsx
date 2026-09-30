@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/api-client";
 
 interface Submission {
   _id: string;
@@ -24,8 +25,8 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/contact")
-      .then((r) => r.json())
+    apiClient
+      .get<Submission[]>("/api/admin/contact")
       .then((data) => { setItems(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
@@ -33,22 +34,18 @@ export default function ContactPage() {
   async function open(item: Submission) {
     setSelected(item);
     if (!item.read) {
-      await fetch(`/api/admin/contact/${item._id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ read: true }),
-      });
+      await apiClient.patch(`/api/admin/contact/${item._id}`, { read: true }).catch(() => {});
       setItems((prev) => prev.map((i) => i._id === item._id ? { ...i, read: true } : i));
     }
   }
 
   async function remove(id: string) {
     if (!confirm("Delete this submission?")) return;
-    const res = await fetch(`/api/admin/contact/${id}`, { method: "DELETE" });
-    if (res.ok) {
+    try {
+      await apiClient.delete(`/api/admin/contact/${id}`);
       setItems((prev) => prev.filter((i) => i._id !== id));
       if (selected?._id === id) setSelected(null);
-    }
+    } catch {}
   }
 
   const unread = items.filter((i) => !i.read).length;

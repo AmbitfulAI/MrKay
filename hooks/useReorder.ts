@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useQueryClient, type QueryKey } from "@tanstack/react-query";
 
 interface Reorderable {
   _id: string;
@@ -14,8 +13,7 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return copy;
 }
 
-export function useReorder<T extends Reorderable>(items: T[], reorderEndpoint: string, queryKey: QueryKey) {
-  const queryClient = useQueryClient();
+export function useReorder<T extends Reorderable>(items: T[], onReorder: (items: T[]) => void) {
   const [localItems, setLocalItems] = useState<T[]>(items);
   const [syncedFrom, setSyncedFrom] = useState<T[]>(items);
   const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -24,16 +22,6 @@ export function useReorder<T extends Reorderable>(items: T[], reorderEndpoint: s
   if (items !== syncedFrom) {
     setSyncedFrom(items);
     setLocalItems(items);
-  }
-
-  async function commitOrder(reordered: T[]) {
-    setLocalItems(reordered);
-    await fetch(reorderEndpoint, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: reordered.map((item, index) => ({ id: item._id, order: index + 1 })) }),
-    });
-    queryClient.invalidateQueries({ queryKey });
   }
 
   function onDragStart(id: string) {
@@ -54,7 +42,9 @@ export function useReorder<T extends Reorderable>(items: T[], reorderEndpoint: s
     const to = localItems.findIndex((i) => i._id === targetId);
     if (from === -1 || to === -1) return;
 
-    commitOrder(arrayMove(localItems, from, to));
+    const reordered = arrayMove(localItems, from, to);
+    setLocalItems(reordered);
+    onReorder(reordered);
   }
 
   function onDragEnd() {

@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useFaqsQuery, useDeleteFaq, useReorderFaqs } from "@/queries/faqs";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface FaqRow { _id: string; question: string; answer: string; order?: number; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 1fr 100px";
 
 export default function AdminFaqs() {
-  const { data: fetched = [], isLoading } = useQuery<FaqRow[]>({
-    queryKey: QUERY_KEYS.faqs,
-    queryFn: () => fetch("/api/admin/faqs").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/faqs/reorder", QUERY_KEYS.faqs);
+  const { data: fetched = [], isLoading } = useFaqsQuery();
+  const deleteFaq = useDeleteFaq();
+  const reorderFaqs = useReorderFaqs();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderFaqs);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -67,7 +62,7 @@ export default function AdminFaqs() {
               </div>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/faqs/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/faqs" queryKey={QUERY_KEYS.faqs} />
+                <DeleteButton onDelete={() => deleteFaq.deleteFaq(item._id)} isPending={deleteFaq.isPending} />
               </div>
             </div>
           ))}

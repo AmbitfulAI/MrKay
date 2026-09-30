@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveGalleryItem } from "@/queries/gallery";
 
 interface FormData { title: string; caption: string; category: string; alt: string; }
 interface Props { initialData?: Partial<FormData> & { imageUrl?: string }; id?: string; categories: string[]; }
@@ -18,7 +17,7 @@ export function GalleryItemForm({ initialData, id, categories }: Props) {
   const [form, setForm] = useState<FormData>({ title: "", caption: "", category: "", alt: "", ...initialData });
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
   const [imageError, setImageError] = useState("");
-  const mutation = useAdminMutation(QUERY_KEYS.gallery, () => router.push("/admin/gallery"));
+  const mutation = useSaveGalleryItem(id, () => router.push("/admin/gallery"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -29,11 +28,7 @@ export function GalleryItemForm({ initialData, id, categories }: Props) {
     e.preventDefault();
     if (!isEdit && !imageUrl) { setImageError("Please upload an image."); return; }
     setImageError("");
-    mutation.mutate({
-      url: isEdit ? `/api/admin/gallery/${id}` : "/api/admin/gallery",
-      method: isEdit ? "PATCH" : "POST",
-      body: { ...form, imageUrl },
-    });
+    mutation.save({ ...form, imageUrl });
   }
 
   return (

@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveFaq } from "@/queries/faqs";
 
 interface FormData { question: string; answer: string; }
 interface Props { initialData?: Partial<FormData>; id?: string; }
@@ -15,7 +14,7 @@ export function FaqForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ question: "", answer: "", ...initialData });
-  const mutation = useAdminMutation(QUERY_KEYS.faqs, () => router.push("/admin/faqs"));
+  const mutation = useSaveFaq(id, () => router.push("/admin/faqs"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -24,11 +23,7 @@ export function FaqForm({ initialData, id }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({
-      url: isEdit ? `/api/admin/faqs/${id}` : "/api/admin/faqs",
-      method: isEdit ? "PATCH" : "POST",
-      body: form,
-    });
+    mutation.save(form);
   }
 
   return (

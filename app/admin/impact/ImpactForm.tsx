@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveImpactOrg } from "@/queries/impact";
 
 interface FormData { name: string; category: string; role: string; since: string; description: string; url: string; active: boolean; alt: string; }
 interface Props { initialData?: Partial<FormData> & { imageUrl?: string }; id?: string; }
@@ -17,7 +16,7 @@ export function ImpactForm({ initialData, id }: Props) {
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ name: "", category: "", role: "", since: "", description: "", url: "", active: true, alt: "", ...initialData });
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
-  const mutation = useAdminMutation(QUERY_KEYS.impact, () => router.push("/admin/impact"));
+  const mutation = useSaveImpactOrg(id, () => router.push("/admin/impact"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -26,11 +25,7 @@ export function ImpactForm({ initialData, id }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({
-      url: isEdit ? `/api/admin/impact/${id}` : "/api/admin/impact",
-      method: isEdit ? "PATCH" : "POST",
-      body: { ...form, imageUrl },
-    });
+    mutation.save({ ...form, imageUrl });
   }
 
   return (

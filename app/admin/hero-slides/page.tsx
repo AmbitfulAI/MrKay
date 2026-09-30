@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useHeroSlidesQuery, useDeleteHeroSlide, useReorderHeroSlides } from "@/queries/hero-slides";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface SlideRow { _id: string; eyebrow: string; line1: string; line2: string; imageUrl?: string; order?: number; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 56px 1fr 200px 100px";
 
 export default function AdminHeroSlides() {
-  const { data: fetched = [], isLoading } = useQuery<SlideRow[]>({
-    queryKey: QUERY_KEYS.heroSlides,
-    queryFn: () => fetch("/api/admin/hero-slides").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/hero-slides/reorder", QUERY_KEYS.heroSlides);
+  const { data: fetched = [], isLoading } = useHeroSlidesQuery();
+  const deleteHeroSlide = useDeleteHeroSlide();
+  const reorderHeroSlides = useReorderHeroSlides();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderHeroSlides);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -74,7 +69,7 @@ export default function AdminHeroSlides() {
               <p style={{ fontSize: "0.72rem", color: "var(--dim)", fontFamily: "var(--font-body)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.eyebrow}</p>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/hero-slides/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/hero-slides" queryKey={QUERY_KEYS.heroSlides} />
+                <DeleteButton onDelete={() => deleteHeroSlide.deleteHeroSlide(item._id)} isPending={deleteHeroSlide.isPending} />
               </div>
             </div>
           ))}

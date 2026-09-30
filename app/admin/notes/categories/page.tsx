@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-type CategoryType = "writing" | "visual-diary";
-
-interface Category { _id: string; title: string; type: CategoryType; order?: number; }
+import { useCategoriesQuery, useAddCategory, useDeleteCategory, type CategoryType } from "@/queries/categories";
 
 const TYPE_LABELS: Record<CategoryType, string> = {
   "writing":      "Writing",
@@ -34,27 +28,19 @@ export default function CategoriesPage() {
   const [newType, setNewType] = useState<CategoryType>("writing");
   const [filter, setFilter] = useState<CategoryType | "all">("all");
 
-  const { data: categories = [], isLoading } = useQuery<Category[]>({
-    queryKey: QUERY_KEYS.categories,
-    queryFn: () => fetch("/api/admin/notes/categories").then((r) => r.json()).then((d) => d.filter((c: Category) => c._id)),
-  });
-
-  const addMutation = useAdminMutation(QUERY_KEYS.categories, () => setNewTitle(""));
-  const deleteMutation = useAdminMutation(QUERY_KEYS.categories);
+  const { data: categories = [], isLoading } = useCategoriesQuery();
+  const addMutation = useAddCategory(() => setNewTitle(""));
+  const deleteMutation = useDeleteCategory();
 
   function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!newTitle.trim()) return;
-    addMutation.mutate({
-      url: "/api/admin/notes/categories",
-      method: "POST",
-      body: { title: newTitle.trim(), type: newType, order: categories.length + 1 },
-    });
+    addMutation.add({ title: newTitle.trim(), type: newType, order: categories.length + 1 });
   }
 
   function handleDelete(id: string, title: string) {
     if (!confirm(`Delete category "${title}"?`)) return;
-    deleteMutation.mutate({ url: `/api/admin/notes/categories/${id}`, method: "DELETE" });
+    deleteMutation.deleteCategory(id);
   }
 
   const visible = filter === "all" ? categories : categories.filter((c) => c.type === filter);

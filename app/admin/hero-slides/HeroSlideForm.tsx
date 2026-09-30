@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveHeroSlide } from "@/queries/hero-slides";
 
 interface FormData {
   eyebrow: string; line1: string; line2: string; subtitle: string;
@@ -41,7 +40,7 @@ export function HeroSlideForm({ initialData, id }: Props) {
   const [customPosition, setCustomPosition] = useState(
     () => !!initialData?.imagePos && !POSITION_PRESETS.some((p) => p.value === initialData.imagePos)
   );
-  const mutation = useAdminMutation(QUERY_KEYS.heroSlides, () => router.push("/admin/hero-slides"));
+  const mutation = useSaveHeroSlide(id, () => router.push("/admin/hero-slides"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -52,11 +51,7 @@ export function HeroSlideForm({ initialData, id }: Props) {
     e.preventDefault();
     if (!isEdit && !imageUrl) { setImageError("Please upload a background image."); return; }
     setImageError("");
-    mutation.mutate({
-      url: isEdit ? `/api/admin/hero-slides/${id}` : "/api/admin/hero-slides",
-      method: isEdit ? "PATCH" : "POST",
-      body: { ...form, imageUrl },
-    });
+    mutation.save({ ...form, imageUrl });
   }
 
   return (

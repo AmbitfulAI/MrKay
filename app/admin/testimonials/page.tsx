@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useTestimonialsQuery, useDeleteTestimonial, useReorderTestimonials } from "@/queries/testimonials";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface TestimonialRow { _id: string; quote: string; clientName: string; clientContext: string; order?: number; pages?: string[]; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 1fr 180px 1fr 100px";
 
 export default function AdminTestimonials() {
-  const { data: fetched = [], isLoading } = useQuery<TestimonialRow[]>({
-    queryKey: QUERY_KEYS.testimonials,
-    queryFn: () => fetch("/api/admin/testimonials").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/testimonials/reorder", QUERY_KEYS.testimonials);
+  const { data: fetched = [], isLoading } = useTestimonialsQuery();
+  const deleteTestimonial = useDeleteTestimonial();
+  const reorderTestimonials = useReorderTestimonials();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderTestimonials);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -71,7 +66,7 @@ export default function AdminTestimonials() {
               </div>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/testimonials/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/testimonials" queryKey={QUERY_KEYS.testimonials} />
+                <DeleteButton onDelete={() => deleteTestimonial.deleteTestimonial(item._id)} isPending={deleteTestimonial.isPending} />
               </div>
             </div>
           ))}

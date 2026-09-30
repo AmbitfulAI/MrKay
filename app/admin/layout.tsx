@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { apiClient } from "@/lib/api-client";
 import {
   DashboardIcon, HeroSlidesIcon, NotesIcon, CategoriesIcon, GalleryIcon,
   TestimonialsIcon, SuccessStoriesIcon, FaqsIcon, MarketplaceIcon, ImpactIcon,
@@ -95,7 +96,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
 
   async function signOut() {
-    await fetch("/api/admin/auth", { method: "DELETE" });
+    await apiClient.delete("/api/admin/auth").catch(() => {});
     router.push("/admin/login");
   }
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiClient } from "@/lib/api-client";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -14,15 +15,10 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
-    const res = await fetch("/api/admin/auth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password }),
-    });
-
-    if (res.ok) {
+    try {
+      await apiClient.post("/api/admin/auth", { password });
       router.push("/admin");
-    } else {
+    } catch {
       setError("Incorrect password.");
       setLoading(false);
     }

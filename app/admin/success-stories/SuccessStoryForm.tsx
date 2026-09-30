@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveSuccessStory } from "@/queries/success-stories";
 
 interface FormData { code: string; title: string; sector: string; client: string; result: string; story: string; }
 interface Props { initialData?: Partial<FormData>; id?: string; }
@@ -15,7 +14,7 @@ export function SuccessStoryForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ code: "", title: "", sector: "", client: "", result: "", story: "", ...initialData });
-  const mutation = useAdminMutation(QUERY_KEYS.successStories, () => router.push("/admin/success-stories"));
+  const mutation = useSaveSuccessStory(id, () => router.push("/admin/success-stories"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -24,11 +23,7 @@ export function SuccessStoryForm({ initialData, id }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({
-      url: isEdit ? `/api/admin/success-stories/${id}` : "/api/admin/success-stories",
-      method: isEdit ? "PATCH" : "POST",
-      body: form,
-    });
+    mutation.save(form);
   }
 
   return (

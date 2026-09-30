@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveProduct } from "@/queries/marketplace";
 
 interface FormData { title: string; subtitle: string; type: string; description: string; price: string; priceNote: string; tag: string; selarUrl: string; available: boolean; coverAccent: string; order: string; }
 interface Props { initialData?: Partial<FormData>; id?: string; }
@@ -15,7 +14,7 @@ export function ProductForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ title: "", subtitle: "", type: "", description: "", price: "", priceNote: "", tag: "", selarUrl: "", available: true, coverAccent: "", order: "", ...initialData });
-  const mutation = useAdminMutation(QUERY_KEYS.marketplace, () => router.push("/admin/marketplace"));
+  const mutation = useSaveProduct(id, () => router.push("/admin/marketplace"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -24,11 +23,7 @@ export function ProductForm({ initialData, id }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({
-      url: isEdit ? `/api/admin/marketplace/${id}` : "/api/admin/marketplace",
-      method: isEdit ? "PATCH" : "POST",
-      body: form,
-    });
+    mutation.save(form);
   }
 
   return (

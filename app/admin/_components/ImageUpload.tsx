@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { apiClient } from "@/lib/api-client";
 
 interface Props {
   value?: string;
@@ -22,11 +23,10 @@ export function ImageUpload({ value, onChange, label = "Image" }: Props) {
     const fd = new FormData();
     fd.append("file", file);
 
-    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-    if (res.ok) {
-      const { imageUrl } = await res.json();
+    try {
+      const { imageUrl } = await apiClient.upload<{ imageUrl: string }>("/api/admin/upload", fd);
       onChange(imageUrl);
-    } else {
+    } catch {
       setError("Upload failed. Please try again.");
     }
     setUploading(false);

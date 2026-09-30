@@ -1,21 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import type { QueryKey } from "@tanstack/react-query";
 
 interface Props {
-  id: string;
-  endpoint: string;
-  queryKey: QueryKey;
+  onDelete: () => void;
+  isPending?: boolean;
 }
 
-export function DeleteButton({ id, endpoint, queryKey }: Props) {
+export function DeleteButton({ onDelete, isPending }: Props) {
   const [confirming, setConfirming] = useState(false);
-  const mutation = useAdminMutation(queryKey);
 
   function handleDelete() {
-    mutation.mutate({ url: `${endpoint}/${id}`, method: "DELETE" });
+    onDelete();
     setConfirming(false);
   }
 
@@ -40,10 +36,10 @@ export function DeleteButton({ id, endpoint, queryKey }: Props) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      disabled={mutation.isPending}
-      style={{ ...btnStyle, color: "var(--dim)", cursor: mutation.isPending ? "not-allowed" : "pointer", opacity: mutation.isPending ? 0.5 : 1 }}
+      disabled={isPending}
+      style={{ ...btnStyle, color: "var(--dim)", cursor: isPending ? "not-allowed" : "pointer", opacity: isPending ? 0.5 : 1 }}
     >
-      {mutation.isPending ? "Deleting…" : "Delete"}
+      {isPending ? "Deleting…" : "Delete"}
     </button>
   );
 }

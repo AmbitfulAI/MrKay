@@ -1,19 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { DeleteNoteButton } from "./DeleteNoteButton";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useNotesQuery, useDeleteNote } from "@/queries/notes";
+import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 
 import { formatNoteDate } from "@/lib/notes";
 
-interface NoteRow { _id: string; title: string; slug: string; category: { title: string }; date: string; }
-
 export default function AdminNotes() {
-  const { data: notes = [], isLoading } = useQuery<NoteRow[]>({
-    queryKey: QUERY_KEYS.notes,
-    queryFn: () => fetch("/api/admin/notes").then((r) => r.json()),
-  });
+  const { data: notes = [], isLoading } = useNotesQuery();
+  const deleteNote = useDeleteNote();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -55,7 +50,7 @@ export default function AdminNotes() {
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{formatNoteDate(note.date)}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/notes/${note._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteNoteButton id={note._id} />
+                <DeleteButton onDelete={() => deleteNote.deleteNote(note._id)} isPending={deleteNote.isPending} />
               </div>
             </div>
           ))}

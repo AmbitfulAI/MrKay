@@ -7,8 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useCategories } from "@/components/CategoriesProvider";
 import type { CategoryOption } from "@/components/CategoriesProvider";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveNote } from "@/queries/notes";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 import { NoteEditor } from "@/app/admin/_components/NoteEditor";
 import type { ContentBlock } from "@/lib/notes";
@@ -75,7 +74,7 @@ export function NoteForm({ initialData, id }: Props) {
   const router     = useRouter();
   const isEdit     = !!id;
   const categories: CategoryOption[] = useCategories();
-  const mutation   = useAdminMutation(QUERY_KEYS.notes, () => router.push("/admin/notes"));
+  const mutation   = useSaveNote(id, () => router.push("/admin/notes"));
 
   const [featuredImages, setFeaturedImages] = useState<string[]>(initialData?.featuredImages ?? []);
   const [contentBlocks, setContentBlocks]   = useState<ContentBlock[]>(() => initBlocks(initialData));
@@ -103,11 +102,7 @@ export function NoteForm({ initialData, id }: Props) {
       return;
     }
     setBlocksError("");
-    mutation.mutate({
-      url:    isEdit ? `/api/admin/notes/${id}` : "/api/admin/notes",
-      method: isEdit ? "PATCH" : "POST",
-      body:   { ...data, featuredImages, contentBlocks },
-    });
+    mutation.save({ ...data, featuredImages, contentBlocks });
   };
 
   return (

@@ -1,17 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useMarketplaceQuery, useDeleteProduct } from "@/queries/marketplace";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface ProductRow { _id: string; title: string; type: string; price?: string; available?: boolean; order?: number; }
 
 export default function AdminMarketplace() {
-  const { data: items = [], isLoading } = useQuery<ProductRow[]>({
-    queryKey: QUERY_KEYS.marketplace,
-    queryFn: () => fetch("/api/admin/marketplace").then((r) => r.json()),
-  });
+  const { data: items = [], isLoading } = useMarketplaceQuery();
+  const deleteProduct = useDeleteProduct();
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -43,7 +38,7 @@ export default function AdminMarketplace() {
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.order ?? "—"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/marketplace/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/marketplace" queryKey={QUERY_KEYS.marketplace} />
+                <DeleteButton onDelete={() => deleteProduct.deleteProduct(item._id)} isPending={deleteProduct.isPending} />
               </div>
             </div>
           ))}

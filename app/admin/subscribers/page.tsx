@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { apiClient } from "@/lib/api-client";
 
 interface Subscriber {
   _id: string;
@@ -16,27 +17,25 @@ export default function SubscribersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/subscribers")
-      .then((r) => r.json())
+    apiClient
+      .get<Subscriber[]>("/api/admin/subscribers")
       .then((data) => { setSubscribers(data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   async function toggleActive(id: string, current: boolean) {
-    const res = await fetch(`/api/admin/subscribers/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ active: !current }),
-    });
-    if (res.ok) {
+    try {
+      await apiClient.patch(`/api/admin/subscribers/${id}`, { active: !current });
       setSubscribers((prev) => prev.map((s) => s._id === id ? { ...s, active: !current } : s));
-    }
+    } catch {}
   }
 
   async function remove(id: string) {
     if (!confirm("Remove this subscriber?")) return;
-    const res = await fetch(`/api/admin/subscribers/${id}`, { method: "DELETE" });
-    if (res.ok) setSubscribers((prev) => prev.filter((s) => s._id !== id));
+    try {
+      await apiClient.delete(`/api/admin/subscribers/${id}`);
+      setSubscribers((prev) => prev.filter((s) => s._id !== id));
+    } catch {}
   }
 
   function exportCsv() {

@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useSuccessStoriesQuery, useDeleteSuccessStory, useReorderSuccessStories } from "@/queries/success-stories";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
-import { useReorder } from "@/app/admin/_components/useReorder";
-import { QUERY_KEYS } from "@/lib/queries/keys";
-
-interface StoryRow { _id: string; code: string; title: string; sector: string; order?: number; }
+import { useReorder } from "@/hooks/useReorder";
 
 const gridCols = "24px 60px 1fr 160px 100px";
 
 export default function AdminSuccessStories() {
-  const { data: fetched = [], isLoading } = useQuery<StoryRow[]>({
-    queryKey: QUERY_KEYS.successStories,
-    queryFn: () => fetch("/api/admin/success-stories").then((r) => r.json()),
-  });
-  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } =
-    useReorder(fetched, "/api/admin/success-stories/reorder", QUERY_KEYS.successStories);
+  const { data: fetched = [], isLoading } = useSuccessStoriesQuery();
+  const deleteSuccessStory = useDeleteSuccessStory();
+  const reorderSuccessStories = useReorderSuccessStories();
+  const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderSuccessStories);
 
   return (
     <div style={{ padding: "40px 48px" }}>
@@ -66,7 +61,7 @@ export default function AdminSuccessStories() {
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.sector}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/success-stories/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
-                <DeleteButton id={item._id} endpoint="/api/admin/success-stories" queryKey={QUERY_KEYS.successStories} />
+                <DeleteButton onDelete={() => deleteSuccessStory.deleteSuccessStory(item._id)} isPending={deleteSuccessStory.isPending} />
               </div>
             </div>
           ))}

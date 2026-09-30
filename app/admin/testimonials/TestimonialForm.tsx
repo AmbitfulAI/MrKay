@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAdminMutation } from "@/lib/queries/useAdminMutation";
-import { QUERY_KEYS } from "@/lib/queries/keys";
+import { useSaveTestimonial } from "@/queries/testimonials";
 
 const PAGE_OPTIONS = [
   { value: "home",                   label: "Homepage" },
@@ -26,7 +25,7 @@ export function TestimonialForm({ initialData, id }: Props) {
   const isEdit = !!id;
   const [form, setForm] = useState<FormData>({ quote: "", clientName: "", clientContext: "", ...initialData });
   const [pages, setPages] = useState<string[]>(initialData?.pages ?? []);
-  const mutation = useAdminMutation(QUERY_KEYS.testimonials, () => router.push("/admin/testimonials"));
+  const mutation = useSaveTestimonial(id, () => router.push("/admin/testimonials"));
 
   function set(field: keyof FormData) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -39,11 +38,7 @@ export function TestimonialForm({ initialData, id }: Props) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    mutation.mutate({
-      url: isEdit ? `/api/admin/testimonials/${id}` : "/api/admin/testimonials",
-      method: isEdit ? "PATCH" : "POST",
-      body: { ...form, pages },
-    });
+    mutation.save({ ...form, pages });
   }
 
   return (

@@ -79,7 +79,7 @@ export default function NewsletterModal() {
       <div
         style={{
           position: "relative",
-          maxWidth: "440px",
+          maxWidth: "clamp(320px, 55vw, 720px)",
           width: "100%",
           background: "var(--bg)",
           border: "1px solid var(--surface-2)",

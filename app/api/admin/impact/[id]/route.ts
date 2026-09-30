@@ -22,7 +22,7 @@ export async function PATCH(
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
   if (data.order !== undefined) update.order = Number(data.order);
-  const org = await ImpactOrg.findByIdAndUpdate(id, update, { new: true });
+  const org = await ImpactOrg.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!org) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/impact");
   return NextResponse.json(org.toJSON());

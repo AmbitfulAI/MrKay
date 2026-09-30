@@ -19,7 +19,7 @@ export async function PATCH(
     story: data.story,
   };
   if (data.order !== undefined) update.order = Number(data.order);
-  const s = await SuccessStory.findByIdAndUpdate(id, update, { new: true });
+  const s = await SuccessStory.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!s) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/testimonials");
   return NextResponse.json(s.toJSON());

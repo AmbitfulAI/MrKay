@@ -13,7 +13,7 @@ export async function PATCH(
   const p = await Product.findByIdAndUpdate(
     id,
     { title: data.title, subtitle: data.subtitle, type: data.type, description: data.description, price: data.price, priceNote: data.priceNote, tag: data.tag, selarUrl: data.selarUrl || "", available: data.available !== false, coverAccent: data.coverAccent, order: data.order ? Number(data.order) : 99 },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!p) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/marketplace");

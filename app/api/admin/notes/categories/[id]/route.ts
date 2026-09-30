@@ -20,7 +20,7 @@ export async function PATCH(
   if (tagline !== undefined) update.tagline = tagline;
   if (description !== undefined) update.description = description;
   if (Array.isArray(themes)) update.themes = themes;
-  const cat = await Category.findByIdAndUpdate(id, update, { new: true });
+  const cat = await Category.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!cat) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(cat.toJSON());
 }

@@ -9,7 +9,7 @@ export async function PATCH(
   await connectDB();
   const { id } = await params;
   const data = await req.json();
-  const item = await ContactSubmission.findByIdAndUpdate(id, { read: data.read }, { new: true });
+  const item = await ContactSubmission.findByIdAndUpdate(id, { read: data.read }, { returnDocument: "after" });
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(item.toJSON());
 }

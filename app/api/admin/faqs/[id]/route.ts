@@ -12,7 +12,7 @@ export async function PATCH(
   const data = await req.json();
   const update: Record<string, unknown> = { question: data.question, answer: data.answer };
   if (data.order !== undefined) update.order = Number(data.order);
-  const faq = await Faq.findByIdAndUpdate(id, update, { new: true });
+  const faq = await Faq.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!faq) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/contact");
   return NextResponse.json(faq.toJSON());

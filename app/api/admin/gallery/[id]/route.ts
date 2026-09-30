@@ -18,7 +18,7 @@ export async function PATCH(
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
   if (data.order !== undefined) update.order = Number(data.order);
-  const img = await GalleryImage.findByIdAndUpdate(id, update, { new: true });
+  const img = await GalleryImage.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!img) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/visual-diary");
   return NextResponse.json(img.toJSON());

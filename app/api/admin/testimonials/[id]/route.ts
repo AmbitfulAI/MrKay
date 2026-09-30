@@ -17,7 +17,7 @@ export async function PATCH(
     pages: Array.isArray(data.pages) ? data.pages : [],
   };
   if (data.order !== undefined) update.order = Number(data.order);
-  const t = await Testimonial.findByIdAndUpdate(id, update, { new: true });
+  const t = await Testimonial.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!t) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/testimonials");
   return NextResponse.json(t.toJSON());

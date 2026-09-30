@@ -24,7 +24,7 @@ export async function PATCH(req: NextRequest) {
       instagramUrl:  data.instagramUrl,
       statsBar:      Array.isArray(data.statsBar) ? data.statsBar : [],
     },
-    { new: true, upsert: true },
+    { returnDocument: "after", upsert: true },
   );
   revalidatePath("/");
   return NextResponse.json(config?.toJSON() ?? {});

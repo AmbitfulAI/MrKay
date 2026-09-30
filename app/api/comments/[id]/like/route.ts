@@ -12,7 +12,7 @@ export async function POST(
   const comment = await Comment.findByIdAndUpdate(
     id,
     { $inc: { likes: 1 } },
-    { new: true },
+    { returnDocument: "after" },
   ).select("likes");
 
   if (!comment) {

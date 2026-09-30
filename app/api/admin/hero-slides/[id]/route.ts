@@ -25,7 +25,7 @@ export async function PATCH(
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
   if (data.order !== undefined) update.order = Number(data.order);
-  const slide = await HeroSlide.findByIdAndUpdate(id, update, { new: true });
+  const slide = await HeroSlide.findByIdAndUpdate(id, update, { returnDocument: "after" });
   if (!slide) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/");
   return NextResponse.json(slide.toJSON());

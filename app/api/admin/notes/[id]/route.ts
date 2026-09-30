@@ -41,7 +41,7 @@ export async function PATCH(
       ...(data.featuredImages !== undefined && { featuredImages: data.featuredImages }),
       ...(data.contentBlocks !== undefined && { contentBlocks: data.contentBlocks }),
     },
-    { new: true },
+    { returnDocument: "after" },
   );
   if (!note) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/writing");

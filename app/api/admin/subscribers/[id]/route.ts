@@ -9,7 +9,7 @@ export async function PATCH(
   await connectDB();
   const { id } = await params;
   const { active } = await req.json();
-  const sub = await Subscriber.findByIdAndUpdate(id, { active }, { new: true });
+  const sub = await Subscriber.findByIdAndUpdate(id, { active }, { returnDocument: "after" });
   if (!sub) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(sub.toJSON());
 }

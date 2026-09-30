@@ -68,6 +68,38 @@ function buildHtml(note: {
 </html>`;
 }
 
+export async function sendCommentNotification(params: {
+  noteTitle: string;
+  noteSlug: string;
+  authorName: string;
+  authorEmail: string;
+  content: string;
+  isReply: boolean;
+}) {
+  const to = process.env.CONTACT_TO_EMAIL ?? process.env.SMTP_USER;
+  if (!to) return;
+
+  const noteUrl = `${siteUrl}/writing/note/${params.noteSlug}`;
+  const kind = params.isReply ? "reply" : "comment";
+
+  await createTransporter()
+    .sendMail({
+      from,
+      to,
+      replyTo: params.authorEmail,
+      subject: `New ${kind} on "${params.noteTitle}"`,
+      text: [
+        `${params.authorName} <${params.authorEmail}> ${params.isReply ? "replied" : "commented"} on "${params.noteTitle}"`,
+        "",
+        params.content,
+        "",
+        `View it → ${noteUrl}`,
+        `Moderate → ${siteUrl}/admin/comments`,
+      ].join("\n"),
+    })
+    .catch(() => {});
+}
+
 export async function sendNoteNotification(note: {
   title: string;
   slug: string;

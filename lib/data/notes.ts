@@ -143,6 +143,7 @@ export async function getNoteSlugs(): Promise<Array<{ slug: string }>> {
 }
 
 export interface DBNoteDetail {
+  _id: string;
   slug: string;
   title: string;
   category: string;
@@ -163,6 +164,7 @@ export const getNoteBySlug = cache(async function getNoteBySlug(
     .catch(() => null);
   if (!fromDB) return null;
   return {
+    _id: String(fromDB._id),
     slug: fromDB.slug,
     title: fromDB.title,
     category: fromDB.category?.title ?? "",

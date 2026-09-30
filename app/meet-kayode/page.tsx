@@ -370,9 +370,9 @@ export default function MeetKayode() {
             className="flex flex-col gap-[2px] bg-surface-2"
             style={{ maxWidth: "760px" }}
           >
-            {testimonials.map((q) => (
+            {testimonials.map((q, i) => (
               <div
-                key={q.name}
+                key={i}
                 className="bg-surface"
                 style={{ padding: "48px 44px" }}
               >

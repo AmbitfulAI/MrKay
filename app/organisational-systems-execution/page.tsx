@@ -142,8 +142,8 @@ export default function OrganisationalSystemsExecution() {
                 name: "Programme Specialist",
                 context: "International Education Organisation",
               },
-            ].map((q) => (
-              <div key={q.name} className="bg-surface" style={{ padding: "48px 44px" }}>
+            ].map((q, i) => (
+              <div key={i} className="bg-surface" style={{ padding: "48px 44px" }}>
                 <span className="display" style={{ fontSize: "3.5rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "24px", opacity: 0.4 }}>&ldquo;</span>
                 <blockquote className="display text-text" style={{ fontSize: "clamp(1rem, 1.6vw, 1.2rem)", fontStyle: "italic", lineHeight: 1.6, marginBottom: "28px" }}>
                   {q.quote}

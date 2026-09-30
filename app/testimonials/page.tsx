@@ -113,9 +113,9 @@ export default async function Testimonials() {
         <div className="container">
           <span className="eyebrow block mb-12">In Their Words</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[2px] bg-surface-2">
-            {activeQuotes.map((q) => (
+            {activeQuotes.map((q, i) => (
               <div
-                key={q.name}
+                key={i}
                 className="bg-surface"
                 style={{ padding: "48px 44px" }}
               >

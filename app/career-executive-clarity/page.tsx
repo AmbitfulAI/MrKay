@@ -213,8 +213,8 @@ export default function CareerExecutiveClarity() {
         <div className="container">
           <span className="eyebrow block mb-12">In Their Words</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[2px] bg-surface-2">
-            {testimonials.map((q) => (
-              <div key={q.name} className="bg-surface" style={{ padding: "40px 36px" }}>
+            {testimonials.map((q, i) => (
+              <div key={i} className="bg-surface" style={{ padding: "40px 36px" }}>
                 <span className="display" style={{ fontSize: "3rem", color: "var(--gold)", lineHeight: 1, display: "block", marginBottom: "20px", opacity: 0.4 }}>&ldquo;</span>
                 <blockquote className="display text-text" style={{ fontSize: "clamp(0.9rem, 1.4vw, 1.1rem)", fontStyle: "italic", lineHeight: 1.6, marginBottom: "28px" }}>
                   {q.quote}

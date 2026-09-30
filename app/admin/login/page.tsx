@@ -21,7 +21,7 @@ export default function AdminLogin() {
     });
 
     if (res.ok) {
-      router.push("/admin/notes");
+      router.push("/admin");
     } else {
       setError("Incorrect password.");
       setLoading(false);

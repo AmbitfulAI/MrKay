@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
+  { label: "Dashboard",       href: "/admin",                  exact: true },
   { label: "Site Config",     href: "/admin/site-config",      exact: false },
   { label: "Hero Slides",     href: "/admin/hero-slides",      exact: false },
   { label: "FAQs",            href: "/admin/faqs",             exact: false },
@@ -60,7 +61,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav style={{ flex: 1, padding: "0 12px" }}>
           {navItems.map((item) => {
-            const active = item.exact
+            const active = item.href === "/admin"
+              ? pathname === "/admin"
+              : item.exact
               ? pathname === item.href || (pathname.startsWith(item.href + "/") && !pathname.startsWith("/admin/notes/categories"))
               : pathname.startsWith(item.href);
             return (

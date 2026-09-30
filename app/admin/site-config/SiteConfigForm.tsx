@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 import { QUERY_KEYS } from "@/lib/queries/keys";
+import { Toast } from "@/app/admin/_components/Toast";
 
 interface StatRow { line: string; descriptor: string; }
 interface Config {
@@ -73,11 +74,11 @@ export function SiteConfigForm({ initial }: { initial: Config }) {
         ))}
 
         {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
-        {saved && <p style={{ fontSize: "0.8rem", color: "var(--gold)", fontFamily: "var(--font-body)" }}>✓ Saved successfully</p>}
         <div>
           <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : "Save Configuration"}</button>
         </div>
       </div>
+      <Toast message="✓ Configuration saved" visible={saved} />
     </form>
   );
 }

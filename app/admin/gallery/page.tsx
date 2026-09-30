@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { QUERY_KEYS } from "@/lib/queries/keys";
 
-interface GalleryRow { _id: string; title: string; category?: string; span?: string; order?: number; }
+interface GalleryRow { _id: string; title: string; category?: string; span?: string; order?: number; imageUrl?: string; }
 
 export default function AdminGallery() {
   const { data: items = [], isLoading } = useQuery<GalleryRow[]>({
@@ -31,11 +31,15 @@ export default function AdminGallery() {
         </div>
       ) : (
         <div style={{ border: "1px solid var(--surface-2)" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px 80px 100px", padding: "10px 20px", borderBottom: "1px solid var(--surface-2)", background: "var(--surface)" }}>
-            {["Title", "Category", "Span", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
+          <div style={{ display: "grid", gridTemplateColumns: "56px 1fr 160px 120px 80px 100px", padding: "10px 20px", borderBottom: "1px solid var(--surface-2)", background: "var(--surface)" }}>
+            {["", "Title", "Category", "Span", "Order", ""].map((h) => <span key={h} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
-            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "1fr 160px 120px 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+            <div key={item._id} style={{ display: "grid", gridTemplateColumns: "56px 1fr 160px 120px 80px 100px", padding: "16px 20px", borderBottom: "1px solid var(--surface-2)", alignItems: "center" }}>
+              {item.imageUrl
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={`${item.imageUrl}?w=48&h=48&fit=crop`} alt="" style={{ width: "40px", height: "40px", objectFit: "cover", opacity: 0.7 }} />
+                : <div style={{ width: "40px", height: "40px", background: "var(--surface-2)" }} />}
               <p className="text-text font-light" style={{ fontSize: "0.88rem" }}>{item.title}</p>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.category || "—"}</span>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.span || "normal"}</span>

@@ -6,7 +6,7 @@ import NewsletterForm from "./NewsletterForm";
 
 const DISMISSED_KEY = "newsletter-modal-dismissed-at";
 const SUBSCRIBED_KEY = "newsletter-modal-subscribed";
-const SHOW_DELAY_MS = 8000;
+const SHOW_DELAY_MS = 3000;
 const COOLDOWN_DAYS = 14;
 
 export default function NewsletterModal() {

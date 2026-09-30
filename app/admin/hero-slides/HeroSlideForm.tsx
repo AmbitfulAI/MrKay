@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 import { useSaveHeroSlide } from "@/queries/hero-slides";
+import { HeroSlidePreview } from "./HeroSlidePreview";
 
 const POSITION_PRESETS = [
   { value: "center top",    label: "Top" },
@@ -47,7 +48,7 @@ export function HeroSlideForm({ initialData, id }: Props) {
     () => !!initialData?.imagePos && !POSITION_PRESETS.some((p) => p.value === initialData.imagePos)
   );
   const mutation = useSaveHeroSlide(id, () => router.push("/admin/hero-slides"));
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       eyebrow: "", line1: "", line2: "", subtitle: "",
@@ -64,8 +65,11 @@ export function HeroSlideForm({ initialData, id }: Props) {
     mutation.save({ ...data, imageUrl });
   };
 
+  const watched = watch();
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "720px" }}>
+    <div style={{ display: "flex", gap: "48px", alignItems: "flex-start", flexWrap: "wrap" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ flex: "1 1 480px", maxWidth: "600px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
         <p style={sectionHead}>Slide Content</p>
@@ -151,5 +155,19 @@ export function HeroSlideForm({ initialData, id }: Props) {
         </div>
       </div>
     </form>
+
+    <div style={{ flex: "1 1 360px", minWidth: "320px" }}>
+      <HeroSlidePreview
+        eyebrow={watched.eyebrow}
+        line1={watched.line1}
+        line2={watched.line2}
+        subtitle={watched.subtitle}
+        imageUrl={imageUrl}
+        imagePos={watched.imagePos}
+        primaryLabel={watched.primaryLabel}
+        secondaryLabel={watched.secondaryLabel}
+      />
+    </div>
+    </div>
   );
 }

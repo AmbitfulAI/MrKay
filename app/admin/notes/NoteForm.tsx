@@ -10,6 +10,7 @@ import type { CategoryOption } from "@/components/CategoriesProvider";
 import { useSaveNote } from "@/queries/notes";
 import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 import { NoteEditor } from "@/app/admin/_components/NoteEditor";
+import { NotePreview } from "./NotePreview";
 import type { ContentBlock } from "@/lib/notes";
 
 const schema = yup.object({
@@ -84,7 +85,7 @@ export function NoteForm({ initialData, id }: Props) {
   function replaceFeaturedImage(i: number, url: string) { setFeaturedImages((p) => p.map((v, j) => j === i ? url : v)); }
   function removeFeaturedImage(i: number)              { setFeaturedImages((p) => p.filter((_, j) => j !== i)); }
 
-  const { register, handleSubmit, formState: { errors } } = useForm<NoteFormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<NoteFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       title:    "",
@@ -105,8 +106,12 @@ export function NoteForm({ initialData, id }: Props) {
     mutation.save({ ...data, featuredImages, contentBlocks });
   };
 
+  const watched = watch();
+  const categoryTitle = categories.find((c) => c._id === watched.category)?.title ?? watched.category;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "760px" }}>
+    <div style={{ display: "flex", gap: "48px", alignItems: "flex-start", flexWrap: "wrap" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ flex: "1 1 480px", maxWidth: "760px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
         {/* Title */}
@@ -207,5 +212,16 @@ export function NoteForm({ initialData, id }: Props) {
         </div>
       </div>
     </form>
+
+    <div style={{ flex: "1 1 380px", minWidth: "340px" }}>
+      <NotePreview
+        title={watched.title}
+        category={categoryTitle}
+        excerpt={watched.excerpt}
+        contentBlocks={contentBlocks}
+        featuredImage={featuredImages[0]}
+      />
+    </div>
+    </div>
   );
 }

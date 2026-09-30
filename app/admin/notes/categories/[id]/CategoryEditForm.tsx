@@ -1,18 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useSaveCategory } from "@/queries/categories";
+
+const schema = yup.object({
+  title:       yup.string().required("Title is required"),
+  type:        yup.string().default("writing"),
+  tagline:     yup.string().default(""),
+  description: yup.string().default(""),
+  themes:      yup.string().default(""),
+}).required();
+
+type FormData = yup.InferType<typeof schema>;
 
 interface Props {
   id: string;
-  initialData: {
-    title: string;
-    type: string;
-    tagline: string;
-    description: string;
-    themes: string;
-  };
+  initialData: FormData;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -37,34 +43,34 @@ const labelStyle: React.CSSProperties = {
   marginBottom: "8px",
 };
 
+const errorStyle: React.CSSProperties = { fontSize: "0.68rem", color: "#e05555", fontFamily: "var(--font-body)", marginTop: "5px" };
+
 export default function CategoryEditForm({ id, initialData }: Props) {
   const router = useRouter();
-  const [form, setForm] = useState(initialData);
   const mutation = useSaveCategory(id, () => router.push("/admin/notes/categories"));
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: initialData,
+  });
 
-  function set(field: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const themes = form.themes.split("\n").map((t) => t.trim()).filter(Boolean);
-    mutation.save({ title: form.title, type: form.type, tagline: form.tagline, description: form.description, themes });
-  }
+  const onSubmit = (data: FormData) => {
+    const themes = data.themes.split("\n").map((t) => t.trim()).filter(Boolean);
+    mutation.save({ title: data.title, type: data.type, tagline: data.tagline, description: data.description, themes });
+  };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: "760px" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "760px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 180px", gap: "20px" }}>
           <div>
             <label style={labelStyle}>Title *</label>
-            <input type="text" value={form.title} onChange={set("title")} required style={inputStyle} />
+            <input type="text" {...register("title")} style={inputStyle} />
+            {errors.title && <p style={errorStyle}>{errors.title.message}</p>}
           </div>
           <div>
             <label style={labelStyle}>Type</label>
-            <select value={form.type} onChange={set("type")} style={inputStyle}>
+            <select {...register("type")} style={inputStyle}>
               <option value="writing">Writing</option>
               <option value="visual-diary">Visual Diary</option>
             </select>
@@ -75,8 +81,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
           <label style={labelStyle}>Tagline</label>
           <input
             type="text"
-            value={form.tagline}
-            onChange={set("tagline")}
+            {...register("tagline")}
             placeholder="Short line shown under the heading on the category page"
             style={inputStyle}
           />
@@ -85,8 +90,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
         <div>
           <label style={labelStyle}>Description</label>
           <textarea
-            value={form.description}
-            onChange={set("description")}
+            {...register("description")}
             rows={6}
             placeholder={"Two paragraphs about this stream.\n\nSeparate paragraphs with a blank line."}
             style={{ ...inputStyle, resize: "vertical", lineHeight: 1.8 }}
@@ -99,8 +103,7 @@ export default function CategoryEditForm({ id, initialData }: Props) {
         <div>
           <label style={labelStyle}>Themes</label>
           <textarea
-            value={form.themes}
-            onChange={set("themes")}
+            {...register("themes")}
             rows={8}
             placeholder={"One theme per line:\nCareer clarity and the discipline of decision-making\nFounder identity, business architecture, and traction"}
             style={{ ...inputStyle, resize: "vertical", lineHeight: 1.8 }}

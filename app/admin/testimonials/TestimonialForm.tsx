@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useSaveTestimonial } from "@/queries/testimonials";
 
 const PAGE_OPTIONS = [
@@ -14,40 +17,46 @@ const PAGE_OPTIONS = [
   { value: "testimonials",           label: "Testimonials Page" },
 ];
 
-interface FormData { quote: string; clientName: string; clientContext: string; }
+const schema = yup.object({
+  quote:         yup.string().required("Quote is required"),
+  clientName:    yup.string().default(""),
+  clientContext: yup.string().default(""),
+}).required();
+
+type FormData = yup.InferType<typeof schema>;
 interface Props { initialData?: Partial<FormData> & { pages?: string[] }; id?: string; }
 
 const input: React.CSSProperties = { width: "100%", background: "var(--surface)", border: "1px solid var(--surface-2)", color: "var(--text)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" };
 const labelStyle: React.CSSProperties = { display: "block", fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", marginBottom: "8px" };
+const errorStyle: React.CSSProperties = { fontSize: "0.68rem", color: "#e05555", fontFamily: "var(--font-body)", marginTop: "5px" };
 
 export function TestimonialForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
-  const [form, setForm] = useState<FormData>({ quote: "", clientName: "", clientContext: "", ...initialData });
   const [pages, setPages] = useState<string[]>(initialData?.pages ?? []);
   const mutation = useSaveTestimonial(id, () => router.push("/admin/testimonials"));
-
-  function set(field: keyof FormData) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-  }
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: yupResolver(schema),
+    defaultValues: { quote: "", clientName: "", clientContext: "", ...initialData },
+  });
 
   function togglePage(value: string) {
     setPages((prev) => prev.includes(value) ? prev.filter((p) => p !== value) : [...prev, value]);
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    mutation.save({ ...form, pages });
-  }
+  const onSubmit = (data: FormData) => mutation.save({ ...data, pages });
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: "700px" }}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ maxWidth: "700px" }}>
       <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        <div><label style={labelStyle}>Quote *</label><textarea value={form.quote} onChange={set("quote")} required rows={5} placeholder="The most honest and incisive…" style={{ ...input, resize: "vertical", lineHeight: 1.7 }} /></div>
+        <div>
+          <label style={labelStyle}>Quote *</label>
+          <textarea {...register("quote")} rows={5} placeholder="The most honest and incisive…" style={{ ...input, resize: "vertical", lineHeight: 1.7 }} />
+          {errors.quote && <p style={errorStyle}>{errors.quote.message}</p>}
+        </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-          <div><label style={labelStyle}>Client Name</label><input value={form.clientName} onChange={set("clientName")} placeholder="e.g. Chukwuemeka Obi" style={input} /></div>
-          <div><label style={labelStyle}>Client Context</label><input value={form.clientContext} onChange={set("clientContext")} placeholder="e.g. CEO, Financial Services" style={input} /></div>
+          <div><label style={labelStyle}>Client Name</label><input {...register("clientName")} placeholder="e.g. Chukwuemeka Obi" style={input} /></div>
+          <div><label style={labelStyle}>Client Context</label><input {...register("clientContext")} placeholder="e.g. CEO, Financial Services" style={input} /></div>
         </div>
         <div>
           <p style={labelStyle}>Show on Pages</p>

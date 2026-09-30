@@ -2,22 +2,93 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  DashboardIcon, HeroSlidesIcon, NotesIcon, CategoriesIcon, GalleryIcon,
+  TestimonialsIcon, SuccessStoriesIcon, FaqsIcon, MarketplaceIcon, ImpactIcon,
+  SettingsIcon, ContactIcon, SubscribersIcon,
+} from "./_components/NavIcons";
 
-const navItems = [
-  { label: "Dashboard",       href: "/admin",                  exact: true },
-  { label: "Site Config",     href: "/admin/site-config",      exact: false },
-  { label: "Hero Slides",     href: "/admin/hero-slides",      exact: false },
-  { label: "FAQs",            href: "/admin/faqs",             exact: false },
-  { label: "Testimonials",    href: "/admin/testimonials",     exact: false },
-  { label: "Success Stories", href: "/admin/success-stories",  exact: false },
-  { label: "Marketplace",     href: "/admin/marketplace",      exact: false },
-  { label: "Gallery",         href: "/admin/gallery",          exact: false },
-  { label: "Impact",          href: "/admin/impact",           exact: false },
-  { label: "Notes",           href: "/admin/notes",            exact: true },
-  { label: "↳ Categories",   href: "/admin/notes/categories", exact: false, sub: true },
-  { label: "Subscribers",    href: "/admin/subscribers",      exact: false },
-  { label: "Contact",        href: "/admin/contact",          exact: false },
+const topItem = { label: "Dashboard", href: "/admin", exact: true, icon: DashboardIcon };
+
+const navGroups: { label: string; items: { label: string; href: string; exact: boolean; icon: () => React.ReactElement }[] }[] = [
+  {
+    label: "Homepage",
+    items: [
+      { label: "Hero Slides", href: "/admin/hero-slides", exact: false, icon: HeroSlidesIcon },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      { label: "Notes",      href: "/admin/notes",            exact: true,  icon: NotesIcon },
+      { label: "Categories", href: "/admin/notes/categories", exact: false, icon: CategoriesIcon },
+      { label: "Gallery",    href: "/admin/gallery",          exact: false, icon: GalleryIcon },
+    ],
+  },
+  {
+    label: "Social Proof",
+    items: [
+      { label: "Testimonials",    href: "/admin/testimonials",    exact: false, icon: TestimonialsIcon },
+      { label: "Success Stories", href: "/admin/success-stories", exact: false, icon: SuccessStoriesIcon },
+      { label: "FAQs",            href: "/admin/faqs",            exact: false, icon: FaqsIcon },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { label: "Marketplace", href: "/admin/marketplace", exact: false, icon: MarketplaceIcon },
+      { label: "Impact",      href: "/admin/impact",      exact: false, icon: ImpactIcon },
+    ],
+  },
+  {
+    label: "Inbox",
+    items: [
+      { label: "Contact",     href: "/admin/contact",     exact: false, icon: ContactIcon },
+      { label: "Subscribers", href: "/admin/subscribers", exact: false, icon: SubscribersIcon },
+    ],
+  },
+  {
+    label: "Settings",
+    items: [
+      { label: "Site Config", href: "/admin/site-config", exact: false, icon: SettingsIcon },
+    ],
+  },
 ];
+
+function isActive(pathname: string, item: { href: string; exact: boolean }) {
+  if (item.href === "/admin") return pathname === "/admin";
+  if (item.exact) {
+    return pathname === item.href || (pathname.startsWith(item.href + "/") && !pathname.startsWith("/admin/notes/categories"));
+  }
+  return pathname.startsWith(item.href);
+}
+
+function NavLink({ item, pathname }: { item: { label: string; href: string; exact: boolean; icon: () => React.ReactElement }; pathname: string }) {
+  const active = isActive(pathname, item);
+  const Icon = item.icon;
+  return (
+    <Link
+      href={item.href}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        padding: "9px 14px",
+        fontSize: "0.8rem",
+        fontFamily: "var(--font-body)",
+        letterSpacing: "0.06em",
+        color: active ? "var(--gold)" : "var(--muted)",
+        background: active ? "var(--gold-glow)" : "transparent",
+        textDecoration: "none",
+        borderRadius: "2px",
+        fontWeight: active ? 500 : 300,
+      }}
+    >
+      <span style={{ display: "flex", opacity: active ? 1 : 0.75 }}><Icon /></span>
+      {item.label}
+    </Link>
+  );
+}
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -59,34 +130,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </span>
         </div>
 
-        <nav style={{ flex: 1, padding: "0 12px" }}>
-          {navItems.map((item) => {
-            const active = item.href === "/admin"
-              ? pathname === "/admin"
-              : item.exact
-              ? pathname === item.href || (pathname.startsWith(item.href + "/") && !pathname.startsWith("/admin/notes/categories"))
-              : pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                style={{
-                  display: "block",
-                  padding: item.sub ? "6px 14px 6px 28px" : "10px 14px",
-                  fontSize: item.sub ? "0.72rem" : "0.8rem",
-                  fontFamily: "var(--font-body)",
-                  letterSpacing: "0.06em",
-                  color: active ? "var(--gold)" : item.sub ? "var(--dim)" : "var(--muted)",
-                  background: active ? "var(--gold-glow)" : "transparent",
-                  textDecoration: "none",
-                  borderRadius: "2px",
-                  fontWeight: active ? 500 : 300,
-                }}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav style={{ flex: 1, padding: "0 12px", overflowY: "auto" }}>
+          <NavLink item={topItem} pathname={pathname} />
+
+          {navGroups.map((group) => (
+            <div key={group.label} style={{ marginTop: "20px" }}>
+              <p style={{
+                padding: "0 14px 6px",
+                fontSize: "0.56rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "var(--dim)",
+                fontFamily: "var(--font-body)",
+                opacity: 0.7,
+              }}>
+                {group.label}
+              </p>
+              {group.items.map((item) => (
+                <NavLink key={item.href} item={item} pathname={pathname} />
+              ))}
+            </div>
+          ))}
         </nav>
 
         <div style={{ padding: "0 12px" }}>

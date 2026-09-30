@@ -3,13 +3,24 @@ import { connectDB } from "@/lib/db";
 import { Comment } from "@/lib/models/Comment";
 import "@/lib/models/Note";
 
+interface LeanComment {
+  _id: unknown;
+  noteId: { _id: unknown; title: string; slug: string } | null;
+  parentId: unknown;
+  authorName: string;
+  authorEmail: string;
+  content: string;
+  likes: number;
+  createdAt: Date;
+}
+
 export async function GET() {
   await connectDB();
 
   const comments = await Comment.find()
     .sort({ createdAt: -1 })
     .populate<{ noteId: { _id: unknown; title: string; slug: string } | null }>("noteId", "title slug")
-    .lean()
+    .lean<LeanComment[]>()
     .catch(() => []);
 
   return NextResponse.json(

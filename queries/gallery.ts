@@ -9,7 +9,6 @@ export interface GalleryRow {
   _id: string;
   title: string;
   category?: string;
-  span?: string;
   order?: number;
   imageUrl?: string;
 }

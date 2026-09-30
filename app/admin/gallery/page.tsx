@@ -6,7 +6,7 @@ import { DeleteButton } from "@/app/admin/_components/DeleteButton";
 import { DragHandle } from "@/app/admin/_components/DragHandle";
 import { useReorder } from "@/hooks/useReorder";
 
-const gridCols = "24px 56px 1fr 160px 120px 100px";
+const gridCols = "24px 56px 1fr 160px 100px";
 
 export default function AdminGallery() {
   const { data: fetched = [], isLoading } = useGalleryQuery();
@@ -33,7 +33,7 @@ export default function AdminGallery() {
       ) : (
         <div style={{ border: "1px solid var(--surface-2)" }}>
           <div style={{ display: "grid", gridTemplateColumns: gridCols, padding: "10px 20px", borderBottom: "1px solid var(--surface-2)", background: "var(--surface)" }}>
-            {["", "", "Title", "Category", "Span", ""].map((h, i) => <span key={i} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
+            {["", "", "Title", "Category", ""].map((h, i) => <span key={i} style={{ fontSize: "0.6rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)" }}>{h}</span>)}
           </div>
           {items.map((item) => (
             <div
@@ -62,7 +62,6 @@ export default function AdminGallery() {
                 : <div style={{ width: "40px", height: "40px", background: "var(--surface-2)" }} />}
               <p className="text-text font-light" style={{ fontSize: "0.88rem" }}>{item.title}</p>
               <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.category || "—"}</span>
-              <span style={{ fontSize: "0.72rem", color: "var(--muted)", fontFamily: "var(--font-body)" }}>{item.span || "normal"}</span>
               <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                 <Link href={`/admin/gallery/${item._id}`} style={{ fontSize: "0.72rem", color: "var(--gold)", fontFamily: "var(--font-body)", textDecoration: "none" }}>Edit</Link>
                 <DeleteButton onDelete={() => deleteGalleryItem.deleteGalleryItem(item._id)} isPending={deleteGalleryItem.isPending} />

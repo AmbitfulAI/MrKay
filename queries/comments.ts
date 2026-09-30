@@ -2,6 +2,8 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
+import { useAdminMutation } from "./useAdminMutation";
+import { QUERY_KEYS } from "./keys";
 
 export interface CommentRow {
   _id: string;
@@ -53,4 +55,30 @@ export function useLikeComment(noteId: string) {
       queryClient.invalidateQueries({ queryKey: commentsKey(noteId) });
     },
   });
+}
+
+export interface AdminCommentRow {
+  _id: string;
+  note: { title: string; slug: string } | null;
+  parentId: string | null;
+  authorName: string;
+  authorEmail: string;
+  content: string;
+  likes: number;
+  createdAt: string;
+}
+
+export function useAdminCommentsQuery() {
+  return useQuery<AdminCommentRow[]>({
+    queryKey: QUERY_KEYS.comments,
+    queryFn: () => apiClient.get("/api/admin/comments"),
+  });
+}
+
+export function useDeleteComment() {
+  const mutation = useAdminMutation(QUERY_KEYS.comments);
+  function deleteComment(id: string) {
+    mutation.mutate({ url: `/api/admin/comments/${id}`, method: "DELETE" });
+  }
+  return { ...mutation, deleteComment };
 }

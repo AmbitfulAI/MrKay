@@ -129,3 +129,12 @@ export function SubscribersIcon() {
     </svg>
   );
 }
+
+export function CommentsIcon() {
+  return (
+    <svg {...common}>
+      <rect x="1.5" y="3" width="13" height="8" rx="1.5" />
+      <path d="M5 11v2.5L8 11" />
+    </svg>
+  );
+}

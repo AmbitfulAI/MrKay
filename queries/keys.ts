@@ -9,4 +9,5 @@ export const QUERY_KEYS = {
   marketplace:    ["admin", "marketplace"]     as const,
   siteConfig:     ["admin", "site-config"]     as const,
   categories:     ["admin", "categories"]      as const,
+  comments:       ["admin", "comments"]        as const,
 } as const;

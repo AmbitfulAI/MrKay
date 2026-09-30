@@ -6,7 +6,7 @@ import { apiClient } from "@/lib/api-client";
 import {
   DashboardIcon, HeroSlidesIcon, NotesIcon, CategoriesIcon, GalleryIcon,
   TestimonialsIcon, SuccessStoriesIcon, FaqsIcon, MarketplaceIcon, ImpactIcon,
-  SettingsIcon, ContactIcon, SubscribersIcon,
+  SettingsIcon, ContactIcon, SubscribersIcon, CommentsIcon,
 } from "./_components/NavIcons";
 
 const topItem = { label: "Dashboard", href: "/admin", exact: true, icon: DashboardIcon };
@@ -44,6 +44,7 @@ const navGroups: { label: string; items: { label: string; href: string; exact: b
   {
     label: "Inbox",
     items: [
+      { label: "Comments",    href: "/admin/comments",    exact: false, icon: CommentsIcon },
       { label: "Contact",     href: "/admin/contact",     exact: false, icon: ContactIcon },
       { label: "Subscribers", href: "/admin/subscribers", exact: false, icon: SubscribersIcon },
     ],

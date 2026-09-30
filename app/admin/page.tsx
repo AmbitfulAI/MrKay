@@ -11,6 +11,7 @@ import { ImpactOrg } from "@/lib/models/ImpactOrg";
 import { Note } from "@/lib/models/Note";
 import { Subscriber } from "@/lib/models/Subscriber";
 import { ContactSubmission } from "@/lib/models/ContactSubmission";
+import { Comment } from "@/lib/models/Comment";
 
 export const revalidate = 0;
 
@@ -49,7 +50,7 @@ function timeAgo(date: Date | null): string {
 export default async function AdminDashboard() {
   await connectDB();
 
-  const [heroSlides, faqs, testimonials, successStories, marketplace, gallery, impact, notes, subscribers, unreadMessages] =
+  const [heroSlides, faqs, testimonials, successStories, marketplace, gallery, impact, notes, subscribers, comments, unreadMessages] =
     await Promise.all([
       summarize(HeroSlide, "Hero Slides", "/admin/hero-slides", "Rotating homepage banners"),
       summarize(Faq, "FAQs", "/admin/faqs", "Shown on the Contact page"),
@@ -60,10 +61,11 @@ export default async function AdminDashboard() {
       summarize(ImpactOrg, "Impact", "/admin/impact", "Boards & pro bono organisations"),
       summarize(Note, "Notes", "/admin/notes", "Writing / blog posts"),
       summarize(Subscriber, "Subscribers", "/admin/subscribers", "Newsletter sign-ups"),
+      summarize(Comment, "Comments", "/admin/comments", "Reader comments on Notes"),
       ContactSubmission.countDocuments({ read: false }),
     ]);
 
-  const sections = [heroSlides, faqs, testimonials, successStories, marketplace, gallery, impact, notes, subscribers];
+  const sections = [heroSlides, faqs, testimonials, successStories, marketplace, gallery, impact, notes, subscribers, comments];
 
   return (
     <div style={{ padding: "40px 48px" }}>

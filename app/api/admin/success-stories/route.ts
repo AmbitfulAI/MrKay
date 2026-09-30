@@ -12,6 +12,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await SuccessStory.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const s = await SuccessStory.create({
     code:   data.code,
     title:  data.title,
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     client: data.client,
     result: data.result,
     story:  data.story,
-    order:  data.order ? Number(data.order) : 99,
+    order:  data.order ? Number(data.order) : (last?.order ?? 0) + 1,
   });
   revalidatePath("/testimonials");
   return NextResponse.json(s.toJSON(), { status: 201 });

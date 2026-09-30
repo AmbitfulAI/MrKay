@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 import { QUERY_KEYS } from "@/lib/queries/keys";
 
-interface FormData { code: string; title: string; sector: string; client: string; result: string; story: string; order: string; }
+interface FormData { code: string; title: string; sector: string; client: string; result: string; story: string; }
 interface Props { initialData?: Partial<FormData>; id?: string; }
 
 const input: React.CSSProperties = { width: "100%", background: "var(--surface)", border: "1px solid var(--surface-2)", color: "var(--text)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" };
@@ -14,7 +14,7 @@ const label: React.CSSProperties = { display: "block", fontSize: "0.6rem", lette
 export function SuccessStoryForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
-  const [form, setForm] = useState<FormData>({ code: "", title: "", sector: "", client: "", result: "", story: "", order: "", ...initialData });
+  const [form, setForm] = useState<FormData>({ code: "", title: "", sector: "", client: "", result: "", story: "", ...initialData });
   const mutation = useAdminMutation(QUERY_KEYS.successStories, () => router.push("/admin/success-stories"));
 
   function set(field: keyof FormData) {
@@ -44,7 +44,6 @@ export function SuccessStoryForm({ initialData, id }: Props) {
         </div>
         <div><label style={label}>Key Result</label><input value={form.result} onChange={set("result")} placeholder="e.g. Board confidence restored within 90 days" style={input} /></div>
         <div><label style={label}>Full Story *</label><textarea value={form.story} onChange={set("story")} required rows={7} placeholder="Describe what happened, the challenge, and the outcome…" style={{ ...input, resize: "vertical", lineHeight: 1.7 }} /></div>
-        <div style={{ maxWidth: "160px" }}><label style={label}>Display Order</label><input type="number" value={form.order} onChange={set("order")} placeholder="1" style={input} /></div>
         {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
           <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Story"}</button>

@@ -12,10 +12,11 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await Faq.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const faq = await Faq.create({
     question: data.question,
     answer:   data.answer,
-    order:    data.order ? Number(data.order) : 99,
+    order:    data.order ? Number(data.order) : (last?.order ?? 0) + 1,
   });
   revalidatePath("/contact");
   return NextResponse.json(faq.toJSON(), { status: 201 });

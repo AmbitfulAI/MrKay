@@ -11,7 +11,6 @@ interface FormData {
   imagePos: string;
   primaryLabel: string; primaryHref: string; primaryCalendly: string;
   secondaryLabel: string; secondaryHref: string; secondaryCalendly: string;
-  order: string;
 }
 interface Props { initialData?: Partial<FormData> & { imageUrl?: string }; id?: string; }
 
@@ -35,7 +34,6 @@ export function HeroSlideForm({ initialData, id }: Props) {
     imagePos: "center top",
     primaryLabel: "", primaryHref: "", primaryCalendly: "false",
     secondaryLabel: "", secondaryHref: "", secondaryCalendly: "false",
-    order: "",
     ...initialData,
   });
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
@@ -123,8 +121,6 @@ export function HeroSlideForm({ initialData, id }: Props) {
             <option value="true">Yes — open Calendly</option>
           </select>
         </div>
-
-        <div style={{ maxWidth: "160px" }}><label style={labelStyle}>Display Order *</label><input type="number" value={form.order} onChange={set("order")} required placeholder="1" style={input} /></div>
 
         {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>

@@ -10,11 +10,14 @@ export async function PATCH(
   await connectDB();
   const { id } = await params;
   const data = await req.json();
-  const t = await Testimonial.findByIdAndUpdate(
-    id,
-    { quote: data.quote, clientName: data.clientName, clientContext: data.clientContext, order: data.order ? Number(data.order) : 99, pages: Array.isArray(data.pages) ? data.pages : [] },
-    { new: true },
-  );
+  const update: Record<string, unknown> = {
+    quote: data.quote,
+    clientName: data.clientName,
+    clientContext: data.clientContext,
+    pages: Array.isArray(data.pages) ? data.pages : [],
+  };
+  if (data.order !== undefined) update.order = Number(data.order);
+  const t = await Testimonial.findByIdAndUpdate(id, update, { new: true });
   if (!t) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/testimonials");
   return NextResponse.json(t.toJSON());

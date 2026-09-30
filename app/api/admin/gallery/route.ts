@@ -12,13 +12,14 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await GalleryImage.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const img = await GalleryImage.create({
     title:    data.title,
     caption:  data.caption,
     category: data.category,
     imageUrl: data.imageUrl ?? "",
     alt:      data.alt ?? "",
-    order:    data.order ? Number(data.order) : 99,
+    order:    data.order ? Number(data.order) : (last?.order ?? 0) + 1,
   });
   revalidatePath("/visual-diary");
   return NextResponse.json(img.toJSON(), { status: 201 });

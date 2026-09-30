@@ -15,7 +15,7 @@ const PAGE_OPTIONS = [
   { value: "testimonials",           label: "Testimonials Page" },
 ];
 
-interface FormData { quote: string; clientName: string; clientContext: string; order: string; }
+interface FormData { quote: string; clientName: string; clientContext: string; }
 interface Props { initialData?: Partial<FormData> & { pages?: string[] }; id?: string; }
 
 const input: React.CSSProperties = { width: "100%", background: "var(--surface)", border: "1px solid var(--surface-2)", color: "var(--text)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" };
@@ -24,7 +24,7 @@ const labelStyle: React.CSSProperties = { display: "block", fontSize: "0.6rem", 
 export function TestimonialForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
-  const [form, setForm] = useState<FormData>({ quote: "", clientName: "", clientContext: "", order: "", ...initialData });
+  const [form, setForm] = useState<FormData>({ quote: "", clientName: "", clientContext: "", ...initialData });
   const [pages, setPages] = useState<string[]>(initialData?.pages ?? []);
   const mutation = useAdminMutation(QUERY_KEYS.testimonials, () => router.push("/admin/testimonials"));
 
@@ -65,7 +65,6 @@ export function TestimonialForm({ initialData, id }: Props) {
             ))}
           </div>
         </div>
-        <div style={{ maxWidth: "160px" }}><label style={labelStyle}>Display Order</label><input type="number" value={form.order} onChange={set("order")} placeholder="1" style={input} /></div>
         {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
           <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Testimonial"}</button>

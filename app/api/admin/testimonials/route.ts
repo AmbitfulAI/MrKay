@@ -12,11 +12,12 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await Testimonial.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const t = await Testimonial.create({
     quote:         data.quote,
     clientName:    data.clientName,
     clientContext: data.clientContext,
-    order:         data.order ? Number(data.order) : 99,
+    order:         data.order ? Number(data.order) : (last?.order ?? 0) + 1,
     pages:         Array.isArray(data.pages) ? data.pages : [],
   });
   revalidatePath("/testimonials");

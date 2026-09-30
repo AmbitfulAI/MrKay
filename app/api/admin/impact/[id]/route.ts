@@ -19,9 +19,9 @@ export async function PATCH(
     url:         data.url || "",
     active:      data.active !== false,
     alt:         data.alt ?? "",
-    order:       data.order ? Number(data.order) : 99,
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
+  if (data.order !== undefined) update.order = Number(data.order);
   const org = await ImpactOrg.findByIdAndUpdate(id, update, { new: true });
   if (!org) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/impact");

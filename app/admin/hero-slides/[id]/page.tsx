@@ -12,7 +12,6 @@ export default async function EditHeroSlide({ params }: { params: Promise<{ id: 
     imageUrl?: string; imagePos?: string;
     primaryLabel?: string; primaryHref?: string; primaryCalendly?: boolean;
     secondaryLabel?: string; secondaryHref?: string; secondaryCalendly?: boolean;
-    order?: number;
   }>();
   if (!item) notFound();
 
@@ -37,7 +36,6 @@ export default async function EditHeroSlide({ params }: { params: Promise<{ id: 
           secondaryLabel:    item.secondaryLabel ?? "",
           secondaryHref:     item.secondaryHref ?? "",
           secondaryCalendly: item.secondaryCalendly ? "true" : "false",
-          order:             item.order?.toString() ?? "",
         }}
       />
     </div>

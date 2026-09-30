@@ -22,9 +22,9 @@ export async function PATCH(
     secondaryLabel:    data.secondaryLabel || "",
     secondaryHref:     data.secondaryHref || "",
     secondaryCalendly: data.secondaryCalendly === "true" || data.secondaryCalendly === true,
-    order:             data.order ? Number(data.order) : 99,
   };
   if (data.imageUrl) update.imageUrl = data.imageUrl;
+  if (data.order !== undefined) update.order = Number(data.order);
   const slide = await HeroSlide.findByIdAndUpdate(id, update, { new: true });
   if (!slide) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/");

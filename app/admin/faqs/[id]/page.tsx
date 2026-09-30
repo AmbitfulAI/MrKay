@@ -7,7 +7,7 @@ import { FaqForm } from "../FaqForm";
 export default async function EditFaq({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   await connectDB();
-  const item = await Faq.findById(id).lean<{ question: string; answer: string; order?: number }>().catch(() => null);
+  const item = await Faq.findById(id).lean<{ question: string; answer: string }>().catch(() => null);
   if (!item) notFound();
 
   return (
@@ -16,7 +16,7 @@ export default async function EditFaq({ params }: { params: Promise<{ id: string
         <Link href="/admin/faqs" style={{ fontSize: "0.62rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--dim)", fontFamily: "var(--font-body)", textDecoration: "none" }}>← FAQs</Link>
         <h1 className="display text-text" style={{ fontSize: "1.8rem", marginTop: "16px" }}>Edit FAQ</h1>
       </div>
-      <FaqForm id={id} initialData={{ question: item.question, answer: item.answer, order: item.order?.toString() ?? "" }} />
+      <FaqForm id={id} initialData={{ question: item.question, answer: item.answer }} />
     </div>
   );
 }

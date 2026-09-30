@@ -12,6 +12,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await HeroSlide.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const slide = await HeroSlide.create({
     eyebrow:           data.eyebrow,
     line1:             data.line1,
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
     secondaryLabel:    data.secondaryLabel || "",
     secondaryHref:     data.secondaryHref || "",
     secondaryCalendly: data.secondaryCalendly === "true" || data.secondaryCalendly === true,
-    order:             data.order ? Number(data.order) : 99,
+    order:             data.order ? Number(data.order) : (last?.order ?? 0) + 1,
   });
   revalidatePath("/");
   return NextResponse.json(slide.toJSON(), { status: 201 });

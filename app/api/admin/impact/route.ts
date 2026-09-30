@@ -12,6 +12,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await connectDB();
   const data = await req.json();
+  const last = await ImpactOrg.findOne().sort({ order: -1 }).select("order").lean<{ order?: number }>();
   const org = await ImpactOrg.create({
     name:        data.name,
     category:    data.category,
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     active:      data.active !== false,
     imageUrl:    data.imageUrl ?? "",
     alt:         data.alt ?? "",
-    order:       data.order ? Number(data.order) : 99,
+    order:       data.order ? Number(data.order) : (last?.order ?? 0) + 1,
   });
   revalidatePath("/impact");
   return NextResponse.json(org.toJSON(), { status: 201 });

@@ -6,7 +6,7 @@ import { ImageUpload } from "@/app/admin/_components/ImageUpload";
 import { useAdminMutation } from "@/lib/queries/useAdminMutation";
 import { QUERY_KEYS } from "@/lib/queries/keys";
 
-interface FormData { name: string; category: string; role: string; since: string; description: string; url: string; active: boolean; alt: string; order: string; }
+interface FormData { name: string; category: string; role: string; since: string; description: string; url: string; active: boolean; alt: string; }
 interface Props { initialData?: Partial<FormData> & { imageUrl?: string }; id?: string; }
 
 const input: React.CSSProperties = { width: "100%", background: "var(--surface)", border: "1px solid var(--surface-2)", color: "var(--text)", padding: "10px 14px", fontFamily: "var(--font-body)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" };
@@ -15,7 +15,7 @@ const labelStyle: React.CSSProperties = { display: "block", fontSize: "0.6rem", 
 export function ImpactForm({ initialData, id }: Props) {
   const router = useRouter();
   const isEdit = !!id;
-  const [form, setForm] = useState<FormData>({ name: "", category: "", role: "", since: "", description: "", url: "", active: true, alt: "", order: "", ...initialData });
+  const [form, setForm] = useState<FormData>({ name: "", category: "", role: "", since: "", description: "", url: "", active: true, alt: "", ...initialData });
   const [imageUrl, setImageUrl] = useState(initialData?.imageUrl ?? "");
   const mutation = useAdminMutation(QUERY_KEYS.impact, () => router.push("/admin/impact"));
 
@@ -52,7 +52,6 @@ export function ImpactForm({ initialData, id }: Props) {
           <input type="checkbox" id="active" checked={form.active} onChange={set("active")} />
           <label htmlFor="active" style={{ ...labelStyle, marginBottom: 0 }}>Active (shown on site)</label>
         </div>
-        <div style={{ maxWidth: "140px" }}><label style={labelStyle}>Order</label><input type="number" value={form.order} onChange={set("order")} placeholder="1" style={input} /></div>
         {mutation.isError && <p style={{ fontSize: "0.8rem", color: "#e05555", fontFamily: "var(--font-body)" }}>{mutation.error.message}</p>}
         <div style={{ display: "flex", gap: "16px" }}>
           <button type="submit" disabled={mutation.isPending} className="btn-solid" style={{ opacity: mutation.isPending ? 0.6 : 1, fontSize: "0.78rem", padding: "11px 28px" }}>{mutation.isPending ? "Saving…" : isEdit ? "Save Changes" : "Add Organisation"}</button>

@@ -10,11 +10,9 @@ export async function PATCH(
   await connectDB();
   const { id } = await params;
   const data = await req.json();
-  const faq = await Faq.findByIdAndUpdate(
-    id,
-    { question: data.question, answer: data.answer, order: data.order ? Number(data.order) : 99 },
-    { new: true },
-  );
+  const update: Record<string, unknown> = { question: data.question, answer: data.answer };
+  if (data.order !== undefined) update.order = Number(data.order);
+  const faq = await Faq.findByIdAndUpdate(id, update, { new: true });
   if (!faq) return NextResponse.json({ error: "Not found" }, { status: 404 });
   revalidatePath("/contact");
   return NextResponse.json(faq.toJSON());

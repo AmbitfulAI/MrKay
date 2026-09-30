@@ -9,7 +9,7 @@ import { useReorder } from "@/hooks/useReorder";
 const gridCols = "24px 1fr 100px";
 
 export default function AdminFaqs() {
-  const { data: fetched = [], isLoading } = useFaqsQuery();
+  const { data: fetched, isLoading } = useFaqsQuery();
   const deleteFaq = useDeleteFaq();
   const reorderFaqs = useReorderFaqs();
   const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderFaqs);

@@ -9,7 +9,7 @@ import { useReorder } from "@/hooks/useReorder";
 const gridCols = "24px 56px 1fr 200px 100px";
 
 export default function AdminHeroSlides() {
-  const { data: fetched = [], isLoading } = useHeroSlidesQuery();
+  const { data: fetched, isLoading } = useHeroSlidesQuery();
   const deleteHeroSlide = useDeleteHeroSlide();
   const reorderHeroSlides = useReorderHeroSlides();
   const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderHeroSlides);

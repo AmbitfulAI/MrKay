@@ -9,7 +9,7 @@ import { useReorder } from "@/hooks/useReorder";
 const gridCols = "24px 56px 1fr 160px 160px 80px 100px";
 
 export default function AdminImpact() {
-  const { data: fetched = [], isLoading } = useImpactQuery();
+  const { data: fetched, isLoading } = useImpactQuery();
   const deleteImpactOrg = useDeleteImpactOrg();
   const reorderImpact = useReorderImpact();
   const { items, draggedId, overId, onDragStart, onDragOverRow, onDrop, onDragEnd } = useReorder(fetched, reorderImpact);

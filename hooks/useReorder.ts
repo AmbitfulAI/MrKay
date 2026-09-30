@@ -6,6 +6,8 @@ interface Reorderable {
   _id: string;
 }
 
+const EMPTY: never[] = [];
+
 function arrayMove<T>(array: T[], from: number, to: number): T[] {
   const copy = array.slice();
   const [moved] = copy.splice(from, 1);
@@ -13,15 +15,16 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
   return copy;
 }
 
-export function useReorder<T extends Reorderable>(items: T[], onReorder: (items: T[]) => void) {
-  const [localItems, setLocalItems] = useState<T[]>(items);
-  const [syncedFrom, setSyncedFrom] = useState<T[]>(items);
+export function useReorder<T extends Reorderable>(items: T[] | undefined, onReorder: (items: T[]) => void) {
+  const safeItems = items ?? EMPTY;
+  const [localItems, setLocalItems] = useState<T[]>(safeItems);
+  const [syncedFrom, setSyncedFrom] = useState<T[]>(safeItems);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
 
-  if (items !== syncedFrom) {
-    setSyncedFrom(items);
-    setLocalItems(items);
+  if (safeItems !== syncedFrom) {
+    setSyncedFrom(safeItems);
+    setLocalItems(safeItems);
   }
 
   function onDragStart(id: string) {
